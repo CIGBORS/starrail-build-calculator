@@ -21,7 +21,7 @@ Além disso, ele irá contar com coisas padrões de outros sites, como análise 
 | <img src="https://github.com/cigbors.png" width="100"> | **[Inserir nome ou apelido](https://github.com/cigbors)** | <INSERIR> |
 | <img src="https://github.com/caiovj18.png" width="100"> | **[Inserir nome ou apelido](https://github.com/caiovj18)** | <INSERIR> |
 | <img src="https://github.com/flpgamess.png" width="100"> | **[Inserir nome ou apelido](https://github.com/flpgamess)** | <INSERIR> |
-| <img src="https://github.com/wavering-ruby.png" width="100"> | **[Inserir nome ou apelido](https://github.com/caiovj18)** | <INSERIR> |
+| <img src="https://github.com/wavering-ruby.png" width="100"> | **[Mateus G. M. de Paula (WaveringRuby)](https://github.com/wavering-ruby)** | <INSERIR> |
 
 </div>
 
@@ -44,10 +44,10 @@ Além disso, ele irá contar com coisas padrões de outros sites, como análise 
 
 <div align="center">
   
-![Vite.js](https://skillicons.dev/icons?i=vite)
-![React.js](https://skillicons.dev/icons?i=react)
-![HTML](https://skillicons.dev/icons?i=html)
-![CSS](https://skillicons.dev/icons?i=css)
+  ![Vite.js](https://skillicons.dev/icons?i=vite)
+  ![React.js](https://skillicons.dev/icons?i=react)
+  ![HTML](https://skillicons.dev/icons?i=html)
+  ![CSS](https://skillicons.dev/icons?i=css)
 
 </div>
 
@@ -57,8 +57,8 @@ Além disso, ele irá contar com coisas padrões de outros sites, como análise 
 
 <div align="center">
 
-![Node.js](https://skillicons.dev/icons?i=nodejs)
-![Python](https://skillicons.dev/icons?i=expressjs)
+  ![Node.js](https://skillicons.dev/icons?i=nodejs)
+  ![Python](https://skillicons.dev/icons?i=expressjs)
 
 </div>
 
@@ -68,7 +68,7 @@ Além disso, ele irá contar com coisas padrões de outros sites, como análise 
 
 <div align="center">
 
-![PostgreSQL](https://skillicons.dev/icons?i=postgresql)
+  ![PostgreSQL](https://skillicons.dev/icons?i=postgresql)
 
 </div>
 
@@ -154,13 +154,14 @@ http://localhost:3000
 </details>
 
 ## Definições e abreviaturas
-
 <!-- Adicionar conforme formos pesquisando sobre -->
+
 
 ---
 
 ## Referências
-
 <!-- Adicionar conforme formos pesquisando sobre -->
+
+[Repositório com os arquivos do Star Rail](https://github.com/Mar-7th/StarRailRes)
 
 ---
