@@ -1,7 +1,10 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express, { json } from "express"
 import cors from "cors"
 
-import testRoutes from "./routes/test.routes"
+import testRoutes from "./routes/test.routes.js"
 
 const app = express()
 
@@ -9,6 +12,7 @@ app.use(cors())
 app.use(json())
 
 app.use("/test", testRoutes)
+// app.use("/api/github/characters", charactersRoutes);
 
 app.get("/", (req,res)=>{
  res.json({message:"API funcionando"})
