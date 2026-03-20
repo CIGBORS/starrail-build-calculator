@@ -51,13 +51,28 @@ export async function getCharacterAllInformations(characterId){
         ...skillsData[skillId]
     }));
 
+    // Relacionamento com ranks costelação (?)
+    /*
+        Verificar a viabilidade de puxar os componentes dentro do que está no characterRanks, mas acredito que não seja necessário
+    */
+    const ranksData = await fetchJson("character_ranks.json");
+    
+    const characterRanks = characterData.ranks.map(rankId => ({
+        id: rankId,
+        icon: `${GITHUB_URL}${icon}`,
+        ...ranksData[skillId]
+    }));
+
+    // Relacionamento com skill tree, verificar se vai ser necessário, porque aqui é mais componente
+    // const skillTreeData = await fetchJson("character_skill_trees.json");
+
     return {
         id: characterId,
         name: characterData.name,
         rarity: characterData.rarity,
         element: elementData,
         max_sp: characterData.max_sp,
-        ranks: characterData.ranks,
+        ranks: characterRanks,
         skills: characterSkills,
         skills_trees: characterData.skills_trees,
         icon: `${GITHUB_URL}${characterData.icon}`,
