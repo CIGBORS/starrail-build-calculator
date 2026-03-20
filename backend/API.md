@@ -14,6 +14,16 @@ Endpoint:
 http://localhost:3000/api/github/:id
 ```
 
+#### JSON de retorno:
+
+```json
+{
+    "id": "1107",
+    "name": "Clara",
+    "icon": "https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/icon/character/1107.png"
+}
+```
+
 ### getCharacterAllInformation
 
 ```url
@@ -514,3 +524,27 @@ Recebe `:id` do personagem e retorna uma grande quantidade de informações rele
 ```
 
 </details>
+
+### getCharacterByName
+
+```url
+http://localhost:3000/api/github/characters/by-name/Clara
+```
+
+Esse código serve para alguma pesquisa de personagem específica baseado em um nome digitado, talvez seja descontinuado mais para frente pela manipulação direta pelo ID.
+
+```json
+{
+    "id": "1107",
+    "name": "Clara",
+    "icon": "https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/icon/character/1107.png"
+}
+```
+
+### getAllCharacters
+
+```json
+http://localhost:3000/api/github/characters/all
+```
+
+Essa função retorna basicamente todos os personagens que estão na base de dados de personagens sem tratativa.

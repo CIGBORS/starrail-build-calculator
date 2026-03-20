@@ -8,6 +8,11 @@ async function fetchJson(endpoint){
     return response.data;
 }
 
+export async function getAllCharacters(){
+    const characterData = await fetchJson("characters.json");
+    return characterData;
+}
+
 export function getCharacterById(characterId){
     return axios.get(`${GITHUB_URL}index_new/pt/characters.json`) // Lembrando que setei PT por que nós somos brasileiros
         .then(response => {
@@ -79,5 +84,20 @@ export async function getCharacterAllInformations(characterId){
         icon: `${GITHUB_URL}${characterData.icon}`,
         preview: `${GITHUB_URL}${characterData.preview}`,
         portrait: `${GITHUB_URL}${characterData.portrait}`
+    }
+}
+
+export async function getCharacterByName(characterName){
+    // Esse endpoint serve para retornar apenas as informações básicas do personagem pelo o nome, como ícone para quando tivermos que ter pesquisas por nome e tudo mais
+    const characterData = await fetchJson("characters.json");
+
+    for(let key in characterData){
+        if(characterData[key].name === characterName){
+            return {
+                id: characterData[key].id,
+                name: characterData[key].name,
+                icon: `${GITHUB_URL}${characterData[key].icon}`
+            }
+        }
     }
 }
