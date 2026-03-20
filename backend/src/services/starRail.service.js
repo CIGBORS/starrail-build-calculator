@@ -48,7 +48,8 @@ export async function getCharacterAllInformations(characterId){
 
     const characterSkills = characterData.skills.map(skillId => ({
         id: skillId,
-        ...skillsData[skillId]
+        ...skillsData[skillId],
+        icon: (skillsData[skillId] || skillsData != "") ? `${GITHUB_URL}${skillsData[skillId].icon}` : "Not found"
     }));
 
     // Relacionamento com ranks costelação (?)
@@ -59,8 +60,8 @@ export async function getCharacterAllInformations(characterId){
     
     const characterRanks = characterData.ranks.map(rankId => ({
         id: rankId,
-        icon: `${GITHUB_URL}${icon}`,
-        ...ranksData[skillId]
+        ...ranksData[rankId],
+        icon: (ranksData[rankId] || ranksData[rankId] != "") ? `${GITHUB_URL}${ranksData[rankId].icon}` : "Not found"
     }));
 
     // Relacionamento com skill tree, verificar se vai ser necessário, porque aqui é mais componente
