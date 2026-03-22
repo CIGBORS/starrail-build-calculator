@@ -164,4 +164,6 @@ http://localhost:3000
 
 [Repositório com os arquivos do Star Rail](https://github.com/Mar-7th/StarRailRes)
 
+[Páginas do Figma](https://www.figma.com/design/EsJVZ8M5EIpSegOb4Sz0IT/STAR-RAIL-BUILDER?node-id=0-1&t=BIW7EKWPVTaYqfEc-1)
+
 ---
