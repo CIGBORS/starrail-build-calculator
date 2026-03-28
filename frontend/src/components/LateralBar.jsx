@@ -16,7 +16,7 @@ export default function LateralBar ({ userLogged = null }) {
                 {/* Adicionar condições para caso o usuário esteja loggado*/}
                 {
                     userLogged === null ? 
-                    ( <img className="lateral-bar__user-icon" src="public/icons/place_holder.png" /> ) :
+                    ( <img className="lateral-bar__user-icon" src="icons/place_holder.png" /> ) :
                     ( <img src={userIcon} />)
                 }
 

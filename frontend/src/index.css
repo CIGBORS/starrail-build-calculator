@@ -1,4 +1,21 @@
 * {
   margin: 0px;
+  padding: 0px;
+  gap: 0px;
+}
+
+/* Mateus do futuro e companhia, esse código reseta a margem */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
   background-color: #16171D;
+}
+
+.home-banner {
+  display: block;
+  opacity: 40%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
