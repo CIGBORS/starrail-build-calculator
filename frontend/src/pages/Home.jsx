@@ -1,3 +1,10 @@
+import LateralBar from "../components/LateralBar";
+
 export default function Home(){
- return <h1>Home</h1>
+
+    return (
+        <>
+            <LateralBar />
+        </>
+    )
 }
