@@ -1,3 +1,9 @@
+import CharacterCard from "../../component/CharacterIcon/CharacterCard";
+
 export default function Home(){
- return <h1>Home</h1>
+    return (
+        <>
+            <CharacterCard />
+        </>   
+    )
 }
