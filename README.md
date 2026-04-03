@@ -123,7 +123,9 @@ npm install
 
 ### 3. Configuração das variáveis de ambiente (env)
 
-Crie um arquivo `.env` na raiz do projeto.
+Todos as configurações abaixo são exemplos e devem ser editados conforme os modelos locais para testes.
+
+Crie um arquivo `.env` na raiz do backend.
 
 Exemplo de configuração do arquivo:
 
@@ -149,6 +151,12 @@ A APi estará disponível em:
 
 ```url
 http://localhost:3000
+```
+
+Também deverá criar um arquivo `.env` dentro do frontend, com a informação da rota para o backend:
+
+```env
+VITE_API_URL=http://localhost:3000/api
 ```
 
 </details>
