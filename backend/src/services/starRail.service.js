@@ -101,3 +101,25 @@ export async function getCharacterByName(characterName){
         }
     }
 }
+
+export async function getAllCharactersCard(){
+    const charactersData = await fetchJson("characters.json");
+    const elementsData = await fetchJson("elements.json");
+    const pathsData = await fetchJson("paths.json");
+
+    const charactersArray = Object.values(charactersData);
+
+    return charactersArray.map(character => ({
+        name: character.name,
+        preview: `${GITHUB_URL}${character.preview}`,
+        rarity: character.rarity,
+        element: { 
+            name: elementsData[character.element].name,
+            icon: `${GITHUB_URL}${elementsData[character.element].icon}`
+        },
+        path: {
+            name: pathsData[character.path].name,
+            icon: pathsData[character.path].icon
+        }
+    }));
+}

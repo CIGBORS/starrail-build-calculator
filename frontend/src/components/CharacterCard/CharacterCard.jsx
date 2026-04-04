@@ -9,8 +9,8 @@ export default function CharacterCard({ character_name = "Clara", character_imag
                 <img src={character_image} className="character-image" alt={character_name} />
 
                 <div className="character-card__header">
-                    <img src={character_element} alt={character_name} />
-                    <img src={character_path} alt={character_name} />
+                    <img className="character-card__icon" src={character_element} alt={character_name} />
+                    <img className="character-card__icon" src={character_path} alt={character_name} />
                 </div>
 
                 <div className="character_footer">
