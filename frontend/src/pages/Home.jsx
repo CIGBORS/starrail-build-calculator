@@ -1,9 +1,11 @@
-import CharacterCard from "../../component/CharacterIcon/CharacterCard";
+import LateralBar from "../components/LateralBar/LateralBar";
 
 export default function Home(){
+
     return (
-        <>
-            <CharacterCard />
-        </>   
+        <> 
+            <img className="home-banner" src="banners/home-banner.png" />
+            <LateralBar />
+        </>
     )
 }

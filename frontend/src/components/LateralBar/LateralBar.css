@@ -1,0 +1,47 @@
+.lateral-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    position: absolute;
+    z-index: 3;
+    top: 0px;
+    width: 100px;
+    height: 100%;
+    background-color: #16171D66;
+}
+
+.lateral-bar__user-icon {
+    margin-top: 10px;
+    width: 60px;
+    height: 60px;
+    box-shadow: 0 4px 4px 0 #F0D98D, inset 0 0 10px #F0D98D;
+    border-radius: 100%;
+    z-index: 0;
+}
+
+.lateral-bar__user-icon:hover{
+    cursor: pointer;
+}
+
+.lateral-bar__footer {
+    margin-top: auto;
+    margin-bottom: 10px;
+}
+
+.lateral-bar__icon {
+    cursor: pointer;
+}
+
+.lateral-bar__primary-icons {
+    display: flex;
+    flex-direction: column;
+    padding-top: 30px;
+}
+
+.primary-icons__icon {
+    display: flex;
+    flex-direction: inherit;
+    justify-content: space-between;
+    gap: 20px;
+}
