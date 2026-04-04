@@ -119,7 +119,7 @@ export async function getAllCharactersCard(){
         },
         path: {
             name: pathsData[character.path].name,
-            icon: pathsData[character.path].icon
+            icon: `${GITHUB_URL}${pathsData[character.path].icon}`
         }
     }));
 }
