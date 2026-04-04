@@ -23,15 +23,20 @@ export default function CharacterCardList(){
 
     if(loading) return <h1>Carregando personagens</h1>
 
+    const visibleCharacters = characters.slice(0, 21);
+
     return(
-        <>
-            <CharacterCard 
-                characterName={characters[0].name}
-                characterImage={characters[0].preview}
-                characterRarity={characters[0].rarity}
-                characterElement={characters[0].element} 
-                characterPath={characters[0].path}
-            />
-        </>
+        <div className="character-card-list__grid">
+            { visibleCharacters. map((char, index) => (
+                <CharacterCard
+                    key={index}
+                    characterName={char.name}
+                    characterImage={char.preview}
+                    characterRarity={char.rarity}
+                    characterElement={char.element} 
+                    characterPath={char.path}
+                />
+            ))}
+        </div>
     )
 }

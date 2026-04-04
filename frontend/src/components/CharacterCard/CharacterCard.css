@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'Star Rail';
+    src: url("fonts/RPG_KR.ttf") format("truetype");
+}
+
 .character-card__component {
     position: relative;
     display: flex;
@@ -5,10 +10,28 @@
     justify-content: space-between;
     width: 120px;
     height: 163px;
-    border: 2px solid #996515;
     border-radius: 15px;
-    background-image: linear-gradient(to bottom, #FFBB00 0%, #997000 86%);
     overflow: hidden;
+}
+
+.card-5 {
+    background-image: linear-gradient(to bottom, rgba(255, 187, 0, 0) 0%, rgba(153, 112, 0, 0.8) 86%);
+    border: 2px solid #996515;
+}
+
+.card-4 {
+    background-image: linear-gradient(to bottom, rgba(153, 0, 255, 0) 0%, rgba(71, 0, 153, 0.8) 86%);
+    border: 2px solid rgb(111, 21, 153)
+}
+
+.card-5:hover {
+    background-image: linear-gradient(to bottom, rgba(255, 187, 0, .8) 0%, rgba(153, 112, 0, 0.8) 86%);
+    border: 2px solid #FFBB00;
+}
+
+.card-4:hover {
+    background-image: linear-gradient(to bottom, rgba(153, 0, 255, .8) 0%, rgba(71, 0, 153, 0.8) 86%);
+    border: 2px solid #8c00ff;
 }
 
 .character-image {
@@ -22,7 +45,6 @@
 }
 
 .character-card__component:hover {
-    border: 2px solid #FFBB00;
     cursor: pointer;
 }
 
@@ -39,7 +61,7 @@
     height: 30px;
 }
 
-.character_footer {
+.character-card__footer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -51,7 +73,9 @@
     position: relative;
 }
 
-.character_name {
-    font-size: 16px;
+.character-card__name {
+    font-size: 18px;
     color: white;
+    font-family: 'Star Rail';
+    text-align: center;
 }
