@@ -1,3 +1,11 @@
+import LateralBar from "../components/LateralBar/LateralBar";
+
 export default function Home(){
- return <h1>Home</h1>
+
+    return (
+        <> 
+            <img className="home-banner" src="banners/home-banner.png" />
+            <LateralBar />
+        </>
+    )
 }

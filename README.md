@@ -20,7 +20,7 @@ Além disso, ele irá contar com coisas padrões de outros sites, como análise 
 |:--------------:|:---------:|:-----:|
 | <img src="https://github.com/cigbors.png" width="100"> | **[Inserir nome ou apelido](https://github.com/cigbors)** | <INSERIR> |
 | <img src="https://github.com/caiovj18.png" width="100"> | **[Inserir nome ou apelido](https://github.com/caiovj18)** | <INSERIR> |
-| <img src="https://github.com/flpgamess.png" width="100"> | **[Inserir nome ou apelido](https://github.com/flpgamess)** | <INSERIR> |
+| <img src="https://github.com/flpgamess.png" width="100"> | **[Felipe P. Silva (FlpGamess)](https://github.com/flpgamess)** | <INSERIR> |
 | <img src="https://github.com/wavering-ruby.png" width="100"> | **[Mateus G. M. de Paula (WaveringRuby)](https://github.com/wavering-ruby)** | <INSERIR> |
 
 </div>
