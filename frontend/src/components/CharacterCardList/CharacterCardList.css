@@ -1,0 +1,6 @@
+.character-card-list__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 120px);
+    row-gap: 30px;
+    column-gap: 40px;
+}

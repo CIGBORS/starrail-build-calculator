@@ -6,12 +6,12 @@ const GITHUB_URL = "https://raw.githubusercontent.com/Mar-7th/StarRailRes/master
 async function fetchJson(endpoint){
     const response = await axios.get(`${GITHUB_URL}index_new/pt/${endpoint}`);
     return response.data;
-}
+};
 
 export async function getAllCharacters(){
     const characterData = await fetchJson("characters.json");
     return characterData;
-}
+};
 
 export function getCharacterById(characterId){
     return axios.get(`${GITHUB_URL}index_new/pt/characters.json`) // Lembrando que setei PT por que nós somos brasileiros
@@ -30,7 +30,7 @@ export function getCharacterById(characterId){
                 icon: `${GITHUB_URL}${characterData.icon}`
             }
         });
-}
+};
 
 export async function getCharacterAllInformations(characterId){
     // Essa função é exclusiva para os personagens que são, em especial, do modo de jogo normal
@@ -85,7 +85,7 @@ export async function getCharacterAllInformations(characterId){
         preview: `${GITHUB_URL}${characterData.preview}`,
         portrait: `${GITHUB_URL}${characterData.portrait}`
     }
-}
+};
 
 export async function getCharacterByName(characterName){
     // Esse endpoint serve para retornar apenas as informações básicas do personagem pelo o nome, como ícone para quando tivermos que ter pesquisas por nome e tudo mais
@@ -100,4 +100,26 @@ export async function getCharacterByName(characterName){
             }
         }
     }
+};
+
+export async function getAllCharactersCard(){
+    const charactersData = await fetchJson("characters.json");
+    const elementsData = await fetchJson("elements.json");
+    const pathsData = await fetchJson("paths.json");
+
+    const charactersArray = Object.values(charactersData);
+
+    return charactersArray.map(character => ({
+        name: character.name,
+        preview: `${GITHUB_URL}${character.preview}`,
+        rarity: character.rarity,
+        element: { 
+            name: elementsData[character.element].name,
+            icon: `${GITHUB_URL}${elementsData[character.element].icon}`
+        },
+        path: {
+            name: pathsData[character.path].name,
+            icon: `${GITHUB_URL}${pathsData[character.path].icon}`
+        }
+    }));
 }
