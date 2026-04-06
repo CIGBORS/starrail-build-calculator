@@ -1,4 +1,5 @@
 import "./LateralBar.css";
+import { NavLink } from "react-router-dom";
 
 export default function LateralBar ({ userLogged = null }) {
     const userIcon = null;
@@ -22,12 +23,29 @@ export default function LateralBar ({ userLogged = null }) {
 
                 <div className="lateral-bar__primary-icons">
                     <div className="primary-icons__icon">
-                        <img className="lateral-bar__icon" src="icons/character-icon.png" />
-                        <img className="lateral-bar__icon" src="icons/relic-icon.png" />
-                        <img className="lateral-bar__icon" src="icons/light-cone-icon.png" />
-                        <img className="lateral-bar__icon" src="icons/team-icon.png" />
-                        <img className="lateral-bar__icon" src="icons/inventory-icon.png" />
-                        <img className="lateral-bar__icon" src="icons/book-icon.png" />
+                        <NavLink to="/characters">
+                            <img className="lateral-bar__icon" src="icons/character-icon.png" />
+                        </NavLink>
+                        
+                        <NavLink to="/relics">
+                            <img className="lateral-bar__icon" src="icons/relic-icon.png" />
+                        </NavLink>
+
+                        <NavLink to="/light-cones">
+                            <img className="lateral-bar__icon" src="icons/light-cone-icon.png" />
+                        </NavLink>
+
+                        <NavLink to="/saved-builds">
+                            <img className="lateral-bar__icon" src="icons/team-icon.png" />
+                        </NavLink>
+
+                        <NavLink to="/build-creators">
+                            <img className="lateral-bar__icon" src="icons/inventory-icon.png" />
+                        </NavLink>
+
+                        <NavLink to="/general">
+                            <img className="lateral-bar__icon" src="icons/book-icon.png" />
+                        </NavLink>
                     </div>
                 </div>
 
