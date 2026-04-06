@@ -12,6 +12,10 @@
     align-items: center;
 }
 
+.header-aware a {
+    color: inherit;
+}
+
 .header-text {
     max-width: 600px;
     text-align: center;
