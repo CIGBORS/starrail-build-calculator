@@ -84,19 +84,6 @@ export async function getCharactersFilters(req, res) {
   }
 }
 
-export function getCharacterByName(req, res) {
-  const characterName = req.params.name;
-
-  getCharacterByNameString(characterName).then((character) => {
-    if (!character) {
-      console.log("Sem personagem");
-      res.json({ error: "Personagem não encontrado" });
-    } else {
-      res.json(character);
-    }
-  });
-}
-
 export async function getAllCharactersCards(req, res) {
   const allCards = await getCharactersCard();
 

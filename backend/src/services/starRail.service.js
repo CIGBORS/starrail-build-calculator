@@ -43,25 +43,6 @@ export async function getCharacterAllInformations(characterId) {
     return null;
   }
 
-  // O CÓDIGO ABAIXO É PARA MONTAR O PERSONAGEM COM OS DADOS QUE QUERO >:)
-  return {
-    id: characterId,
-    name: characterData.name,
-    icon: `${GITHUB_URL}${characterData.icon}`,
-    preview: `${GITHUB_URL}${characterData.preview}`,
-    portrait: `${GITHUB_URL}${characterData.portrait}`,
-  };
-}
-
-export async function getCharacterAllInformations(characterId) {
-  // Essa função é exclusiva para os personagens que são, em especial, do modo de jogo normal
-  const charactersData = await fetchJson("characters.json");
-  const characterData = charactersData[characterId];
-
-  if (!characterData) {
-    return null;
-  }
-
   // Relacionamento com os elementos do personagem
   const elementsData = await fetchJson("elements.json");
   const elementData = elementsData[characterData.element];
