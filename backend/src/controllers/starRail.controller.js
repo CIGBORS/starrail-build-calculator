@@ -2,7 +2,8 @@ import {
     getCharacterById, 
     getCharacterAllInformations as getCharacterAllInfo,
     getCharacterByName as getCharacterByNameString,
-    getAllCharacters
+    getAllCharacters,
+    getAllCharactersCard as getCharactersCard
 } from "../services/starRail.service.js";
 
 export async function getCharacters(req, res){
@@ -14,7 +15,7 @@ export async function getCharacters(req, res){
     } else {
         res.json(allCharacters);
     }
-}
+};
 
 export function getCharacter(req, res){
     const characterId = req.params.id;
@@ -27,7 +28,7 @@ export function getCharacter(req, res){
             res.json(character); // Passando as informações em JSON
         }
     });
-}
+};
 
 export function getCharacterAllInformations(req, res){
     const characterId = req.params.id;
@@ -40,7 +41,7 @@ export function getCharacterAllInformations(req, res){
             res.json(character);
         }
     });
-}
+};
 
 export function getCharacterByName(req, res){
     const characterName = req.params.name;
@@ -52,5 +53,16 @@ export function getCharacterByName(req, res){
         } else {
             res.json(character);
         }
-    })
-}
+    });
+};
+
+export async function getAllCharactersCards(req, res){
+    const allCards = await getCharactersCard();
+
+    if(!allCards){
+        console.log("Sem personagem");
+        res.json({ error: "Personagens não encontrados dentro da base de dados "});
+    } else {
+        res.json(allCards);
+    }
+};
