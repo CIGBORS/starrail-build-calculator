@@ -10,7 +10,7 @@ import {
 
 const router = Router();
 
-router.get("/all-cards", getAllCharactersCards);
+router.post("/all-cards", getAllCharactersCards);
 router.get("/all", getCharacters);
 router.get("/all/:id", getCharacterAllInformations);
 router.post("/filters", getCharactersFilters);

@@ -85,7 +85,7 @@ export async function getCharactersFilters(req, res) {
 }
 
 export async function getAllCharactersCards(req, res) {
-  const allCards = await getCharactersCard();
+  const allCards = await getCharactersCard(req.body);
 
   if (!allCards) {
     console.log("Sem personagem");

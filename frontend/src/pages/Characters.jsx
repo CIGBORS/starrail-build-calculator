@@ -84,7 +84,7 @@ export default function Characters() {
           setPesquisaFiltro={setPesquisaFiltro}
           Campo={"element"}
         />
-        <CharacterCardList />
+        <CharacterCardList Filtro={Filtro} PesquisaFiltro={PesquisaFiltro} />
       </div>
     </>
   );

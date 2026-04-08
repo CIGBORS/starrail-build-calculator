@@ -1,4 +1,8 @@
 import axios from "axios"; // Para manipular os json vindo direto do GitHub
+import {
+  ConverterCampoId,
+  FormatNomesPersonagens,
+} from "./utils/utilidades.service.js";
 
 // Esse link está relativo ao código do personagem
 const GITHUB_URL =
@@ -111,41 +115,26 @@ export async function getCharacterByName(characterName) {
 }
 
 export async function getCharactersFilters(filters) {
+  //desistruturação dos filters
   const { name, rarity, path, element } = filters;
 
+  //puxa dos json do git
   const charactersData = await fetchJson("characters.json");
   const pathsData = await fetchJson("paths.json");
   const elementsData = await fetchJson("elements.json");
 
+  //converte em array
   const characters = Object.values(charactersData);
-
-  const pathNameToId = Object.values(pathsData).reduce((acc, path) => {
-    acc[path.name] = path.id;
-    return acc;
-  }, {});
-
-  const elementsNameToId = Object.values(elementsData).reduce(
-    (acc, element) => {
-      acc[element.name] = element.id;
-      return acc;
-    },
-    {},
-  );
+  //converte em array pegando só o nome e id no estilo [{nome:id}]
+  const pathNameToId = ConverterCampoId("name", "id", pathsData);
+  const elementsNameToId = ConverterCampoId("name", "id", elementsData);
 
   const selectedPaths = path?.map((p) => pathNameToId[p]);
   const selectedElements = element?.map((p) => elementsNameToId[p]);
   const filtered = characters
     .filter((character) => {
       if (name) {
-        let searchName = character.name;
-
-        if (character.name === "{NICKNAME}") {
-          searchName = `Desbravador (${pathsData[character.path]?.name})`;
-        }
-
-        if (character.name === "7 de Março") {
-          searchName = `7 de Março (${pathsData[character.path]?.name})`;
-        }
+        let searchName = FormatNomesPersonagens(character, pathsData);
 
         if (!searchName.toLowerCase().includes(name.toLowerCase())) {
           return false;
@@ -212,14 +201,44 @@ export async function getCharactersFilters(filters) {
   };
 }
 
-export async function getAllCharactersCard() {
+export async function getAllCharactersCard(filters) {
+  const { name, rarity, path, element } = filters;
+
   const charactersData = await fetchJson("characters.json");
   const elementsData = await fetchJson("elements.json");
   const pathsData = await fetchJson("paths.json");
 
   const charactersArray = Object.values(charactersData);
 
-  return charactersArray.map((character) => ({
+  const filtered = charactersArray.filter((character) => {
+    if (name) {
+      const searchName = FormatNomesPersonagens(character, pathsData);
+
+      if (!searchName.toLowerCase().includes(name.toLowerCase())) {
+        return false;
+      }
+    }
+
+    if (rarity && rarity.length && !rarity.includes(character.rarity)) {
+      return false;
+    }
+
+    if (path && path.length && !path.includes(pathsData[character.path].name)) {
+      return false;
+    }
+
+    if (
+      element &&
+      element.length &&
+      !element.includes(elementsData[character.element].name)
+    ) {
+      return false;
+    }
+
+    return true;
+  });
+
+  return filtered.map((character) => ({
     name: character.name,
     preview: `${GITHUB_URL}${character.preview}`,
     rarity: character.rarity,
