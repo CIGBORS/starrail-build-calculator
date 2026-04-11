@@ -6,6 +6,7 @@ import cors from "cors"
 
 import testRoutes from "./routes/test.routes.js"
 import charactersRoutes from "./routes/starRail/characters.routes.js";
+import loginRoutes from "./routes/login/login.routes.js";
 
 const app = express()
 
@@ -14,6 +15,7 @@ app.use(json())
 
 app.use("/test", testRoutes)
 app.use("/api/github/characters", charactersRoutes);
+app.use("/api/login", loginRoutes);
 
 app.get("/", (req,res)=>{
  res.json({message:"API funcionando"})
