@@ -239,7 +239,7 @@ export async function getAllCharactersCard(filters) {
   });
 
   return filtered.map((character) => ({
-    name: character.name,
+    name: FormatNomesPersonagens(character, pathsData),
     preview: `${GITHUB_URL}${character.preview}`,
     rarity: character.rarity,
     element: {
