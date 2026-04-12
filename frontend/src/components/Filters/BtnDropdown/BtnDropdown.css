@@ -1,0 +1,74 @@
+.multiselect-filter {
+  width: 100%;
+  max-width: 200px;
+  background-color: #16171D;
+  border: 1px solid #3a3d45;
+  border-radius: 10px;
+  box-sizing: border-box;
+  align-items: center;
+  color: #e5e7eb;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.multiselect-filter__trigger {
+  background-color: #16171D;
+  border: 1px solid #3a3d45;
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  min-height: 40px;
+  color: #e5e7eb;
+}
+
+.multiselect-filter__panel {
+  background-color: #16171D;
+  border: 1px solid #2d3038;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.multiselect-filter__header {
+  background-color: #1e1f26;
+  border-bottom: 1px solid #2d3038;
+  padding: 0.75rem;
+}
+
+.multiselect-filter__input {
+  background-color: #2a2c33;
+  border: 1px solid #3a3d45;
+  border-radius: 20px;
+  padding: 0.5rem 0.75rem;
+  color: #e5e7eb;
+}
+
+.multiselect-filter__list {
+  background-color: #16171D;
+}
+
+.multiselect-filter__item {
+  background-color: #16171D;
+  color: #e5e7eb;
+  padding: 0.5rem 1rem;
+
+  &--selected {
+    background-color: #1e3a5f;
+    color: #ffffff;
+  }
+}
+
+.multiselect-filter__item:hover {
+    background-color: #2a2c33;
+}
+
+.multiselect-filter__token {
+  background-color: #2563eb;
+  color: white;
+  border-radius: 16px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.multiselect-filter__clear {
+  color: #9ca3af;
+  cursor: pointer;
+}
