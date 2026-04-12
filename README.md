@@ -173,7 +173,7 @@ cd frontend
 E em seguida, utilize o seguinte comando para iniciar o servidor:
 
 ```bash
-npm start
+npm run dev
 ```
 
 A API estará disponível em:
