@@ -1,9 +1,14 @@
-import { Pool } from "pg"
-import dotenv from "dotenv"
-dotenv.config()
+import { Pool } from "pg";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const pool = new Pool({
- connectionString: process.env.DATABASE_URL
-})
+  host: process.env.POSTGRESQL_HOST,
+  port: process.env.POSTGRESQL_PORT,
+  user: process.env.POSTGRESQL_USER,
+  password: process.env.POSTGRESQL_PASSWORD,
+  database: process.env.POSTGRESQL_DATABASE,
+});
 
-export default pool
+export default pool;
