@@ -186,7 +186,7 @@ http://localhost:3000
 
 ## Ligando os Servidores
 
-Ligue o Servidor
+Para esses passos, é extremamente recomendado que você utilize dois terminais a partir da pasta raiz do projeto. Separando-os em backend e frontend.
 
 Na pasta raiz do projeto entre no backend com:
 
