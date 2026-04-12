@@ -131,7 +131,7 @@ Exemplo de configuração do arquivo:
 
 ```env
 # POSTGRESQL
-POSTGRESQL_HOST=localhost
+POSTGRESQL_HOST=host.docker.internal
 POSTGRESQL_PORT=5432
 POSTGRESQL_USER=order_api
 POSTGRESQL_PASSWORD=your_password
@@ -139,13 +139,23 @@ POSTGRESQL_DATABASE=orders
 
 # BACKEND
 BACKEND_PORT=3000
+
+#Redis
+REDIS_URL=redis://redis:6379
 ```
 
 ### 4. Ligue o Servidor
 
+Para o Back utilize na raiz do projeto:
+```bash
+docker compose up --build
+```
+
+Para o Frontend utilize:
 ```bash
 npm start
 ```
+
 
 A APi estará disponível em:
 
