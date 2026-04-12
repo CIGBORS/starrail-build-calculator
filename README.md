@@ -146,7 +146,7 @@ REDIS_URL=redis://redis:6379
 
 ### 4. Ligue o Servidor
 
-Para o Back utilize na raiz do projeto:
+Para o Backend utilize na raiz do projeto:
 ```bash
 docker compose up --build
 ```
