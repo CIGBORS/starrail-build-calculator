@@ -22,27 +22,27 @@ export default function LateralBar({ userLogged = null }) {
 
         <div className="lateral-bar__primary-icons">
             <div className="primary-icons__icon">
-                <NavLink to="/characters">
+                <NavLink to="/characters" className={({isActive}) => isActive ? "nav-link-active" : ""}>
                     <img className="lateral-bar__icon" src="icons/character-icon.png" />
                 </NavLink>
                 
-                <NavLink to="/relics">
+                <NavLink to="/relics" className={({isActive}) => isActive ? "nav-link-active" : ""}>
                     <img className="lateral-bar__icon" src="icons/relic-icon.png" />
                 </NavLink>
 
-                <NavLink to="/light-cones">
+                <NavLink to="/light-cones" className={({isActive}) => isActive ? "nav-link-active" : ""}>
                     <img className="lateral-bar__icon" src="icons/light-cone-icon.png" />
                 </NavLink>
 
-                <NavLink to="/saved-builds">
+                <NavLink to="/saved-builds" className={({isActive}) => isActive ? "nav-link-active" : ""}>
                     <img className="lateral-bar__icon" src="icons/team-icon.png" />
                 </NavLink>
 
-                <NavLink to="/build-creators">
+                <NavLink to="/build-creators" className={({isActive}) => isActive ? "nav-link-active" : ""}>
                     <img className="lateral-bar__icon" src="icons/inventory-icon.png" />
                 </NavLink>
 
-                <NavLink to="/general">
+                <NavLink to="/general" className={({isActive}) => isActive ? "nav-link-active" : ""}>
                     <img className="lateral-bar__icon" src="icons/book-icon.png" />
                 </NavLink>
             </div>
