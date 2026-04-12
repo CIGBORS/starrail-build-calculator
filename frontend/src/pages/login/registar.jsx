@@ -31,6 +31,7 @@ export default function Register() {
       username: user,
       password,
       email,
+      status: "ativo"
     });
 
     if (response.error) {
@@ -76,7 +77,7 @@ export default function Register() {
           <button onClick={handleRegister}>
             Registrar
           </button>
-          <button className="register-button" onClick={() => navigate("/login") }>
+          <button className="register-button" onClick={() => navigate("/login")}>
             Voltar para Login
           </button>
         </div>
