@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { getApi, postApi } from "../api/api";
-import BtnDropDown from "../components/Filtros/BtnDropDown";
-import BtnInputText from "../components/Filtros/BtnInputText";
+import BtnInputText from "../components/Filters/BtnInputText/BtnInputText";
+import BtnDropDown from "../components/Filters/BtnDropdown/BtnDropDown";
+
 import CharacterCardList from "../components/CharacterCardList/CharacterCardList";
 import LateralBar from "../components/LateralBar/LateralBar";
 
@@ -53,37 +54,42 @@ export default function Characters() {
     <>
       <LateralBar />
       <div className="characters-content">
-        <BtnInputText
-          PesquisaFiltro={PesquisaFiltro}
-          setPesquisaFiltro={setPesquisaFiltro}
-          Campo={"name"}
-          Opcoes={OpcoesFiltros.name}
-        />
-        <BtnDropDown
-          Opcoes={OpcoesFiltros.rarity}
-          Filtro={Filtro}
-          setFiltro={setFiltro}
-          PesquisaFiltro={PesquisaFiltro}
-          setPesquisaFiltro={setPesquisaFiltro}
-          Campo={"rarity"}
-        />
-        <BtnDropDown
-          Opcoes={OpcoesFiltros.path}
-          Filtro={Filtro}
-          setFiltro={setFiltro}
-          PesquisaFiltro={PesquisaFiltro}
-          setPesquisaFiltro={setPesquisaFiltro}
-          Campo={"path"}
-        />
+        <div className="characters-content__header">
+          <BtnInputText
+            PesquisaFiltro={PesquisaFiltro}
+            setPesquisaFiltro={setPesquisaFiltro}
+            Campo={"name"}
+            Opcoes={OpcoesFiltros.name}
+          />
 
-        <BtnDropDown
-          Opcoes={OpcoesFiltros.element}
-          Filtro={Filtro}
-          setFiltro={setFiltro}
-          PesquisaFiltro={PesquisaFiltro}
-          setPesquisaFiltro={setPesquisaFiltro}
-          Campo={"element"}
-        />
+          <BtnDropDown
+            Opcoes={OpcoesFiltros.rarity}
+            Filtro={Filtro}
+            setFiltro={setFiltro}
+            PesquisaFiltro={PesquisaFiltro}
+            setPesquisaFiltro={setPesquisaFiltro}
+            Campo={"rarity"}
+          />
+
+          <BtnDropDown
+            Opcoes={OpcoesFiltros.path}
+            Filtro={Filtro}
+            setFiltro={setFiltro}
+            PesquisaFiltro={PesquisaFiltro}
+            setPesquisaFiltro={setPesquisaFiltro}
+            Campo={"path"}
+          />
+          
+          <BtnDropDown
+            Opcoes={OpcoesFiltros.element}
+            Filtro={Filtro}
+            setFiltro={setFiltro}
+            PesquisaFiltro={PesquisaFiltro}
+            setPesquisaFiltro={setPesquisaFiltro}
+            Campo={"element"}
+          />
+        </div>
+
         <CharacterCardList Filtro={Filtro} PesquisaFiltro={PesquisaFiltro} />
       </div>
     </>

@@ -1,7 +1,13 @@
+@font-face {
+    font-family: 'Star Rail';
+    src: url("fonts/RPG_KR.ttf") format("truetype");
+}
+
 * {
   margin: 0px;
   padding: 0px;
   gap: 0px;
+  font-family: "Star Rail", sans-serif;
 }
 
 /* Mateus do futuro e companhia, esse código reseta a margem */
@@ -9,7 +15,7 @@ html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #16171D;
+  background-color: #202128;
 }
 
 .home-banner {
@@ -22,4 +28,11 @@ html, body, #root {
 
 .characters-content {
   margin-left: 150px;
+  margin-right: 150px;
+}
+
+.characters-content__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
