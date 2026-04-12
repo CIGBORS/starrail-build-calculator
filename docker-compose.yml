@@ -1,0 +1,20 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    env_file:
+      - ./backend/.env
+
+  worker:
+    build: ./backend
+    command: node redis/worker/loginWorker.js
+    depends_on:
+      - redis
+    env_file:
+      - ./backend/.env
+
+  redis:
+    image: redis:7

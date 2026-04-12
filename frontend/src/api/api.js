@@ -1,6 +1,19 @@
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export async function getApi(path) {
-  const res = await fetch(`${API_URL}${path}`)
-  return res.json()
+  const res = await fetch(`${API_URL}${path}`);
+  return res.json();
+}
+
+export async function postApi(path, body) {
+  const res = await fetch(`${API_URL}${path}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  console.log(res);
+  return res.json();
 }
