@@ -152,28 +152,10 @@ VITE_API_URL=http://localhost:3000/api
 
 ### 4. Ligue o Servidor
 
-Na pasta raiz do projeto entre no backend com:
-
-```bash
-cd backend
-```
-
-E inicie o servidor usando:
+Na pasta raiz do projeto digite:
 
 ```bash
 docker compose up --build
-```
-
-Para o frontend, entre na pasta do frontend a partir da raiz do projeto usando:
-
-```bash
-cd frontend
-```
-
-E em seguida, utilize o seguinte comando para iniciar o servidor:
-
-```bash
-npm run dev
 ```
 
 A API estará disponível em:
@@ -183,34 +165,6 @@ http://localhost:3000
 ```
 
 </details>
-
-## Ligando os Servidores
-
-Para esses passos, é extremamente recomendado que você utilize dois terminais a partir da pasta raiz do projeto. Separando-os em backend e frontend.
-
-Na pasta raiz do projeto entre no backend com:
-
-```bash
-cd backend
-```
-
-E inicie o servidor usando:
-
-```bash
-docker compose up --build
-```
-
-Para o frontend, entre na pasta do frontend a partir da raiz do projeto usando:
-
-```bash
-cd frontend
-```
-
-E em seguida, utilize o seguinte comando para iniciar o servidor:
-
-```bash
-npm start
-```
 
 ---
 
