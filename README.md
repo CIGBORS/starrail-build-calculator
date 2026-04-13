@@ -161,7 +161,7 @@ docker compose up --build
 A API estará disponível em:
 
 ```url
-http://localhost:3000
+http://localhost:5173
 ```
 
 </details>
