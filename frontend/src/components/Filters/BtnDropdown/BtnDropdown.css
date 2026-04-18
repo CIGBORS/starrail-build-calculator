@@ -7,6 +7,8 @@
   box-sizing: border-box;
   align-items: center;
   color: #e5e7eb;
+  font-size: 0.8rem;
+  padding-left: 10px;
   margin-left: auto;
   margin-right: auto;
 }

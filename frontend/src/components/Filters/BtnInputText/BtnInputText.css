@@ -12,9 +12,8 @@
 }
 
 .autocomplete-filter__input {
-  background-color: #2a2c33;
-  border: 1px solid #3a3d45;
-  border-radius: 20px;
+  background-color: transparent;
+  border: none;
   padding: 0.5rem 0.75rem;
   color: #e5e7eb;
   flex: 1;
@@ -47,6 +46,19 @@
 
 .autocomplete-filter__dropdown:hover {
   background-color: #2a2c33;
+}
+
+.autocomplete-filter__dropdown .p-button-label {
+  display: none;
+}
+
+.autocomplete-filter .p-autocomplete-dropdown.p-button {
+  background-color: #16171D;
+  border: 1px solid #3a3d45;
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  min-height: 40px;
+  color: #e5e7eb;
 }
 
 .autocomplete-filter__panel {

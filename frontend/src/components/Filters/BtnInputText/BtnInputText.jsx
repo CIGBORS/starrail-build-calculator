@@ -30,11 +30,11 @@ const BtnInputText = ({ PesquisaFiltro, setPesquisaFiltro, Campo, Opcoes }) => {
       completeMethod={search}
       onChange={(e) => pesquisa(e.value)}
       placeholder="Sem Filtros"
+      inputClassName="autocomplete-filter__input"
       dropdown
       pt={{
         root: { className: "autocomplete-filter" },
-        input: { className: "autocomplete-filter__input" },
-        dropdown: { className: "autocomplete-filter__dropdown" },
+        dropdownButton: { className: "autocomplete-filter__dropdown" },
         panel: { className: "autocomplete-filter__panel" },
         list: { className: "autocomplete-filter__list" },
         item: ({ context }) => ({
