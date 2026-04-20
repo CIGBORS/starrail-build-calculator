@@ -1,6 +1,6 @@
 @font-face {
-    font-family: 'Star Rail';
-    src: url("fonts/RPG_KR.ttf") format("truetype");
+  font-family: "Star Rail";
+  src: url("fonts/RPG_KR.ttf") format("truetype");
 }
 
 * {
@@ -11,7 +11,9 @@
 }
 
 /* Mateus do futuro e companhia, esse código reseta a margem */
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -32,7 +34,52 @@ html, body, #root {
 }
 
 .characters-content__header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.build-editor {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+
+  margin-left: 90px;
+  height: 100%;
+}
+
+.build-editor .inputtext-be {
+  margin-bottom: 10px;
+  width: 400px;
+}
+
+.build-editor_content {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.character-preview {
+  width: 150px;
+  height: 400px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.character-preview img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.relic-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stat-row {
+  display: flex;
+  gap: 10px;
 }
