@@ -3,23 +3,32 @@ import { salvarLog } from "../../functions/log.js";
 import { countUsersLogin } from "../../redis/queues/loginQueue.js";
 
 // Essa função roda quando o servidor sobe e já cria a tabela no banco automaticamente caso você não tenha criado!
-async function criarTabelaSeNaoExistir() {
-  try {
-    await pool.query(`
-            CREATE TABLE IF NOT EXISTS usuarios (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(100) UNIQUE NOT NULL,
-                password VARCHAR(100) NOT NULL,
-                email VARCHAR(100) NOT NULL,
-                status VARCHAR(100) NOT NULL,
-                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        `);
-    console.log("Tabela 'usuarios' verificada/criada com sucesso!");
-  } catch (error) {
-    console.error("Erro ao verificar tabela de usuários:", error);
+async function criarTabelaSeNaoExistir(retries = 5, delay = 2000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS usuarios (
+          id SERIAL PRIMARY KEY,
+          username VARCHAR(100) UNIQUE NOT NULL,
+          password VARCHAR(100) NOT NULL,
+          email VARCHAR(100) NOT NULL,
+          status VARCHAR(100) NOT NULL,
+          data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      console.log("Tabela 'usuarios' verificada/criada com sucesso!");
+      return;
+    } catch (error) {
+      console.error(`Tentativa ${i+1} falhou:`, error.message);
+      if (i < retries - 1) {
+        await new Promise(resolve => setTimeout(resolve, delay));
+      } else {
+        console.error("Erro ao verificar tabela de usuários após múltiplas tentativas:", error);
+      }
+    }
   }
 }
+
 criarTabelaSeNaoExistir();
 
 export async function login(req, res) {

@@ -15,6 +15,7 @@ services:
       - "3000:3000"
     depends_on:
       - redis
+      - postgres
     env_file:
       - ./backend/.env
 
@@ -28,3 +29,21 @@ services:
 
   redis:
     image: redis:7
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: star_rail_database
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      POSTGRES_USER: ${POSTGRESQL_USER}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
+      POSTGRES_DB: ${POSTGRESQL_DB}
+    ports:
+      - "${POSTGRESQL_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    
+volumes:
+  postgres_data:

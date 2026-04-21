@@ -13,6 +13,7 @@ export default function Characters() {
     path: [],
     element: [],
   });
+  
   // Adicionado o código para carregar os dados antes da visualização, lan ting me ajudo
   const [Filtro, setFiltro] = useState({
     name: [],
