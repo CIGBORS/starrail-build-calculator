@@ -45,3 +45,8 @@
     justify-content: space-between;
     gap: 20px;
 }
+
+.nav-link-active .lateral-bar__icon {
+    filter: saturate(1.5) contrast(1.2) brightness(1.15) hue-rotate(-10deg) drop-shadow(0 0 3px rgba(255, 165, 0, 0.6));
+    transition: filter 0.2s ease;
+}

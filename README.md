@@ -18,8 +18,8 @@ Além disso, ele irá contar com coisas padrões de outros sites, como análise 
 
 | Foto de Perfil | Desenvolvedor | Função |
 |:--------------:|:---------:|:-----:|
-| <img src="https://github.com/cigbors.png" width="100"> | **[Inserir nome ou apelido](https://github.com/cigbors)** | <INSERIR> |
-| <img src="https://github.com/caiovj18.png" width="100"> | **[Inserir nome ou apelido](https://github.com/caiovj18)** | <INSERIR> |
+| <img src="https://github.com/cigbors.png" width="100"> | **[Victor Giordano Damiani (Cigbors)](https://github.com/cigbors)** | <INSERIR> |
+| <img src="https://github.com/caiovj18.png" width="100"> | **[Caio Viana de Jesus (Caiovj18)](https://github.com/caiovj18)** | <INSERIR> |
 | <img src="https://github.com/flpgamess.png" width="100"> | **[Felipe P. Silva (FlpGamess)](https://github.com/flpgamess)** | <INSERIR> |
 | <img src="https://github.com/wavering-ruby.png" width="100"> | **[Mateus G. M. de Paula (WaveringRuby)](https://github.com/wavering-ruby)** | <INSERIR> |
 
@@ -131,7 +131,7 @@ Exemplo de configuração do arquivo:
 
 ```env
 # POSTGRESQL
-POSTGRESQL_HOST=localhost
+POSTGRESQL_HOST=host.docker.internal
 POSTGRESQL_PORT=5432
 POSTGRESQL_USER=order_api
 POSTGRESQL_PASSWORD=your_password
@@ -139,31 +139,32 @@ POSTGRESQL_DATABASE=orders
 
 # BACKEND
 BACKEND_PORT=3000
+
+#Redis
+REDIS_URL=redis://redis:6379
 ```
 
-### 4. Ligue o Servidor
-
-```bash
-npm start
-```
-
-A APi estará disponível em:
-
-```url
-http://localhost:3000
-```
-
-Também deverá criar um arquivo `.env` dentro do frontend, com a informação da rota para o backend:
+Também deverá ser criado um arquivo `.env` dentro do frontend, com a informação da rota para o backend:
 
 ```env
 VITE_API_URL=http://localhost:3000/api
 ```
 
+### 4. Ligue o Servidor
+
+Na pasta raiz do projeto digite:
+
+```bash
+docker compose up --build
+```
+
+A API estará disponível em:
+
+```url
+http://localhost:5173
+```
+
 </details>
-
-## Definições e abreviaturas
-<!-- Adicionar conforme formos pesquisando sobre -->
-
 
 ---
 

@@ -1,4 +1,14 @@
 services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - redis
+    command: npm run dev -- --host 0.0.0.0
+    env_file:
+      - ./frontend/.env
+
   backend:
     build: ./backend
     ports:
