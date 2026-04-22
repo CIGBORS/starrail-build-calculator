@@ -9,6 +9,7 @@ export default function RelicsCardTable({
   mainKey,
   mainFilterOptions,
 }) {
+  const relics = ["head", "hands", "body", "speed", "sphere", "rope"];
   return (
     <Card title="Body">
       <div className="inputtext-be">
@@ -19,7 +20,13 @@ export default function RelicsCardTable({
           Opcoes={mainFilterOptions[mainKey]}
         />
       </div>
-      <RelicsSttsForm />
+
+      <RelicsSttsForm type={"head"} />
+      <RelicsSttsForm type={"hands"} />
+      <RelicsSttsForm type={"body"} />
+      <RelicsSttsForm type={"boots"} />
+      <RelicsSttsForm type={"sphere"} />
+      <RelicsSttsForm type={"rope"} />
     </Card>
   );
 }
