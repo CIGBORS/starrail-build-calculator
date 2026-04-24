@@ -8,8 +8,10 @@ export default function RelicsCardTable({
   setFilterMain,
   mainKey,
   mainFilterOptions,
+  relicsUserStatis,
+  setUserRelicStats,
+  relicstypes,
 }) {
-  const relics = ["head", "hands", "body", "speed", "sphere", "rope"];
   return (
     <Card title="Body">
       <div className="inputtext-be">
@@ -20,13 +22,14 @@ export default function RelicsCardTable({
           Opcoes={mainFilterOptions[mainKey]}
         />
       </div>
-
-      <RelicsSttsForm type={"head"} />
-      <RelicsSttsForm type={"hands"} />
-      <RelicsSttsForm type={"body"} />
-      <RelicsSttsForm type={"boots"} />
-      <RelicsSttsForm type={"sphere"} />
-      <RelicsSttsForm type={"rope"} />
+      {relicstypes.map((type) => (
+        <RelicsSttsForm
+          key={type}
+          type={type}
+          relicData={relicsUserStatis[type]}
+          setRelicStats={setUserRelicStats}
+        />
+      ))}
     </Card>
   );
 }

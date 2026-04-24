@@ -3,7 +3,7 @@ import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import { Stts } from "../../../../backend/src/utils/variables";
 
-export default function RelicsSttsForm({ type }) {
+export default function RelicsSttsForm({ type, relicData, setRelicStats }) {
   const mainStats = Object.values(Stts).filter((stat) =>
     stat.main.includes(type),
   );
@@ -21,8 +21,37 @@ export default function RelicsSttsForm({ type }) {
           options={mainStats}
           optionLabel="name"
           placeholder="Selecione o stat"
+          value={relicData.main.stat}
+          onChange={(e) => {
+            setRelicStats((prev) => ({
+              ...prev,
+              [type]: {
+                ...prev[type],
+                main: {
+                  ...prev[type].main,
+                  stat: e.value,
+                },
+              },
+            }));
+          }}
         />
-        <InputNumber />
+        <InputNumber
+          value={relicData.main.value}
+          onValueChange={(e) => {
+            setRelicStats((prev) => ({
+              ...prev,
+              [type]: {
+                ...prev[type],
+                main: {
+                  ...prev[type].main,
+                  value: e.value,
+                },
+              },
+            }));
+          }}
+          mode="decimal"
+          suffix={relicData.main.stat?.percent ? "%" : ""}
+        />
       </div>
 
       <h4>Substats</h4>
@@ -33,8 +62,48 @@ export default function RelicsSttsForm({ type }) {
             options={subStats}
             optionLabel="name"
             placeholder="Selecione o stat"
+            value={relicData.subs[index].stat}
+            onChange={(e) => {
+              setRelicStats((prev) => {
+                const newSubs = [...prev[type].subs];
+                newSubs[index] = {
+                  ...newSubs[index],
+                  stat: e.value,
+                };
+
+                return {
+                  ...prev,
+                  [type]: {
+                    ...prev[type],
+                    subs: newSubs,
+                  },
+                };
+              });
+            }}
           />
-          <InputNumber />
+
+          <InputNumber
+            value={relicData.subs[index].value}
+            onValueChange={(e) => {
+              setRelicStats((prev) => {
+                const newSubs = [...prev[type].subs];
+                newSubs[index] = {
+                  ...newSubs[index],
+                  value: e.value,
+                };
+
+                return {
+                  ...prev,
+                  [type]: {
+                    ...prev[type],
+                    subs: newSubs,
+                  },
+                };
+              });
+            }}
+            mode="decimal"
+            suffix={relicData.subs[index].stat?.percent ? "%" : ""}
+          />
         </div>
       ))}
     </div>

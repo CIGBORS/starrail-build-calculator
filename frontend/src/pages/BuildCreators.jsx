@@ -12,6 +12,65 @@ import { Card } from "primereact/card";
 import RelicsCardTable from "../components/RelicsCardTable/RelicsCardTable";
 
 export default function BuildCreators() {
+  const [relicStats, setRelicStats] = useState({
+    head: {
+      main: { stat: null, value: null },
+      subs: [
+        { stat: null, value: null },
+        { stat: null, value: null },
+        { stat: null, value: null },
+        { stat: null, value: null },
+      ],
+    },
+    hands: {
+      main: { stat: null, value: null },
+      subs: [
+        { stat: null, value: null },
+        { stat: null, value: null },
+        { stat: null, value: null },
+        { stat: null, value: null },
+      ],
+    },
+    body: {
+      main: { stat: null, value: null },
+      subs: [
+        { stat: null, value: null },
+        { stat: null, value: null },
+        { stat: null, value: null },
+        { stat: null, value: null },
+      ],
+    },
+    boots: {
+      main: { stat: null, value: null },
+      subs: [
+        { stat: null, value: null },
+        { stat: null, value: null },
+        { stat: null, value: null },
+        { stat: null, value: null },
+      ],
+    },
+    sphere: {
+      main: { stat: null, value: null },
+      subs: [
+        { stat: null, value: null },
+        { stat: null, value: null },
+        { stat: null, value: null },
+        { stat: null, value: null },
+      ],
+    },
+    rope: {
+      main: { stat: null, value: null },
+      subs: [
+        { stat: null, value: null },
+        { stat: null, value: null },
+        { stat: null, value: null },
+        { stat: null, value: null },
+      ],
+    },
+  });
+
+  const relics = ["head", "hands", "body", "boots", "sphere", "rope"];
+
   const [OpcoesFiltros, setOpcoesFiltros] = useState({
     charName: [],
     charImage: [
@@ -86,6 +145,9 @@ export default function BuildCreators() {
         setFilterMain={setPesquisaFiltro}
         mainKey={"atfName"}
         mainFilterOptions={OpcoesFiltros}
+        relicsUserStatis={relicStats}
+        setUserRelicStats={setRelicStats}
+        relicstypes={relics}
       />
     </>
   );
