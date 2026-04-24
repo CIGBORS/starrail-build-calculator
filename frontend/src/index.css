@@ -24,14 +24,6 @@ html, body, #root {
   display: flex;
 }
 
-.home-content {
-  z-index: 1;
-}
-
-.home-main-content {
-  flex: 1;
-}
-
 .home-banner {
   position: absolute;
   top: 0;
@@ -43,9 +35,25 @@ html, body, #root {
   z-index: 0;
 }
 
-.characters-content {
-  margin-left: 150px;
-  margin-right: 150px;
+.home-main__column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  z-index: 1;
+}
+
+.characters-page {
+  display: flex;
+  min-height: 100vh;
+}
+
+.characters-main-content {
+  display: flex;
+  flex: 1;
+  padding: 20px 150px;
+  overflow-y: auto;
+  flex-direction: column;
+  align-items: center;
 }
 
 .characters-content__header {
