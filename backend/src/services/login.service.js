@@ -19,7 +19,7 @@ async function criarTabelaSeNaoExistir(retries = 5, delay = 2000) {
       console.log("Tabela 'usuarios' verificada/criada com sucesso!");
       return;
     } catch (error) {
-      console.error(`Tentativa ${i+1} falhou:`, error.message);
+      console.error(`Tentativa ${i + 1} falhou:`, error.message);
       if (i < retries - 1) {
         await new Promise(resolve => setTimeout(resolve, delay));
       } else {
@@ -71,7 +71,10 @@ export async function login(req, res) {
       username,
       type: "login",
     });
-    return res.json({ message: "Login bem-sucedido" });
+
+    const { password: _, ...usuarioSemSenha } = usuarioAchado;
+
+    return res.json(usuarioSemSenha);
   } catch (error) {
     console.error("Erro no login:", error);
     return res.status(500).json({ error: "Erro de conexão com o banco" });
@@ -98,6 +101,7 @@ export async function register(req, res) {
       `Um novo usuario com o e-mail \${email} foi criado.`,
       username,
     );
+    
     return res.json({ message: "Registro bem-sucedido no Banco de Dados!" });
   } catch (error) {
     if (error.code === "23505") {
