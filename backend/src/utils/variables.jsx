@@ -5,6 +5,7 @@ export const Stts = {
     percent: false,
     affix: true,
     main: ["head"],
+    Summary: "Vida",
   },
 
   HPAddedRatio: {
@@ -13,6 +14,7 @@ export const Stts = {
     percent: true,
     affix: true,
     main: ["body", "boots", "sphere", "rope"],
+    Summary: undefined,
   },
 
   AttackDelta: {
@@ -21,6 +23,7 @@ export const Stts = {
     percent: false,
     affix: true,
     main: ["hands"],
+    Summary: "Ataque",
   },
 
   AttackAddedRatio: {
@@ -29,6 +32,7 @@ export const Stts = {
     percent: true,
     affix: true,
     main: ["body", "boots", "sphere", "rope"],
+    Summary: undefined,
   },
 
   DefenceDelta: {
@@ -37,6 +41,7 @@ export const Stts = {
     percent: false,
     affix: true,
     main: [],
+    Summary: "Defesa",
   },
 
   DefenceAddedRatio: {
@@ -45,6 +50,7 @@ export const Stts = {
     percent: true,
     affix: true,
     main: ["body", "boots", "sphere", "rope"],
+    Summary: undefined,
   },
 
   SpeedDelta: {
@@ -53,6 +59,7 @@ export const Stts = {
     percent: false,
     affix: true,
     main: ["boots"],
+    Summary: "Velocidade",
   },
 
   CriticalChanceBase: {
@@ -61,6 +68,7 @@ export const Stts = {
     percent: true,
     affix: true,
     main: ["body"],
+    Summary: "Taxa Critica",
   },
 
   CriticalDamageBase: {
@@ -69,6 +77,7 @@ export const Stts = {
     percent: true,
     affix: true,
     main: ["body"],
+    Summary: "Dano Critico",
   },
 
   BreakDamageAddedRatioBase: {
@@ -77,6 +86,7 @@ export const Stts = {
     percent: true,
     affix: true,
     main: ["rope"],
+    Summary: "Efeito de Quebra",
   },
 
   StatusProbabilityBase: {
@@ -85,6 +95,7 @@ export const Stts = {
     percent: true,
     affix: true,
     main: ["body"],
+    Summary: "Taxa de Acerto de Efeito",
   },
 
   StatusResistanceBase: {
@@ -93,6 +104,7 @@ export const Stts = {
     percent: true,
     affix: true,
     main: ["body"],
+    Summary: "Resistencia a Efeito",
   },
 
   HealRatioBase: {
@@ -101,6 +113,7 @@ export const Stts = {
     percent: true,
     affix: false,
     main: ["body"],
+    Summary: "Bônus de Cura",
   },
 
   SPDRatio: {
@@ -109,6 +122,7 @@ export const Stts = {
     percent: true,
     affix: false,
     main: ["rope"],
+    Summary: "Regeneração de Energia",
   },
 
   PhysicalAddedRatio: {
@@ -118,6 +132,7 @@ export const Stts = {
     percent: true,
     affix: false,
     main: ["sphere"],
+    Summary: "Dano Físico",
   },
 
   FireAddedRatio: {
@@ -127,6 +142,7 @@ export const Stts = {
     percent: true,
     affix: false,
     main: ["sphere"],
+    Summary: "Dano Fogo",
   },
 
   IceAddedRatio: {
@@ -136,6 +152,7 @@ export const Stts = {
     percent: true,
     affix: false,
     main: ["sphere"],
+    Summary: "Dano Gelo",
   },
 
   ThunderAddedRatio: {
@@ -145,6 +162,7 @@ export const Stts = {
     percent: true,
     affix: false,
     main: ["sphere"],
+    Summary: "Dano Raio",
   },
 
   WindAddedRatio: {
@@ -154,6 +172,7 @@ export const Stts = {
     percent: true,
     affix: false,
     main: ["sphere"],
+    Summary: "Dano Vento",
   },
 
   QuantumAddedRatio: {
@@ -163,6 +182,7 @@ export const Stts = {
     percent: true,
     affix: false,
     main: ["sphere"],
+    Summary: "Dano Quantum",
   },
 
   ImaginaryAddedRatio: {
@@ -172,5 +192,6 @@ export const Stts = {
     percent: true,
     affix: false,
     main: ["sphere"],
+    Summary: "Dano Imaginário",
   },
 };

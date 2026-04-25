@@ -39,6 +39,24 @@ body,
   align-items: center;
 }
 
+.build-editor-main {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.left-side {
+  width: 35%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.right-side {
+  width: 65%;
+}
+
 .build-editor {
   display: flex;
   flex-direction: column;
