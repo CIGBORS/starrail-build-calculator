@@ -195,5 +195,3 @@ export const Stts = {
     Summary: "Dano Imaginário",
   },
 };
-
-export const bobbiegoods = {};
