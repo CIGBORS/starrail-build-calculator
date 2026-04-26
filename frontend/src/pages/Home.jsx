@@ -2,10 +2,11 @@ import HeaderAware from "../components/HeaderAware/HeaderAware";
 import LateralBar from "../components/LateralBar/LateralBar";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import { NavLink } from "react-router-dom";
 
 export default function Home(){
-    const { user } = useContext(UserContext);
-    console.log(user);
+    const { userData } = useContext(UserContext);
+
     return (
         <> 
             <div className="home-container">
@@ -17,7 +18,11 @@ export default function Home(){
                     <HeaderAware /> 
                     
                     <div className="home-main-content">
-                        <h1> Welcome back {} </h1>
+                        { userData ? (
+                            <h1 className="home-message"> Bem-vindo {userData.username}! Suas criações estão lhe esperando! </h1>
+                        ) : (
+                            <h1 className="home-message"> Bem-vindo ao site! Caso deseje ver a suas criações salvas faça <NavLink to="/login">login</NavLink></h1>
+                        )}
                     </div>
                 </div>
             </div>

@@ -1,20 +1,13 @@
 import React, { createContext, useState, useEffect } from 'react';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [userData, setUserData] = useState(() => {
-    try {
-      const storedUser = localStorage.getItem('user');
-      return storedUser ? JSON.parse(storedUser) : null;
-    } catch {
-      console.log("Não foi possível carregar o usuário");
-      return null;
-    }
-    
-  });
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
+
     if (userData) {
       localStorage.setItem("user", JSON.stringify(userData));
     } else {

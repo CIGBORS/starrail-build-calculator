@@ -1,4 +1,4 @@
-import { useState, useContext} from "react";
+import { useState, useContext } from "react";
 import "./login.css";
 import { useNavigate } from "react-router-dom";
 import bgImage from "../../../public/img/Honkai_Star_Rail.jpg";
@@ -30,6 +30,7 @@ export default function Login() {
       return;
     }
 
+    // USERCONTEXT: aqui estou setando o valor do user context.
     const userData = response;
     setUserData(userData);
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { postApi } from "../api/api";
-import BtnInputText from "../components/Filters/BtnInputText/BtnInputText";
-import BtnDropDown from "../components/Filters/BtnDropdown/BtnDropDown";
+import BtnInputText from "../components/Filters/BtnInputText/BtnInputText.jsx";
+import BtnDropdown from "../components/Filters/BtnDropdown/BtnDropdown.jsx";
 
 import CharacterCardList from "../components/CharacterCardList/CharacterCardList";
 import LateralBar from "../components/LateralBar/LateralBar";
@@ -64,7 +64,7 @@ export default function Characters() {
               Opcoes={OpcoesFiltros.name}
             />
 
-            <BtnDropDown
+            <BtnDropdown
               Opcoes={OpcoesFiltros.rarity}
               Filtro={Filtro}
               setFiltro={setFiltro}
@@ -73,7 +73,7 @@ export default function Characters() {
               Campo={"rarity"}
             />
 
-            <BtnDropDown
+            <BtnDropdown
               Opcoes={OpcoesFiltros.path}
               Filtro={Filtro}
               setFiltro={setFiltro}
@@ -82,7 +82,7 @@ export default function Characters() {
               Campo={"path"}
             />
             
-            <BtnDropDown
+            <BtnDropdown
               Opcoes={OpcoesFiltros.element}
               Filtro={Filtro}
               setFiltro={setFiltro}

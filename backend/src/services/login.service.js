@@ -2,30 +2,33 @@ import pool from "../config/db.js";
 import { salvarLog } from "../../functions/log.js";
 import { countUsersLogin } from "../../redis/queues/loginQueue.js";
 
-// Essa função roda quando o servidor sobe e já cria a tabela no banco automaticamente caso você não tenha criado!
-async function criarTabelaSeNaoExistir(retries = 5, delay = 2000) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      await pool.query(`
-        CREATE TABLE IF NOT EXISTS usuarios (
-          id SERIAL PRIMARY KEY,
-          username VARCHAR(100) UNIQUE NOT NULL,
-          password VARCHAR(100) NOT NULL,
-          email VARCHAR(100) NOT NULL,
-          status VARCHAR(100) NOT NULL,
-          data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-      `);
-      console.log("Tabela 'usuarios' verificada/criada com sucesso!");
-      return;
-    } catch (error) {
-      console.error(`Tentativa ${i + 1} falhou:`, error.message);
-      if (i < retries - 1) {
-        await new Promise(resolve => setTimeout(resolve, delay));
-      } else {
-        console.error("Erro ao verificar tabela de usuários após múltiplas tentativas:", error);
-      }
-    }
+export async function getUsuarios(req, res) {
+  try {
+    const resultado = await pool.query(
+      "SELECT id, username, email, status, data_criacao FROM usuarios ORDER BY id"
+    );
+    
+    return res.json(resultado.rows);
+  } catch (error) {
+    console.error("Erro ao buscar usuários:", error);
+    return res.status(500).json({ error: "Erro ao buscar usuários" });
+  }
+}
+async function criarTabelaSeNaoExistir() {
+  try {
+    await pool.query(`
+            CREATE TABLE IF NOT EXISTS usuarios (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(100) UNIQUE NOT NULL,
+                password VARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL,
+                status VARCHAR(100) NOT NULL,
+                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+    console.log("Tabela 'usuarios' verificada/criada com sucesso!");
+  } catch (error) {
+    console.error("Erro ao verificar tabela de usuários:", error);
   }
 }
 
@@ -71,11 +74,9 @@ export async function login(req, res) {
       username,
       type: "login",
     });
-
     const { password: _, ...usuarioSemSenha } = usuarioAchado;
 
-    return res.json(usuarioSemSenha);
-  } catch (error) {
+    return res.json(usuarioSemSenha);  } catch (error) {
     console.error("Erro no login:", error);
     return res.status(500).json({ error: "Erro de conexão com o banco" });
   }
@@ -101,7 +102,6 @@ export async function register(req, res) {
       `Um novo usuario com o e-mail \${email} foi criado.`,
       username,
     );
-    
     return res.json({ message: "Registro bem-sucedido no Banco de Dados!" });
   } catch (error) {
     if (error.code === "23505") {

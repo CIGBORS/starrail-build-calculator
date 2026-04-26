@@ -26,10 +26,15 @@
 .lateral-bar__footer {
     margin-top: auto;
     margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .lateral-bar__icon {
     cursor: pointer;
+    width: 40px;
+    height: 40px;
 }
 
 .lateral-bar__primary-icons {

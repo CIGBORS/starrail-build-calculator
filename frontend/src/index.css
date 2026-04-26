@@ -1,6 +1,8 @@
 @font-face {
     font-family: 'Star Rail';
-    src: url("fonts/RPG_KR.ttf") format("truetype");
+    src: url("/fonts/RPG_KR.woff2") format("truetype");
+    font-weight: normal;
+    font-style: normal;
 }
 
 * {
