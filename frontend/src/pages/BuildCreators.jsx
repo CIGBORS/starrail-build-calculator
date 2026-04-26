@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getApi, postApi } from "../api/api";
 import BtnInputText from "../components/Filters/BtnInputText/BtnInputText";
 import BtnDropDown from "../components/Filters/BtnDropdown/BtnDropDown";
+import { Stts } from "../components/RelicsSttsForm/variables";
 
 import GeneralCard from "../components/CharacterCard/GeneralCard";
 
@@ -18,13 +19,22 @@ export default function BuildCreators() {
     atk: "{X}",
     def: "{X}",
     spd: "{X}",
-    critRate: "{X}",
-    critDmg: "{X}",
-    breakEffect: "{X}",
-    effectHit: "{X}",
-    effectRes: "{X}",
-    energyRegen: "{X}",
+    crit_rate: "{X}",
+    crit_dmg: "{X}",
+    break: "{X}",
+    effect_hit: "{X}",
+    effect_res: "{X}",
+    energy: "{X}",
+    heal: "{X}",
+    dmg: "{X}"
   });
+
+  const [charBaseStats, setCharBaseStats] = useState(null);
+  const [lcBaseStats, setLcBaseStats] = useState(null);
+  const [lcInfo, setLcInfo] = useState(null);
+
+  const [cavernData, setCavernData] = useState(null);
+  const [planarData, setPlanarData] = useState(null);
 
   const [relicStats, setRelicStats] = useState({
     head: {
@@ -87,31 +97,285 @@ export default function BuildCreators() {
 
   const [OpcoesFiltros, setOpcoesFiltros] = useState({
     charName: [],
-    charImage: [
-      "https://upload.wikimedia.org/wikipedia/en/8/86/Firefly_HSR.png",
-    ],
+    charImage: "https://upload.wikimedia.org/wikipedia/en/8/86/Firefly_HSR.png",
     lcName: [],
-    lcImage: [
+    lcImage:
       "https://starrail.honeyhunterworld.com/img/item/dazzled-by-a-flowery-world-item_icon_thumbnail_large.webp",
-    ],
-    atfName: [],
-    atfImage: [],
+    cavernName: [],
+    planarName: [],
+    cavernImage: ["", "", "", ""],
+    planarImage: ["", ""],
   });
-  // Adicionado o código para carregar os dados antes da visualização, lan ting me ajudo
+
   const [Filtro, setFiltro] = useState({
     charName: [],
     lcName: [],
-    atfName: [],
+    cavernName: [],
+    planarName: [],
   });
 
   const [PesquisaFiltro, setPesquisaFiltro] = useState({
     charName: "",
     lcName: "",
-    atfName: "",
+    cavernName: "",
+    planarName: "",
   });
 
-  useEffect(() => {}, [PesquisaFiltro, Filtro]);
+  useEffect(() => {
+    const fetchFilters = async () => {
+      try {
+        const charData = await postApi("/github/characters/filters", {});
+        const lcData = await postApi("/github/light-cones/filters", {});
+        const relicsData = await postApi("/github/relics/filters", {});
+        
+        setOpcoesFiltros((prev) => ({
+          ...prev,
+          charName: charData && charData.name ? charData.name : [],
+          lcName: lcData && lcData.name ? lcData.name : [],
+          cavernName: relicsData && relicsData.cavern ? relicsData.cavern : [],
+          planarName: relicsData && relicsData.planar ? relicsData.planar : [],
+        }));
+      } catch (error) {
+        console.error("Erro ao buscar filtros:", error);
+      }
+    };
+    fetchFilters();
+  }, []);
 
+  useEffect(() => {
+    const fetchCharacterData = async () => {
+      if (PesquisaFiltro.charName) {
+        try {
+          // Utiliza a rota all-cards para buscar o card do personagem e pegar a imagem preview
+          const data = await postApi("/github/characters/all-cards", {
+            name: PesquisaFiltro.charName,
+          });
+          if (data && data.length > 0) {
+            setOpcoesFiltros((prev) => ({
+              ...prev,
+              charImage: data[0].preview,
+            }));
+            setCharBaseStats(data[0].stats);
+            // Atualiza também o Filtro.charName para consistência
+            setFiltro((prev) => ({
+              ...prev,
+              charName: PesquisaFiltro.charName,
+            }));
+          }
+        } catch (error) {
+          console.error("Erro ao buscar dados do personagem:", error);
+        }
+      }
+    };
+
+    // Só busca se for um nome que existe na lista (opcional, mas evita requests desnecessários)
+    if (OpcoesFiltros.charName.includes(PesquisaFiltro.charName)) {
+      fetchCharacterData();
+    }
+  }, [PesquisaFiltro.charName, OpcoesFiltros.charName]);
+
+  useEffect(() => {
+    const fetchLCData = async () => {
+      if (PesquisaFiltro.lcName) {
+        try {
+          const data = await postApi("/github/light-cones/all-cards", {
+            name: PesquisaFiltro.lcName,
+          });
+          if (data && data.length > 0) {
+            setOpcoesFiltros((prev) => ({
+              ...prev,
+              lcImage: data[0].portrait || data[0].preview || data[0].icon,
+            }));
+            setLcInfo(data[0]);
+            setLcBaseStats(data[0].stats);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar dados do Cone de Luz:", error);
+        }
+      }
+    };
+
+    if (OpcoesFiltros.lcName.some(lc => lc === PesquisaFiltro.lcName || lc.name === PesquisaFiltro.lcName)) {
+      fetchLCData();
+    }
+  }, [PesquisaFiltro.lcName, OpcoesFiltros.lcName]);
+
+  useEffect(() => {
+    const fetchCavernData = async () => {
+      if (PesquisaFiltro.cavernName) {
+        try {
+          const data = await postApi("/github/relics/all-cards", {
+            name: PesquisaFiltro.cavernName,
+          });
+          if (data && data.length > 0) {
+            setOpcoesFiltros((prev) => ({
+              ...prev,
+              cavernImage: data[0].icons.slice(0, 4) || ["", "", "", ""],
+            }));
+            setCavernData(data[0]);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar dados das Relíquias:", error);
+        }
+      }
+    };
+
+    if (OpcoesFiltros.cavernName.includes(PesquisaFiltro.cavernName)) {
+      fetchCavernData();
+    }
+  }, [PesquisaFiltro.cavernName, OpcoesFiltros.cavernName]);
+
+  useEffect(() => {
+    const fetchPlanarData = async () => {
+      if (PesquisaFiltro.planarName) {
+        try {
+          const data = await postApi("/github/relics/all-cards", {
+            name: PesquisaFiltro.planarName,
+          });
+          if (data && data.length > 0) {
+            setOpcoesFiltros((prev) => ({
+              ...prev,
+              planarImage: data[0].icons.slice(0, 2) || ["", ""],
+            }));
+            setPlanarData(data[0]);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar dados dos Ornamentos Planos:", error);
+        }
+      }
+    };
+
+    if (OpcoesFiltros.planarName.includes(PesquisaFiltro.planarName)) {
+      fetchPlanarData();
+    }
+  }, [PesquisaFiltro.planarName, OpcoesFiltros.planarName]);
+
+  useEffect(() => {
+    if (!charBaseStats) {
+      setFinalStats({
+        hp: "{X}", atk: "{X}", def: "{X}", spd: "{X}",
+        crit_rate: "{X}", crit_dmg: "{X}", break: "{X}",
+        effect_hit: "{X}", effect_res: "{X}", energy: "{X}", heal: "{X}", dmg: "{X}"
+      });
+      return;
+    }
+
+    const baseHp = charBaseStats.hp + (lcBaseStats ? lcBaseStats.hp : 0);
+    const baseAtk = charBaseStats.atk + (lcBaseStats ? lcBaseStats.atk : 0);
+    const baseDef = charBaseStats.def + (lcBaseStats ? lcBaseStats.def : 0);
+    const baseSpd = charBaseStats.spd;
+    const baseCritRate = charBaseStats.crit_rate;
+    const baseCritDmg = charBaseStats.crit_dmg;
+
+    let totals = {
+      flat: { hp: 0, atk: 0, def: 0, spd: 0 },
+      percent: { 
+        hp: 0, atk: 0, def: 0, spd: 0, 
+        crit_rate: 0, crit_dmg: 0, break: 0, 
+        effect_hit: 0, effect_res: 0, energy: 0, heal: 0, dmg: 0 
+      }
+    };
+
+    Object.values(relicStats).forEach(relic => {
+      const statsToProcess = [relic.main, ...relic.subs];
+      statsToProcess.forEach(s => {
+        if (!s.stat || !s.value) return;
+        const statInfo = Stts[s.stat];
+        if (!statInfo) return;
+
+        if (statInfo.percent) {
+          totals.percent[statInfo.field] += Number(s.value);
+        } else {
+          totals.flat[statInfo.field] += Number(s.value);
+        }
+      });
+    });
+
+    const propMap = {
+      HPAddedRatio: { field: "hp", percent: true },
+      AttackAddedRatio: { field: "atk", percent: true },
+      DefenceAddedRatio: { field: "def", percent: true },
+      SpeedDelta: { field: "spd", percent: false },
+      CriticalChanceBase: { field: "crit_rate", percent: true },
+      CriticalDamageBase: { field: "crit_dmg", percent: true },
+      BreakDamageAddedRatioBase: { field: "break", percent: true },
+      StatusProbabilityBase: { field: "effect_hit", percent: true },
+      StatusResistanceBase: { field: "effect_res", percent: true },
+      SPRatioBase: { field: "energy", percent: true },
+      HealRatioBase: { field: "heal", percent: true },
+      AllDamageTypeAddedRatio: { field: "dmg", percent: true },
+      PhysicalAddedRatio: { field: "dmg", percent: true },
+      FireAddedRatio: { field: "dmg", percent: true },
+      IceAddedRatio: { field: "dmg", percent: true },
+      LightningAddedRatio: { field: "dmg", percent: true },
+      WindAddedRatio: { field: "dmg", percent: true },
+      QuantumAddedRatio: { field: "dmg", percent: true },
+      ImaginaryAddedRatio: { field: "dmg", percent: true },
+    };
+
+    if (lcInfo && lcInfo.properties) {
+      lcInfo.properties.forEach((prop) => {
+        const mapped = propMap[prop.type];
+        if (mapped) {
+          const valToAdd = mapped.percent ? prop.value * 100 : prop.value;
+          if (mapped.percent) {
+            totals.percent[mapped.field] += valToAdd;
+          } else {
+            totals.flat[mapped.field] += valToAdd;
+          }
+        }
+      });
+    }
+
+    if (cavernData && cavernData.properties) {
+      cavernData.properties.forEach((propList) => {
+        propList.forEach((prop) => {
+          const mapped = propMap[prop.type];
+          if (mapped) {
+            const valToAdd = mapped.percent ? prop.value * 100 : prop.value;
+            if (mapped.percent) {
+              totals.percent[mapped.field] += valToAdd;
+            } else {
+              totals.flat[mapped.field] += valToAdd;
+            }
+          }
+        });
+      });
+    }
+
+    if (planarData && planarData.properties) {
+      planarData.properties.forEach((propList) => {
+        propList.forEach((prop) => {
+          const mapped = propMap[prop.type];
+          if (mapped) {
+            const valToAdd = mapped.percent ? prop.value * 100 : prop.value;
+            if (mapped.percent) {
+              totals.percent[mapped.field] += valToAdd;
+            } else {
+              totals.flat[mapped.field] += valToAdd;
+            }
+          }
+        });
+      });
+    }
+
+    const final = {
+      hp: Math.floor(baseHp * (1 + totals.percent.hp / 100) + totals.flat.hp),
+      atk: Math.floor(baseAtk * (1 + totals.percent.atk / 100) + totals.flat.atk),
+      def: Math.floor(baseDef * (1 + totals.percent.def / 100) + totals.flat.def),
+      spd: (baseSpd * (1 + totals.percent.spd / 100) + totals.flat.spd).toFixed(1),
+      crit_rate: (baseCritRate * 100 + totals.percent.crit_rate).toFixed(1),
+      crit_dmg: (baseCritDmg * 100 + totals.percent.crit_dmg).toFixed(1),
+      break: totals.percent.break.toFixed(1),
+      effect_hit: totals.percent.effect_hit.toFixed(1),
+      effect_res: totals.percent.effect_res.toFixed(1),
+      energy: (100 + totals.percent.energy).toFixed(1),
+      heal: totals.percent.heal.toFixed(1),
+      dmg: totals.percent.dmg.toFixed(1)
+    };
+
+    setFinalStats(final);
+  }, [charBaseStats, lcBaseStats, relicStats]);
   return (
     <>
       <LateralBar />
@@ -144,24 +408,39 @@ export default function BuildCreators() {
           </div>
 
           <GeneralCard
-            itemName={"Firosfly"}
-            itemRarity={"5"}
+            itemName={lcInfo ? lcInfo.name : "Nenhum Cone Selecionado"}
+            itemRarity={lcInfo ? String(lcInfo.rarity) : "5"}
             itemImage={OpcoesFiltros.lcImage}
-            itemIcon1={""}
+            itemIcon1={lcInfo && lcInfo.path ? lcInfo.path.icon : ""}
           />
         </div>
 
         <div className="right-side">
           <RelicsCardTable
+            title="Relíquias das Cavernas (4 Peças)"
             sFilterMain={PesquisaFiltro}
             setFilterMain={setPesquisaFiltro}
-            mainKey={"atfName"}
-            imageKey={"atfImage"}
+            mainKey={"cavernName"}
+            imageKey={"cavernImage"}
             mainFilterOptions={OpcoesFiltros}
             relicsUserStatis={relicStats}
             setUserRelicStats={setRelicStats}
-            relicstypes={relics}
+            relicstypes={relics.slice(0, 4)}
           />
+
+          <div style={{ marginTop: "20px" }}>
+            <RelicsCardTable
+              title="Ornamentos Planos (2 Peças)"
+              sFilterMain={PesquisaFiltro}
+              setFilterMain={setPesquisaFiltro}
+              mainKey={"planarName"}
+              imageKey={"planarImage"}
+              mainFilterOptions={OpcoesFiltros}
+              relicsUserStatis={relicStats}
+              setUserRelicStats={setRelicStats}
+              relicstypes={relics.slice(4, 6)}
+            />
+          </div>
         </div>
       </div>
     </>

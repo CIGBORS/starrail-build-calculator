@@ -13,9 +13,10 @@ export default function RelicsCardTable({
   relicsUserStatis,
   setUserRelicStats,
   relicstypes,
+  title,
 }) {
   return (
-    <Card title="Body" className="relics-container">
+    <Card title={title} className="relics-container">
       <div className="inputtext-be">
         <BtnInputText
           PesquisaFiltro={sFilterMain}

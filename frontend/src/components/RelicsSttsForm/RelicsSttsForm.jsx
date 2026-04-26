@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
-import { Stts } from "../../../../backend/src/utils/variables";
+import { Stts } from "./variables"
 
 export default function RelicsSttsForm({
   type,

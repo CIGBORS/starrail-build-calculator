@@ -1,4 +1,4 @@
-import { Stts } from "../../../../backend/src/utils/variables";
+import { Stts } from "../RelicsSttsForm/variables";
 
 export default function StatsCard({ stats }) {
   const summaryStats = Object.values(Stts).filter(
