@@ -6,6 +6,10 @@ import {
   getAllCharacters,
   getCharactersFilters as getCharFiltersServ,
   getAllCharactersCard as getCharactersCard,
+  getLightConesFilters as getLCFiltersServ,
+  getAllLightConesCard as getLCCardsServ,
+  getRelicsFilters as getRelicsFiltersServ,
+  getAllRelicsCard as getRelicsCardsServ,
 } from "../services/starRail.service.js";
 
 export async function getCharacters(req, res) {
@@ -92,5 +96,49 @@ export async function getAllCharactersCards(req, res) {
     res.json({ error: "Personagens não encontrados dentro da base de dados " });
   } else {
     res.json(allCards);
+  }
+}
+
+export async function getLCFilters(req, res) {
+  try {
+    const data = await getLCFiltersServ();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+export async function getAllLCCards(req, res) {
+  try {
+    const allCards = await getLCCardsServ(req.body);
+    if (!allCards) {
+      res.json({ error: "Cones de luz não encontrados" });
+    } else {
+      res.json(allCards);
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+export async function getRelicsFilters(req, res) {
+  try {
+    const data = await getRelicsFiltersServ();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+export async function getAllRelicsCards(req, res) {
+  try {
+    const allCards = await getRelicsCardsServ(req.body);
+    if (!allCards) {
+      res.json({ error: "Relíquias não encontradas" });
+    } else {
+      res.json(allCards);
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 }

@@ -5,21 +5,38 @@ import "./BtnInputText.css";
 const BtnInputText = ({ PesquisaFiltro, setPesquisaFiltro, Campo, Opcoes }) => {
   const [ItensFiltrados, setItensFiltrados] = useState([]);
 
+  const isObject = Opcoes && Opcoes.length > 0 && typeof Opcoes[0] === "object";
+
   const search = (event) => {
     const query = event.query.toLowerCase();
 
-    const filtered = Opcoes.filter((item) =>
-      item.toLowerCase().includes(query),
-    );
+    const filtered = Opcoes.filter((item) => {
+      const value = isObject ? item.name : item;
+      return value.toLowerCase().includes(query);
+    });
 
     setItensFiltrados(filtered);
   };
 
   const pesquisa = (valor) => {
+    const valueToSet = typeof valor === "object" ? valor.name : valor;
     setPesquisaFiltro({
       ...PesquisaFiltro,
-      [Campo]: valor,
+      [Campo]: valueToSet,
     });
+  };
+
+  const itemTemplate = (item) => {
+    if (isObject) {
+      return (
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {item.icon && <img src={item.icon} alt={item.name} style={{ width: "32px", height: "32px", objectFit: "cover" }} />}
+          {item.path_icon && <img src={item.path_icon} alt="Path" style={{ width: "24px", height: "24px" }} />}
+          <span>{item.name}</span>
+        </div>
+      );
+    }
+    return <span>{item}</span>;
   };
 
   return (
@@ -29,6 +46,8 @@ const BtnInputText = ({ PesquisaFiltro, setPesquisaFiltro, Campo, Opcoes }) => {
       suggestions={ItensFiltrados}
       completeMethod={search}
       onChange={(e) => pesquisa(e.value)}
+      field={isObject ? "name" : undefined}
+      itemTemplate={itemTemplate}
       placeholder="Sem Filtros"
       inputClassName="autocomplete-filter__input"
       dropdown

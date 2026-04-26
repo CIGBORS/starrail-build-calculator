@@ -207,6 +207,7 @@ export async function getAllCharactersCard(filters) {
   const charactersData = await fetchJson("characters.json");
   const elementsData = await fetchJson("elements.json");
   const pathsData = await fetchJson("paths.json");
+  const promotionsData = await fetchJson("character_promotions.json");
 
   const charactersArray = Object.values(charactersData);
 
@@ -238,17 +239,149 @@ export async function getAllCharactersCard(filters) {
     return true;
   });
 
-  return filtered.map((character) => ({
-    name: FormatNomesPersonagens(character, pathsData),
-    preview: `${GITHUB_URL}${character.preview}`,
-    rarity: character.rarity,
-    element: {
-      name: elementsData[character.element].name,
-      icon: `${GITHUB_URL}${elementsData[character.element].icon}`,
-    },
-    path: {
-      name: pathsData[character.path].name,
-      icon: `${GITHUB_URL}${pathsData[character.path].icon}`,
-    },
+  return filtered.map((character) => {
+    const promotion = promotionsData[character.id];
+    let stats = null;
+    if (promotion && promotion.values && promotion.values.length > 0) {
+      const lastAscension = promotion.values[promotion.values.length - 1];
+      stats = {
+        hp: lastAscension.hp.base + lastAscension.hp.step * 79,
+        atk: lastAscension.atk.base + lastAscension.atk.step * 79,
+        def: lastAscension.def.base + lastAscension.def.step * 79,
+        spd: lastAscension.spd ? lastAscension.spd.base : 0,
+        crit_rate: lastAscension.crit_rate ? lastAscension.crit_rate.base : 0,
+        crit_dmg: lastAscension.crit_dmg ? lastAscension.crit_dmg.base : 0,
+      };
+    }
+
+    return {
+      id: character.id,
+      name: FormatNomesPersonagens(character, pathsData),
+      preview: `${GITHUB_URL}${character.preview}`,
+      rarity: character.rarity,
+      element: {
+        name: elementsData[character.element].name,
+        icon: `${GITHUB_URL}${elementsData[character.element].icon}`,
+      },
+      path: {
+        name: pathsData[character.path].name,
+        icon: `${GITHUB_URL}${pathsData[character.path].icon}`,
+      },
+      stats,
+    };
+  });
+}
+
+export async function getLightConesFilters() {
+  const lcData = await fetchJson("light_cones.json");
+  const pathsData = await fetchJson("paths.json");
+  const lcArray = Object.values(lcData);
+
+  const items = lcArray.map((c) => ({
+    name: c.name,
+    icon: `${GITHUB_URL}${c.icon}`,
+    path_icon: pathsData[c.path] ? `${GITHUB_URL}${pathsData[c.path].icon}` : null
   }));
+
+  items.sort((a, b) => a.name.localeCompare(b.name));
+
+  return {
+    name: items,
+  };
+}
+
+export async function getAllLightConesCard(filters) {
+  const { name } = filters;
+  const lcData = await fetchJson("light_cones.json");
+  const promotionsData = await fetchJson("light_cone_promotions.json");
+  const ranksData = await fetchJson("light_cone_ranks.json");
+  const pathsData = await fetchJson("paths.json");
+
+  const lcArray = Object.values(lcData);
+
+  const filtered = lcArray.filter((lc) => {
+    if (name && !lc.name.toLowerCase().includes(name.toLowerCase())) {
+      return false;
+    }
+    return true;
+  });
+
+  return filtered.map((lc) => {
+    const promotion = promotionsData[lc.id];
+    let stats = null;
+    if (promotion && promotion.values && promotion.values.length > 0) {
+      const lastAscension = promotion.values[promotion.values.length - 1];
+      stats = {
+        hp: lastAscension.hp.base + lastAscension.hp.step * 79,
+        atk: lastAscension.atk.base + lastAscension.atk.step * 79,
+        def: lastAscension.def.base + lastAscension.def.step * 79,
+      };
+    }
+
+    const rank = ranksData[lc.id];
+    let properties = [];
+    if (rank && rank.properties && rank.properties.length > 0) {
+      // Usar a primeira superposição (S1) para as propriedades passivas
+      properties = rank.properties[0];
+    }
+
+    return {
+      id: lc.id,
+      name: lc.name,
+      icon: `${GITHUB_URL}${lc.icon}`,
+      preview: `${GITHUB_URL}${lc.preview}`,
+      portrait: `${GITHUB_URL}${lc.portrait}`,
+      rarity: lc.rarity,
+      path: pathsData[lc.path]
+        ? {
+            name: pathsData[lc.path].name,
+            icon: `${GITHUB_URL}${pathsData[lc.path].icon}`,
+          }
+        : null,
+      stats,
+      properties,
+    };
+  });
+}
+
+export async function getRelicsFilters() {
+  const relicsData = await fetchJson("relic_sets.json");
+  const relicsArray = Object.values(relicsData);
+
+  const cavern = relicsArray.filter((r) => r.properties.length === 2);
+  const planar = relicsArray.filter((r) => r.properties.length === 1);
+
+  return {
+    cavern: [...new Set(cavern.map((r) => r.name))].sort((a, b) =>
+      a.localeCompare(b),
+    ),
+    planar: [...new Set(planar.map((r) => r.name))].sort((a, b) =>
+      a.localeCompare(b),
+    ),
+  };
+}
+
+export async function getAllRelicsCard(filters) {
+  const { name } = filters;
+  const relicsData = await fetchJson("relic_sets.json");
+  const relicsArray = Object.values(relicsData);
+
+  const filtered = relicsArray.filter((r) => {
+    if (name && !r.name.toLowerCase().includes(name.toLowerCase())) {
+      return false;
+    }
+    return true;
+  });
+
+  return filtered.map((r) => {
+    const icon = `${GITHUB_URL}${r.icon}`;
+    return {
+      id: r.id,
+      name: r.name,
+      icon: icon,
+      icons: [icon, icon, icon, icon, icon, icon], // Array de 6 ícones iguais para prevenir bugs no frontend
+      desc: r.desc,
+      properties: r.properties,
+    };
+  });
 }
