@@ -1,4 +1,4 @@
-import { Stts } from "../../../../backend/src/utils/variables";
+import { Stts } from "../../../../shared/variables";
 
 export default function StatsCard({ stats }) {
   const summaryStats = Object.values(Stts).filter(
