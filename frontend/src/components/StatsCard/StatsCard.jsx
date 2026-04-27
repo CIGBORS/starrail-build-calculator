@@ -15,7 +15,15 @@ const STAT_ICONS = {
   effect_res: "icon/property/IconStatusResistance.png",
   energy:     "icon/property/IconEnergyRecovery.png",
   heal:       "icon/property/IconHealRatio.png",
-  dmg:        "icon/property/IconDamage.png",
+  aggro:      "icon/property/IconTaunt.png",
+  dmg_physical:  "icon/property/IconPhysicalAddedRatio.png",
+  dmg_fire:      "icon/property/IconFireAddedRatio.png",
+  dmg_ice:       "icon/property/IconIceAddedRatio.png",
+  dmg_lightning: "icon/property/IconThunderAddedRatio.png",
+  dmg_wind:      "icon/property/IconWindAddedRatio.png",
+  dmg_quantum:   "icon/property/IconQuantumAddedRatio.png",
+  dmg_imaginary: "icon/property/IconImaginaryAddedRatio.png",
+  dmg_elation:   "icon/property/IconJoy.png",
 };
 
 const STAT_LABELS = {
@@ -30,18 +38,32 @@ const STAT_LABELS = {
   effect_res: "Res. a Efeito",
   energy:     "Rec. Energia",
   heal:       "Bônus Cura",
-  dmg:        "Bônus Dano",
+  aggro:      "Agressividade",
+  dmg_physical:  "Dano Físico",
+  dmg_fire:      "Dano Fogo",
+  dmg_ice:       "Dano Gelo",
+  dmg_lightning: "Dano Raio",
+  dmg_wind:      "Dano Vento",
+  dmg_quantum:   "Dano Quântico",
+  dmg_imaginary: "Dano Imaginário",
+  dmg_elation:   "Dano Euforia",
 };
 
 const STAT_PERCENT = {
   hp: false, atk: false, def: false, spd: false,
   crit_rate: true, crit_dmg: true, break: true,
-  effect_hit: true, effect_res: true, energy: true, heal: true, dmg: true,
+  effect_hit: true, effect_res: true, energy: true, heal: true,
+  aggro: false,
+  dmg_physical: true, dmg_fire: true, dmg_ice: true,
+  dmg_lightning: true, dmg_wind: true, dmg_quantum: true,
+  dmg_imaginary: true, dmg_elation: true,
 };
 
 const STAT_ORDER = [
   "hp", "def", "atk", "spd", "crit_rate", "effect_hit",
-  "crit_dmg", "effect_res", "break", "energy", "heal", "dmg",
+  "crit_dmg", "effect_res", "break", "energy", "heal", "aggro",
+  "dmg_physical", "dmg_fire", "dmg_ice", "dmg_lightning",
+  "dmg_wind", "dmg_quantum", "dmg_imaginary", "dmg_elation"
 ];
 
 export default function StatsCard({ stats }) {

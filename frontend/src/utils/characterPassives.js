@@ -15,6 +15,19 @@
  * Fontes de referência: habilidades oficiais do jogo (HSR Wiki / fandom)
  */
 
+function addGlobalDmgBonus(stats, bonus) {
+  return {
+    ...stats,
+    dmg_physical: (stats.dmg_physical || 0) + bonus,
+    dmg_fire: (stats.dmg_fire || 0) + bonus,
+    dmg_ice: (stats.dmg_ice || 0) + bonus,
+    dmg_lightning: (stats.dmg_lightning || 0) + bonus,
+    dmg_wind: (stats.dmg_wind || 0) + bonus,
+    dmg_quantum: (stats.dmg_quantum || 0) + bonus,
+    dmg_imaginary: (stats.dmg_imaginary || 0) + bonus,
+  };
+}
+
 const PASSIVE_MAP = {
 
   // ─── Vaga-lume / Firefly (SAM) ────────────────────────────────────────────
@@ -39,14 +52,14 @@ const PASSIVE_MAP = {
   // (Cada 1% de Effect Hit dá 0.6% de DMG)
   "1307": (stats) => {
     const dmgBonus = Math.min(72, stats.effect_hit * 0.6);
-    return { ...stats, dmg: stats.dmg + dmgBonus };
+    return addGlobalDmgBonus(stats, dmgBonus);
   },
 
   // ─── Xueyi ──────────────────────────────────────────────────────────────
   // Passiva: DMG% += 100% × Break Effect (cap: +240%)
   "1214": (stats) => {
     const dmgBonus = Math.min(240, stats.break * 1.0);
-    return { ...stats, dmg: stats.dmg + dmgBonus };
+    return addGlobalDmgBonus(stats, dmgBonus);
   },
 
   // ─── Boothill ───────────────────────────────────────────────────────────
@@ -204,6 +217,50 @@ const PASSIVE_MAP = {
       crit_rate: stats.crit_rate + 10,
       crit_dmg: stats.crit_dmg + 20,
     };
+  },
+
+  // ─── PERSONAGENS DE EUFORIA ────────────────────────────────────────────
+  // ─── Sparxie ─────────────────────────────────────────────────────────────
+  // Passiva: Para cada 100 pontos do ATQ de Sparxie que excedam 2000, aumenta a Euforia em 5% (max 80%)
+  "1501": (stats) => {
+    const excessAtk = Math.max(0, stats.atk - 2000);
+    const elationBonus = Math.min(80, Math.floor(excessAtk / 100) * 5);
+    return { ...stats, dmg_elation: (stats.dmg_elation || 0) + elationBonus };
+  },
+
+  // ─── Yao Guang ───────────────────────────────────────────────────────────
+  // Passiva: Quando a VEL for 120 ou superior, aumenta a Euforia em 30%. Para cada 1 de VEL excedente, aumenta a Euforia em 1% (max 200).
+  "1502": (stats) => {
+    if (stats.spd >= 120) {
+      const excessSpd = Math.min(200, Math.floor(stats.spd - 120));
+      const elationBonus = 30 + (excessSpd * 1);
+      return { ...stats, dmg_elation: (stats.dmg_elation || 0) + elationBonus };
+    }
+    return stats;
+  },
+
+  // ─── Loba Prateada Nv. 999 ──────────────────────────────────────────────
+  // Passiva: Quando a VEL for 160 ou superior, aumenta a Euforia em 50%. Para cada 1 de VEL excedente, aumenta em 2% (max 100).
+  "1506": (stats) => {
+    if (stats.spd >= 160) {
+      const excessSpd = Math.min(100, Math.floor(stats.spd - 160));
+      const elationBonus = 50 + (excessSpd * 2);
+      return { ...stats, dmg_elation: (stats.dmg_elation || 0) + elationBonus };
+    }
+    return stats;
+  },
+
+  // ─── Desbravador Euforia ────────────────────────────────────────────────
+  // Passiva: Para cada 200 pontos de ATQ que excedam 1000, aumenta a Euforia em 10% (max 60%)
+  "8009": (stats) => {
+    const excessAtk = Math.max(0, stats.atk - 1000);
+    const elationBonus = Math.min(60, Math.floor(excessAtk / 200) * 10);
+    return { ...stats, dmg_elation: (stats.dmg_elation || 0) + elationBonus };
+  },
+  "8010": (stats) => {
+    const excessAtk = Math.max(0, stats.atk - 1000);
+    const elationBonus = Math.min(60, Math.floor(excessAtk / 200) * 10);
+    return { ...stats, dmg_elation: (stats.dmg_elation || 0) + elationBonus };
   },
 };
 

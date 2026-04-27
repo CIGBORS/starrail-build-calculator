@@ -6,6 +6,8 @@ export const Stts = {
     affix: true,
     main: ["head"],
     Summary: "Vida",
+    maxValue: 705,
+    icon: "icon/property/IconMaxHP.png",
   },
 
   HPAddedRatio: {
@@ -15,6 +17,8 @@ export const Stts = {
     affix: true,
     main: ["body", "boots", "sphere", "rope"],
     Summary: undefined,
+    maxValue: 43.2,
+    icon: "icon/property/IconMaxHP.png",
   },
 
   AttackDelta: {
@@ -24,6 +28,8 @@ export const Stts = {
     affix: true,
     main: ["hands"],
     Summary: "Ataque",
+    maxValue: 352,
+    icon: "icon/property/IconAttack.png",
   },
 
   AttackAddedRatio: {
@@ -33,6 +39,8 @@ export const Stts = {
     affix: true,
     main: ["body", "boots", "sphere", "rope"],
     Summary: undefined,
+    maxValue: 43.2,
+    icon: "icon/property/IconAttack.png",
   },
 
   DefenceDelta: {
@@ -42,6 +50,7 @@ export const Stts = {
     affix: true,
     main: [],
     Summary: "Defesa",
+    icon: "icon/property/IconDefence.png",
   },
 
   DefenceAddedRatio: {
@@ -51,6 +60,8 @@ export const Stts = {
     affix: true,
     main: ["body", "boots", "sphere", "rope"],
     Summary: undefined,
+    maxValue: 54.0,
+    icon: "icon/property/IconDefence.png",
   },
 
   SpeedDelta: {
@@ -60,6 +71,8 @@ export const Stts = {
     affix: true,
     main: ["boots"],
     Summary: "Velocidade",
+    maxValue: 25,
+    icon: "icon/property/IconSpeed.png",
   },
 
   CriticalChanceBase: {
@@ -69,6 +82,8 @@ export const Stts = {
     affix: true,
     main: ["body"],
     Summary: "Taxa Critica",
+    maxValue: 32.4,
+    icon: "icon/property/IconCriticalChance.png",
   },
 
   CriticalDamageBase: {
@@ -78,6 +93,8 @@ export const Stts = {
     affix: true,
     main: ["body"],
     Summary: "Dano Critico",
+    maxValue: 64.8,
+    icon: "icon/property/IconCriticalDamage.png",
   },
 
   BreakDamageAddedRatioBase: {
@@ -87,6 +104,8 @@ export const Stts = {
     affix: true,
     main: ["rope"],
     Summary: "Efeito de Quebra",
+    maxValue: 64.8,
+    icon: "icon/property/IconBreakUp.png",
   },
 
   StatusProbabilityBase: {
@@ -96,6 +115,8 @@ export const Stts = {
     affix: true,
     main: ["body"],
     Summary: "Taxa de Acerto de Efeito",
+    maxValue: 43.2,
+    icon: "icon/property/IconStatusProbability.png",
   },
 
   StatusResistanceBase: {
@@ -105,6 +126,7 @@ export const Stts = {
     affix: true,
     main: ["body"],
     Summary: "Resistencia a Efeito",
+    icon: "icon/property/IconStatusResistance.png",
   },
 
   HealRatioBase: {
@@ -114,6 +136,8 @@ export const Stts = {
     affix: false,
     main: ["body"],
     Summary: "Bônus de Cura",
+    maxValue: 34.5,
+    icon: "icon/property/IconHealRatio.png",
   },
 
   SPDRatio: {
@@ -123,75 +147,103 @@ export const Stts = {
     affix: false,
     main: ["rope"],
     Summary: "Regeneração de Energia",
+    maxValue: 19.4,
+    icon: "icon/property/IconEnergyRecovery.png",
   },
 
   PhysicalAddedRatio: {
     name: "Dano Físico",
-    field: "dmg",
+    field: "dmg_physical",
     element: "physical",
     percent: true,
     affix: false,
     main: ["sphere"],
     Summary: "Dano Físico",
+    maxValue: 38.8,
+    icon: "icon/property/IconPhysicalAddedRatio.png",
   },
 
   FireAddedRatio: {
     name: "Dano Fogo",
-    field: "dmg",
+    field: "dmg_fire",
     element: "fire",
     percent: true,
     affix: false,
     main: ["sphere"],
     Summary: "Dano Fogo",
+    maxValue: 38.8,
+    icon: "icon/property/IconFireAddedRatio.png",
   },
 
   IceAddedRatio: {
     name: "Dano Gelo",
-    field: "dmg",
+    field: "dmg_ice",
     element: "ice",
     percent: true,
     affix: false,
     main: ["sphere"],
     Summary: "Dano Gelo",
+    maxValue: 38.8,
+    icon: "icon/property/IconIceAddedRatio.png",
   },
 
   ThunderAddedRatio: {
     name: "Dano Raio",
-    field: "dmg",
+    field: "dmg_lightning",
     element: "lightning",
     percent: true,
     affix: false,
     main: ["sphere"],
     Summary: "Dano Raio",
+    maxValue: 38.8,
+    icon: "icon/property/IconThunderAddedRatio.png",
   },
 
   WindAddedRatio: {
     name: "Dano Vento",
-    field: "dmg",
+    field: "dmg_wind",
     element: "wind",
     percent: true,
     affix: false,
     main: ["sphere"],
     Summary: "Dano Vento",
+    maxValue: 38.8,
+    icon: "icon/property/IconWindAddedRatio.png",
   },
 
   QuantumAddedRatio: {
     name: "Dano Quantum",
-    field: "dmg",
+    field: "dmg_quantum",
     element: "quantum",
     percent: true,
     affix: false,
     main: ["sphere"],
     Summary: "Dano Quantum",
+    maxValue: 38.8,
+    icon: "icon/property/IconQuantumAddedRatio.png",
   },
 
   ImaginaryAddedRatio: {
     name: "Dano Imaginário",
-    field: "dmg",
+    field: "dmg_imaginary",
     element: "imaginary",
     percent: true,
     affix: false,
     main: ["sphere"],
     Summary: "Dano Imaginário",
+    maxValue: 38.8,
+    icon: "icon/property/IconImaginaryAddedRatio.png",
+  },
+
+  ElationAddedRatio: {
+    name: "Dano Euforia",
+    field: "dmg_elation",
+    element: "elation",
+    percent: true,
+    affix: false,
+    main: ["sphere"],
+    Summary: "Dano Euforia",
+    maxValue: 38.8,
+    icon: "icon/property/IconJoy.png",
   },
 };

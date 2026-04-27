@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getApi, postApi } from "../api/api";
 import BtnInputText from "../components/Filters/BtnInputText/BtnInputText";
 import BtnDropDown from "../components/Filters/BtnDropdown/BtnDropDown";
-import { Stts } from "../components/RelicsSttsForm/variables";
+import { Stts } from "../../../shared/variables";
 
 import GeneralCard from "../components/CharacterCard/GeneralCard";
 
@@ -16,18 +16,13 @@ import { applyPassiveConversions } from "../utils/characterPassives";
 
 export default function BuildCreators() {
   const [finalStats, setFinalStats] = useState({
-    hp: "{X}",
-    atk: "{X}",
-    def: "{X}",
-    spd: "{X}",
-    crit_rate: "{X}",
-    crit_dmg: "{X}",
-    break: "{X}",
-    effect_hit: "{X}",
-    effect_res: "{X}",
-    energy: "{X}",
-    heal: "{X}",
-    dmg: "{X}"
+    hp: "{X}", atk: "{X}", def: "{X}", spd: "{X}",
+    crit_rate: "{X}", crit_dmg: "{X}", break: "{X}",
+    effect_hit: "{X}", effect_res: "{X}", energy: "{X}", heal: "{X}",
+    aggro: "{X}",
+    dmg_physical: "{X}", dmg_fire: "{X}", dmg_ice: "{X}",
+    dmg_lightning: "{X}", dmg_wind: "{X}", dmg_quantum: "{X}",
+    dmg_imaginary: "{X}", dmg_elation: "{X}"
   });
 
   const [charBaseStats, setCharBaseStats] = useState(null);
@@ -260,7 +255,11 @@ export default function BuildCreators() {
       setFinalStats({
         hp: "{X}", atk: "{X}", def: "{X}", spd: "{X}",
         crit_rate: "{X}", crit_dmg: "{X}", break: "{X}",
-        effect_hit: "{X}", effect_res: "{X}", energy: "{X}", heal: "{X}", dmg: "{X}"
+        effect_hit: "{X}", effect_res: "{X}", energy: "{X}", heal: "{X}",
+        aggro: "{X}",
+        dmg_physical: "{X}", dmg_fire: "{X}", dmg_ice: "{X}",
+        dmg_lightning: "{X}", dmg_wind: "{X}", dmg_quantum: "{X}",
+        dmg_imaginary: "{X}", dmg_elation: "{X}"
       });
       return;
     }
@@ -277,7 +276,9 @@ export default function BuildCreators() {
       percent: {
         hp: 0, atk: 0, def: 0, spd: 0,
         crit_rate: 0, crit_dmg: 0, break: 0,
-        effect_hit: 0, effect_res: 0, energy: 0, heal: 0, dmg: 0
+        effect_hit: 0, effect_res: 0, energy: 0, heal: 0,
+        all_dmg: 0, dmg_physical: 0, dmg_fire: 0, dmg_ice: 0,
+        dmg_lightning: 0, dmg_wind: 0, dmg_quantum: 0, dmg_imaginary: 0, dmg_elation: 0
       }
     };
 
@@ -308,14 +309,16 @@ export default function BuildCreators() {
       StatusResistanceBase: { field: "effect_res", percent: true },
       SPRatioBase: { field: "energy", percent: true },
       HealRatioBase: { field: "heal", percent: true },
-      AllDamageTypeAddedRatio: { field: "dmg", percent: true },
-      PhysicalAddedRatio: { field: "dmg", percent: true },
-      FireAddedRatio: { field: "dmg", percent: true },
-      IceAddedRatio: { field: "dmg", percent: true },
-      LightningAddedRatio: { field: "dmg", percent: true },
-      WindAddedRatio: { field: "dmg", percent: true },
-      QuantumAddedRatio: { field: "dmg", percent: true },
-      ImaginaryAddedRatio: { field: "dmg", percent: true },
+      AllDamageTypeAddedRatio: { field: "all_dmg", percent: true },
+      PhysicalAddedRatio: { field: "dmg_physical", percent: true },
+      FireAddedRatio: { field: "dmg_fire", percent: true },
+      IceAddedRatio: { field: "dmg_ice", percent: true },
+      LightningAddedRatio: { field: "dmg_lightning", percent: true },
+      ThunderAddedRatio: { field: "dmg_lightning", percent: true },
+      WindAddedRatio: { field: "dmg_wind", percent: true },
+      QuantumAddedRatio: { field: "dmg_quantum", percent: true },
+      ImaginaryAddedRatio: { field: "dmg_imaginary", percent: true },
+      ElationAddedRatio: { field: "dmg_elation", percent: true },
     };
 
     if (lcInfo && lcInfo.properties) {
@@ -392,7 +395,15 @@ export default function BuildCreators() {
       effect_res: totals.percent.effect_res,
       energy: 100 + totals.percent.energy,
       heal: totals.percent.heal,
-      dmg: totals.percent.dmg,
+      aggro: charBaseStats.taunt || 0,
+      dmg_physical: totals.percent.dmg_physical + totals.percent.all_dmg,
+      dmg_fire: totals.percent.dmg_fire + totals.percent.all_dmg,
+      dmg_ice: totals.percent.dmg_ice + totals.percent.all_dmg,
+      dmg_lightning: totals.percent.dmg_lightning + totals.percent.all_dmg,
+      dmg_wind: totals.percent.dmg_wind + totals.percent.all_dmg,
+      dmg_quantum: totals.percent.dmg_quantum + totals.percent.all_dmg,
+      dmg_imaginary: totals.percent.dmg_imaginary + totals.percent.all_dmg,
+      dmg_elation: totals.percent.dmg_elation,
     };
 
     // Aplica as passivas de conversão de status do personagem (ex: ATK -> Break da Vaga-lume)
@@ -411,7 +422,15 @@ export default function BuildCreators() {
       effect_res: withPassives.effect_res.toFixed(1),
       energy: withPassives.energy.toFixed(1),
       heal: withPassives.heal.toFixed(1),
-      dmg: withPassives.dmg.toFixed(1),
+      aggro: withPassives.aggro,
+      dmg_physical: withPassives.dmg_physical.toFixed(1),
+      dmg_fire: withPassives.dmg_fire.toFixed(1),
+      dmg_ice: withPassives.dmg_ice.toFixed(1),
+      dmg_lightning: withPassives.dmg_lightning.toFixed(1),
+      dmg_wind: withPassives.dmg_wind.toFixed(1),
+      dmg_quantum: withPassives.dmg_quantum.toFixed(1),
+      dmg_imaginary: withPassives.dmg_imaginary.toFixed(1),
+      dmg_elation: withPassives.dmg_elation.toFixed(1),
     };
 
     setFinalStats(final);

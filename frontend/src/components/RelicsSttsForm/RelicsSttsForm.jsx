@@ -100,6 +100,7 @@ export default function RelicsSttsForm({
           mode="decimal"
           maxFractionDigits={2}
           suffix={Stts[relicData.main.stat]?.percent ? "%" : ""}
+          readOnly={true}
         />
       </div>
 
