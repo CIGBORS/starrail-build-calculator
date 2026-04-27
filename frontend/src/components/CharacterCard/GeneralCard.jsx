@@ -17,7 +17,6 @@ export default function GeneralCard({
   itemImage,
   itemRarity,
   itemIcon1,
-  itemIcon2,
 }) {
   const rarity = parseInt(itemRarity, 10) || 5;
 

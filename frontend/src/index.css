@@ -22,14 +22,25 @@ html, body, #root {
 
 
 /* ── Build Editor ──────────────────────────────────────────── */
+.editor-page-wrapper {
+  display: flex;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-color: #202128;
+}
+
+.editor-main-column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .build-editor-main {
   display: flex;
   gap: 20px;
   align-items: flex-start;
-  padding: 16px 16px 16px 116px;
-  /* offset LateralBar 100px */
-  min-height: 100vh;
-  background-color: #202128;
+  padding: 16px;
 }
 
 .left-side {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getApi, postApi } from "../api/api";
+import { postApi } from "../api/api";
 import BtnInputText from "../components/Filters/BtnInputText/BtnInputText";
 import BtnDropdown from "../components/Filters/BtnDropdown/BtnDropdown";
 import { Stts } from "../../../shared/variables";
@@ -437,91 +437,95 @@ export default function BuildCreators() {
   }, [charBaseStats, lcBaseStats, lcInfo, cavernData, planarData, relicStats]);
   return (
     <>
+      <div className="editor-page-wrapper">
       <LateralBar />
-      <div className="build-editor-main">
-        <div className="left-side">
-          <div className="inputtext-be">
-            <BtnInputText
-              PesquisaFiltro={PesquisaFiltro}
-              setPesquisaFiltro={setPesquisaFiltro}
-              Campo={"charName"}
-              Opcoes={OpcoesFiltros.charName}
-            />
-          </div>
+        <div className="build-editor-column">
+          <div className="build-editor-main">
+            <div className="left-side">
+              <div className="inputtext-be">
+                <BtnInputText
+                  PesquisaFiltro={PesquisaFiltro}
+                  setPesquisaFiltro={setPesquisaFiltro}
+                  Campo={"charName"}
+                  Opcoes={OpcoesFiltros.charName}
+                />
+              </div>
 
-          <div className="build-editor_content">
-            <div className="character-preview">
-              <img src={OpcoesFiltros.charImage} alt={Filtro.charName} />
-            </div>
-          </div>
-
-          <StatsCard stats={finalStats} />
-
-          <div className="inputtext-be">
-            <BtnInputText
-              PesquisaFiltro={PesquisaFiltro}
-              setPesquisaFiltro={setPesquisaFiltro}
-              Campo={"lcName"}
-              Opcoes={OpcoesFiltros.lcName}
-            />
-          </div>
-
-          <GeneralCard
-            itemName={lcInfo ? lcInfo.name : "Nenhum Cone Selecionado"}
-            itemRarity={lcInfo ? String(lcInfo.rarity) : "5"}
-            itemImage={OpcoesFiltros.lcImage}
-            itemIcon1={lcInfo && lcInfo.path ? lcInfo.path.icon : ""}
-          />
-        </div>
-
-        <div className="right-side">
-          <Card title="Relíquias e Ornamentos" className="relics-container">
-            <div className="relics-wrapper">
-              <div className="relics-section">
-                <div className="inputtext-be">
-                  <BtnInputText
-                    PesquisaFiltro={PesquisaFiltro}
-                    setPesquisaFiltro={setPesquisaFiltro}
-                    Campo={"cavernName"}
-                    Opcoes={OpcoesFiltros.cavernName}
-                  />
-                </div>
-                <div className="relics-grid">
-                  {relics.slice(0, 4).map((type, index) => (
-                    <RelicsSttsForm
-                      key={type}
-                      type={type}
-                      relicData={relicStats[type]}
-                      setRelicStats={setRelicStats}
-                      image={OpcoesFiltros.cavernImage[index]}
-                    />
-                  ))}
+              <div className="build-editor_content">
+                <div className="character-preview">
+                  <img src={OpcoesFiltros.charImage} alt={Filtro.charName} />
                 </div>
               </div>
 
-              <div className="relics-section">
-                <div className="inputtext-be">
-                  <BtnInputText
-                    PesquisaFiltro={PesquisaFiltro}
-                    setPesquisaFiltro={setPesquisaFiltro}
-                    Campo={"planarName"}
-                    Opcoes={OpcoesFiltros.planarName}
-                  />
-                </div>
-                <div className="relics-grid relics-grid--planar">
-                  {relics.slice(4, 6).map((type, index) => (
-                    <RelicsSttsForm
-                      key={type}
-                      type={type}
-                      relicData={relicStats[type]}
-                      setRelicStats={setRelicStats}
-                      image={OpcoesFiltros.planarImage[index]}
-                    />
-                  ))}
-                </div>
+              <StatsCard stats={finalStats} />
+
+              <div className="inputtext-be">
+                <BtnInputText
+                  PesquisaFiltro={PesquisaFiltro}
+                  setPesquisaFiltro={setPesquisaFiltro}
+                  Campo={"lcName"}
+                  Opcoes={OpcoesFiltros.lcName}
+                />
               </div>
+
+              <GeneralCard
+                itemName={lcInfo ? lcInfo.name : "Nenhum Cone Selecionado"}
+                itemRarity={lcInfo ? String(lcInfo.rarity) : "5"}
+                itemImage={OpcoesFiltros.lcImage}
+                itemIcon1={lcInfo && lcInfo.path ? lcInfo.path.icon : ""}
+              />
             </div>
-          </Card>
+
+            <div className="right-side">
+              <Card title="Relíquias e Ornamentos" className="relics-container">
+                <div className="relics-wrapper">
+                  <div className="relics-section">
+                    <div className="inputtext-be">
+                      <BtnInputText
+                        PesquisaFiltro={PesquisaFiltro}
+                        setPesquisaFiltro={setPesquisaFiltro}
+                        Campo={"cavernName"}
+                        Opcoes={OpcoesFiltros.cavernName}
+                      />
+                    </div>
+                    <div className="relics-grid">
+                      {relics.slice(0, 4).map((type, index) => (
+                        <RelicsSttsForm
+                          key={type}
+                          type={type}
+                          relicData={relicStats[type]}
+                          setRelicStats={setRelicStats}
+                          image={OpcoesFiltros.cavernImage[index]}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="relics-section">
+                    <div className="inputtext-be">
+                      <BtnInputText
+                        PesquisaFiltro={PesquisaFiltro}
+                        setPesquisaFiltro={setPesquisaFiltro}
+                        Campo={"planarName"}
+                        Opcoes={OpcoesFiltros.planarName}
+                      />
+                    </div>
+                    <div className="relics-grid relics-grid--planar">
+                      {relics.slice(4, 6).map((type, index) => (
+                        <RelicsSttsForm
+                          key={type}
+                          type={type}
+                          relicData={relicStats[type]}
+                          setRelicStats={setRelicStats}
+                          image={OpcoesFiltros.planarImage[index]}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
     </>

@@ -1,7 +1,7 @@
 import "./LateralBar.css";
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
 import ModalLogout from "../Modals/Logout";
 
@@ -22,18 +22,13 @@ export default function LateralBar() {
   return (
     <>
       <div className="lateral-bar">
-        {/* Adicionar condições para caso o usuário esteja loggado*/}
-        {userLogged === null ? (
           <NavLink 
             to="/usuario">
-          <img
-            className="lateral-bar__user-icon"
-            src={userData?.icon_url || "icons/place_holder.png"}
-          />
+            <img
+              className="lateral-bar__user-icon"
+              src={userData?.icon_url || "icons/place_holder.png"}
+            />
           </NavLink>
-        ) : (
-          <img src={userIcon} />
-        )}
 
         <div className="lateral-bar__primary-icons">
           <div className="primary-icons__icon">

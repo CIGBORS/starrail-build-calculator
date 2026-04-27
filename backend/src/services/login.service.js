@@ -19,17 +19,28 @@ export async function getUsuarios(req, res) {
 async function criarTabelaSeNaoExistir() {
   try {
     await pool.query(`
-            CREATE TABLE IF NOT EXISTS usuarios (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(100) UNIQUE NOT NULL,
-                password VARCHAR(100) NOT NULL,
-                email VARCHAR(100) NOT NULL,
-                status VARCHAR(100) NOT NULL,
-                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                icon_id VARCHAR(20) DEFAULT '202006',
-                icon_url VARCHAR(255) DEFAULT 'icon/avatar/IconHead_202007.png'
-            );
-        `);
+      CREATE TABLE IF NOT EXISTS usuarios (
+          id SERIAL PRIMARY KEY,
+          username VARCHAR(100) UNIQUE NOT NULL,
+          password VARCHAR(100) NOT NULL,
+          email VARCHAR(100) NOT NULL,
+          status VARCHAR(100) NOT NULL,
+          data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          icon_id VARCHAR(20) DEFAULT '202006',
+          icon_url VARCHAR(255) DEFAULT 'icon/avatar/IconHead_202007.png'
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS sistema_logs (
+          id SERIAL PRIMARY KEY,
+          acao VARCHAR(50) NOT NULL,
+          descricao TEXT NOT NULL,
+          usuario_afetado VARCHAR(100),
+          data_log TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     console.log("Tabela 'usuarios' verificada/criada com sucesso!");
   } catch (error) {
     console.error("Erro ao verificar tabela de usuários:", error);

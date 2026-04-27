@@ -2,8 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import "./ImageCarousel.css";
 
 const images = [
-    "img/Honkai_Star_Rail.jpg",
-    "img/Honkai_Star_Rail.jpg"
+    "caroseul/1banner_4_2.png"
 ]
 
 export default function Imagecarousel() {

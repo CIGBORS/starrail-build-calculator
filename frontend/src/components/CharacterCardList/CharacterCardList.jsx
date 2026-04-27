@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { postApi } from "../../api/api";
-import CharacterCard from "../CharacterCard/CharacterCard";
+import CharacterCard from "../CharacterCard/CharacterCard.jsx";
 import "./CharacterCardList.css";
 
 export default function CharacterCardList({ Filtro, PesquisaFiltro }) {
