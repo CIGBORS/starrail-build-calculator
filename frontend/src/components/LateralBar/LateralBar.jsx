@@ -1,5 +1,7 @@
 import "./LateralBar.css";
 import { NavLink } from "react-router-dom";
+import { UserContext } from "../../context/UserContext.jsx";
+import { useContext, useEffect } from "react";
 
 export default function LateralBar({ userLogged = null }) {
   const userIcon = null;
@@ -10,15 +12,20 @@ export default function LateralBar({ userLogged = null }) {
     // Esse ferramenta, DEVE trazer o caminho
   }
 
+  const { userData } = useContext(UserContext);
+
   return (
     <>
       <div className="lateral-bar">
         {/* Adicionar condições para caso o usuário esteja loggado*/}
         {userLogged === null ? (
+          <NavLink 
+            to="/usuario">
           <img
             className="lateral-bar__user-icon"
-            src="icons/place_holder.png"
+            src={userData?.icon_url || "icons/place_holder.png"}
           />
+          </NavLink>
         ) : (
           <img src={userIcon} />
         )}

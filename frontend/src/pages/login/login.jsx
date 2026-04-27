@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useState, useContext} from "react";
 import "./login.css";
 import { useNavigate } from "react-router-dom";
 import bgImage from "../../../public/img/Honkai_Star_Rail.jpg";
 import { postApi } from "../../api/api.js";
+import { UserContext } from "../../context/UserContext.jsx";
 
 export default function Login() {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setUserData } = useContext(UserContext);
 
   async function handleLogin() {
     setError("");
@@ -27,6 +29,9 @@ export default function Login() {
       setError(response.error);
       return;
     }
+
+    const userData = response;
+    setUserData(userData);
 
     navigate("/");
   }

@@ -1,6 +1,8 @@
 import {
   login as loginService,
   register as registerService,
+  getUsuarios as getUsuariosService,
+  changeUser as changeUserService,
 } from "../services/login.service.js";
 import redis from "../../redis/redisClient.js";
 export async function login(req, res) {
@@ -31,6 +33,33 @@ export async function register(req, res) {
     return await registerService(req, res);
   } catch (error) {
     console.error("Erro no register controller:", error);
+    return res.status(500).json({ error: "Erro interno no servidor" });
+  }
+}
+
+export async function changeUser(req, res) {
+  const { username, password, email } = req.body;
+
+  if (!username || !email) {
+    return res
+      .status(400)
+      .json({ error: "Nome de usuário e e-mail são obrigatórios" });
+  }
+
+  try {
+    return await changeUserService(req, res);
+  } catch (error) {
+    console.error("Erro no changeUser controller:", error);
+    return res.status(500).json({ error: "Erro interno no servidor" });
+  }
+}
+
+
+export async function getUsuarios(req, res) {
+  try {
+    return await getUsuariosService(req, res);
+  } catch (error) {
+    console.error("Erro no getUsuarios controller:", error);
     return res.status(500).json({ error: "Erro interno no servidor" });
   }
 }
