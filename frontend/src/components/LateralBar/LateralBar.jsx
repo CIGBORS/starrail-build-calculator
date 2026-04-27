@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
 import ModalLogout from "../Modals/Logout";
+import placeHolder from "../../../public/icons/place_holder.png";
 
 export default function LateralBar() {
   const [showModal, setShowModal] = useState(false);
@@ -16,19 +17,21 @@ export default function LateralBar() {
   }
 
   const { userData } = useContext(UserContext);
+  console.log(userData)
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
   return (
     <>
       <div className="lateral-bar">
-          <NavLink 
-            to="/usuario">
-            <img
-              className="lateral-bar__user-icon"
-              src={userData?.icon_url || "icons/place_holder.png"}
-            />
-          </NavLink>
+        <NavLink
+          to="/usuario">
+          <img
+            className="lateral-bar__user-icon"
+            src={userData?.icon_url ? `/${userData.icon_url}` : placeHolder}
+            onError={(e) => { e.target.onerror = null; e.target.src = placeHolder; }}
+          />
+        </NavLink>
 
         <div className="lateral-bar__primary-icons">
           <div className="primary-icons__icon">
@@ -99,19 +102,19 @@ export default function LateralBar() {
         </div>
 
         <div className="lateral-bar__footer">
-          { 
+          {
             !userData ? (
-                ""
-              ) : (
-                <img 
-                  className="lateral-bar__icon" 
-                  onClick={handleOpenModal}
-                  src="icons/exit-icon.png" alt="Encerrar Sessão"
-                />
-              )
+              ""
+            ) : (
+              <img
+                className="lateral-bar__icon"
+                onClick={handleOpenModal}
+                src="icons/exit-icon.png" alt="Encerrar Sessão"
+              />
+            )
           }
 
-          <img  className="lateral-bar__icon" src="icons/information-icon.png" alt="Informações sobre o site"/>
+          <img className="lateral-bar__icon" src="icons/information-icon.png" alt="Informações sobre o site" />
         </div>
       </div>
 
