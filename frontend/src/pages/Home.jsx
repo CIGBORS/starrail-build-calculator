@@ -1,3 +1,6 @@
+import { useContext, useEffect } from "react";
+import LateralBar from "../components/LateralBar/LateralBar";
+import { UserContext } from "../context/UserContext.jsx";
 import HeaderAware from "../components/HeaderAware/HeaderAware.jsx";
 import LateralBar from "../components/LateralBar/LateralBar.jsx";
 import { useContext } from "react";

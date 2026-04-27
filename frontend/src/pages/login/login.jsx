@@ -1,9 +1,9 @@
-import { useState, useContext } from "react";
+import { useState, useContext} from "react";
 import "./login.css";
 import { useNavigate } from "react-router-dom";
 import bgImage from "../../../public/img/Honkai_Star_Rail.jpg";
 import { postApi } from "../../api/api.js";
-import { UserContext } from "../../context/UserContext.jsx"
+import { UserContext } from "../../context/UserContext.jsx";
 
 export default function Login() {
   const [user, setUser] = useState("");

@@ -1,6 +1,8 @@
 import pool from "../config/db.js";
 import { salvarLog } from "../../functions/log.js";
 import { countUsersLogin } from "../../redis/queues/loginQueue.js";
+import * as loginRepository from "../repository/login.repository.js";
+import { getAllAvatars } from "./starRail.service.js";
 
 export async function getUsuarios(req, res) {
   try {
@@ -23,7 +25,9 @@ async function criarTabelaSeNaoExistir() {
                 password VARCHAR(100) NOT NULL,
                 email VARCHAR(100) NOT NULL,
                 status VARCHAR(100) NOT NULL,
-                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                icon_id VARCHAR(20) DEFAULT '202006',
+                icon_url VARCHAR(255) DEFAULT 'icon/avatar/IconHead_202007.png'
             );
         `);
     console.log("Tabela 'usuarios' verificada/criada com sucesso!");
@@ -134,5 +138,48 @@ export async function register(req, res) {
     }
     console.error("Erro no registro:", error);
     return res.status(500).json({ error: "Erro de conexão com o banco" });
+  }
+}
+
+export async function changeUser(req, res) {
+  const { id } = req.params;
+  const { username, password, email, icon_id, icon_url } = req.body;
+
+  if (!username || !email) {
+    return res
+      .status(400)
+      .json({ error: "Nome de usuário e e-mail são obrigatórios" });
+  }
+  try {
+    let resultado;
+
+    if (password) {
+      resultado = await loginRepository.changeUser(req, res);
+    } else {
+      resultado = await loginRepository.changeUserWithoutPassword(req, res);
+    }
+
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    await salvarLog(
+      "ALTERACAO_USUARIO",
+      "Dados do usuário atualizados com sucesso",
+      username
+    );
+
+    return res.json(resultado.rows[0]);
+  } catch (error) {
+    if (error.code === "23505") {
+      return res
+        .status(400)
+        .json({ error: "Esse nome de usuário já está em uso!" });
+    }
+
+    // Log detalhado do erro
+    console.error("Erro ao atualizar usuário:", error, error.stack);
+    // Retorna detalhes do erro para facilitar debug
+    return res.status(500).json({ error: "Erro de conexão com o banco", details: error.message });
   }
 }

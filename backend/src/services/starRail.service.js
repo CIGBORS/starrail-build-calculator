@@ -5,7 +5,7 @@ import {
 } from "./utils/utilidades.service.js";
 
 // Esse link está relativo ao código do personagem
-const GITHUB_URL =
+export const GITHUB_URL =
   "https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/";
 
 async function fetchJson(endpoint) {
@@ -16,6 +16,19 @@ async function fetchJson(endpoint) {
 export async function getAllCharacters() {
   const characterData = await fetchJson("characters.json");
   return characterData;
+}
+
+export async function getAllAvatars() {
+  const avatarsData = await fetchJson("avatars.json");
+  return Object.fromEntries(
+    Object.entries(avatarsData).map(([key, avatar]) => [
+      key,
+      {
+        ...avatar,
+        icon_url: avatar.icon ? `${GITHUB_URL}${avatar.icon}` : null,
+      },
+    ]),
+  );
 }
 
 export async function getCharacterById(characterId) {

@@ -9,15 +9,15 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
 
     if (userData) {
-      localStorage.setItem("user", JSON.stringify(userData));
+      sessionStorage.setItem("user", JSON.stringify(userData));
     } else {
-      localStorage.removeItem("user");
+      sessionStorage.removeItem("user");
     }
   }, [userData]);
 
   const logout = () => {
     setUserData(null);
-    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
   };
 
   return (

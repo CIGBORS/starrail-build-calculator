@@ -6,6 +6,7 @@ import {
   getAllCharacters,
   getCharactersFilters as getCharFiltersServ,
   getAllCharactersCard as getCharactersCard,
+  getAllAvatars as getAllAvatarsServ,
   getLightConesFilters as getLCFiltersServ,
   getAllLightConesCard as getLCCardsServ,
   getRelicsFilters as getRelicsFiltersServ,
@@ -21,6 +22,11 @@ export async function getCharacters(req, res) {
   } else {
     res.json(allCharacters);
   }
+}
+
+export async function getAllAvatars(req, res) {
+  const allAvatars = await getAllAvatarsServ();
+  res.json(allAvatars);
 }
 
 export function getCharacter(req, res) {
