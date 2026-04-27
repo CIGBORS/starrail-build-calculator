@@ -1,8 +1,3 @@
-@font-face {
-    font-family: 'Star Rail';
-    src: url("fonts/RPG_KR.ttf") format("truetype");
-}
-
 .character-card__component {
     position: relative;
     display: flex;
