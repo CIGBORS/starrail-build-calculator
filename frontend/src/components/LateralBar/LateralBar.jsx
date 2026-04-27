@@ -28,8 +28,7 @@ export default function LateralBar() {
           to="/usuario">
           <img
             className="lateral-bar__user-icon"
-            src={userData?.icon_url ? `/${userData.icon_url}` : placeHolder}
-            onError={(e) => { e.target.onerror = null; e.target.src = placeHolder; }}
+            src={userData?.icon_url ? `${userData.icon_url}` : placeHolder}
           />
         </NavLink>
 
