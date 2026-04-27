@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getApi, postApi } from "../api/api";
 import BtnInputText from "../components/Filters/BtnInputText/BtnInputText";
-import BtnDropDown from "../components/Filters/BtnDropdown/BtnDropDown";
+import BtnDropdown from "../components/Filters/BtnDropdown/BtnDropdown";
 import { Stts } from "../../../shared/variables";
 
 import GeneralCard from "../components/CharacterCard/GeneralCard";

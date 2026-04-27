@@ -17,7 +17,7 @@ export default function Router() {
           <Route path="/login" element={<Login />} />
           <Route path="/registrar" element={<Register />} />
         </Routes>
-      <UserProvider>
+      </UserProvider>
     </BrowserRouter>
   );
 }

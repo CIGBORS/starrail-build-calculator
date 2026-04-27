@@ -193,6 +193,8 @@ html, body, #root {
   border: 1px solid #3a3c4d;
   border-radius: 10px;
   color: #e5e7eb;
+}
+
 html, body { 
   overflow-x: hidden;
   width: 100%;
