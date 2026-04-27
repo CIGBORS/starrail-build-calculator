@@ -5,3 +5,11 @@ CREATE TABLE IF NOT EXISTS sistema_logs (
     usuario_afetado VARCHAR(100),
     data_log TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE usuarios (
+	id SERIAL PRIMARY KEY,
+	username VARCHAR(100),
+	email VARCHAR(100),
+	status VARCHAR(100), 
+	data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)

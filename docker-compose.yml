@@ -1,6 +1,27 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: star_rail_database
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      POSTGRES_USER: ${POSTGRESQL_USER}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
+      POSTGRES_DB: ${POSTGRESQL_DB}
+    ports:
+      - "${POSTGRESQL_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRESQL_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
   frontend:
     build: ./frontend
+    init: true
     ports:
       - "5173:5173"
     depends_on:
@@ -14,7 +35,10 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - redis
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
     env_file:
       - ./backend/.env
 
@@ -28,3 +52,6 @@ services:
 
   redis:
     image: redis:7
+    
+volumes:
+  postgres_data:

@@ -168,6 +168,24 @@ http://localhost:5173
 
 ---
 
+## Rodando a ferramenta
+
+Toda vez que for atualizar o docker, será necessário pará-lo utilizando:
+
+```bash
+docker compose down
+```
+
+E logo em seguida, para aplicar as alterações feitas no código dos arquivos, será necessário utilizar:
+
+```bash
+docker compose up -d
+```
+
+Onde o `up -d` recria os container com a última configuração realizada.
+
+---
+
 ## Referências
 <!-- Adicionar conforme formos pesquisando sobre -->
 

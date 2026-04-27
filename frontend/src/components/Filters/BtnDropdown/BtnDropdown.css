@@ -35,14 +35,6 @@
   padding: 0.75rem;
 }
 
-.multiselect-filter__input {
-  background-color: #2a2c33;
-  border: 1px solid #3a3d45;
-  border-radius: 20px;
-  padding: 0.5rem 0.75rem;
-  color: #e5e7eb;
-}
-
 .multiselect-filter__list {
   background-color: #16171D;
 }
