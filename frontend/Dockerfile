@@ -1,13 +1,13 @@
 FROM node:20
 
-WORKDIR /app
+WORKDIR /app/frontend
 
-COPY package*.json ./
-
+COPY frontend/package*.json ./
 RUN npm install
 
-COPY . .
+COPY frontend/ ./
+COPY shared/ ../shared/
 
-EXPOSE 3000
+EXPOSE 5173
 
-CMD ["node", "src/server.js"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

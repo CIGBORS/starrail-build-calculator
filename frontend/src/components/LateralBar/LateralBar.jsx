@@ -1,10 +1,13 @@
 import "./LateralBar.css";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { UserContext } from "../../context/UserContext.jsx";
 import { useContext, useEffect } from "react";
+import { UserContext } from "../../context/UserContext";
+import ModalLogout from "../Modals/Logout";
 
-export default function LateralBar({ userLogged = null }) {
-  const userIcon = null;
+export default function LateralBar() {
+  const [showModal, setShowModal] = useState(false);
+
   // eslint-disable-next-line no-unused-vars
   function getUserIcon() {
     // Função para pegar o ícone do usuário que ele cadastrou
@@ -13,6 +16,8 @@ export default function LateralBar({ userLogged = null }) {
   }
 
   const { userData } = useContext(UserContext);
+  const handleOpenModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
 
   return (
     <>
@@ -75,16 +80,15 @@ export default function LateralBar({ userLogged = null }) {
             />
             {/*</NavLink>*/}
 
-            {/*<NavLink
+            <NavLink
               to="/build-creators"
               className={({ isActive }) => (isActive ? "nav-link-active" : "")}
-            >*/}
-            <img
-              className="lateral-bar__icon"
-              src="icons/inventory-icon.png"
-              onClick={() => alert("Em desenvolvimento")}
-            />
-            {/*</NavLink>*/}
+            >
+              <img
+                className="lateral-bar__icon"
+                src="icons/inventory-icon.png"
+              />
+            </NavLink>
 
             {/* <NavLink
               to="/general"
@@ -100,9 +104,27 @@ export default function LateralBar({ userLogged = null }) {
         </div>
 
         <div className="lateral-bar__footer">
-          <img src="icons/information-icon.png" />
+          { 
+            !userData ? (
+                ""
+              ) : (
+                <img 
+                  className="lateral-bar__icon" 
+                  onClick={handleOpenModal}
+                  src="icons/exit-icon.png" alt="Encerrar Sessão"
+                />
+              )
+          }
+
+          <img  className="lateral-bar__icon" src="icons/information-icon.png" alt="Informações sobre o site"/>
         </div>
       </div>
+
+      {
+        showModal && (
+          <ModalLogout onClose={handleCloseModal} />
+        )
+      }
     </>
   );
 }

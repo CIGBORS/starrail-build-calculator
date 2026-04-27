@@ -35,7 +35,26 @@ async function criarTabelaSeNaoExistir() {
     console.error("Erro ao verificar tabela de usuários:", error);
   }
 }
+
 criarTabelaSeNaoExistir();
+
+// Essa é uma função mais generalizada, para fazer requisições de todos os tipos
+export async function registerLog(req, res) {
+  const { action, description, userId } = req.body;
+
+  try {
+    await salvarLog(
+      action,
+      description,
+      userId
+    );
+
+    return res.status(200).json({ sucess: "Registro salvo com sucesso" });
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ error: "Erro de contato interno com o servidor" })
+  }
+}
 
 export async function login(req, res) {
   const { username, password } = req.body;

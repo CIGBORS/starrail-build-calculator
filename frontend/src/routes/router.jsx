@@ -4,6 +4,7 @@ import Characters from "../pages/Characters.jsx";
 import Login from "../pages/login/login.jsx";
 import Register from "../pages/login/registar.jsx";
 import Usuario from "../pages/usuario.jsx";
+import BuildCreators from "../pages/BuildCreators.jsx";
 import { UserProvider } from "../context/UserContext.jsx";
 
 export default function Router() {
@@ -13,6 +14,7 @@ export default function Router() {
                 <Routes>
                     <Route path="/" element={<Home/>}/>
                     <Route path="/characters" element={<Characters/>}/>
+                    <Route path="/build-creators" element={<BuildCreators />} />
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/registrar" element={<Register/>}/>
                     <Route path="/usuario" element={<Usuario/>}/>

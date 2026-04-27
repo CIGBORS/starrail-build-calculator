@@ -30,6 +30,7 @@ export default function Login() {
       return;
     }
 
+    // USERCONTEXT: aqui estou setando o valor do user context.
     const userData = response;
     setUserData(userData);
 

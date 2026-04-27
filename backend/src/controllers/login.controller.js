@@ -3,8 +3,26 @@ import {
   register as registerService,
   getUsuarios as getUsuariosService,
   changeUser as changeUserService,
+  registerLog
 } from "../services/login.service.js";
 import redis from "../../redis/redisClient.js";
+
+export async function registerNewLog(req, res){
+  const { action, description, userId } = req.body;
+
+  try {
+    if(!action && !description && !userId) {
+      return res.status(400).json({ error: "Todos os campos devem estar preenchidos" });
+    } else {
+      await registerLog(req, res);
+      
+      return res.status(200).json({ success: "Sucesso no cadastro do log" });
+    }
+  } catch {
+    return res.status(500).json({ error: "Erro interno no servidor" });
+  }
+}
+
 export async function login(req, res) {
   const { username, password } = req.body;
 

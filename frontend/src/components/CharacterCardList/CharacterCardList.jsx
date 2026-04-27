@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getApi, postApi } from "../../api/api";
+import { postApi } from "../../api/api";
 import CharacterCard from "../CharacterCard/CharacterCard";
 import "./CharacterCardList.css";
 

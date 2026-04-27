@@ -43,7 +43,6 @@ const BtnDropDown = ({
         }),
         token: { className: 'multiselect-filter__token' },
         clearIcon: { className: 'multiselect-filter__clear' },
-        filterInput: { className: 'multiselect-filter__input' }
       }}
       panelClassName="multiselect-filter__panel"
     />
