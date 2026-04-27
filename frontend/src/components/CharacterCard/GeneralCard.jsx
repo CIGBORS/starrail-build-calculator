@@ -1,39 +1,46 @@
 import React from "react";
 import "./CharacterCard.css";
 
-export default function CharacterCard({
+function StarRating({ rarity }) {
+  const count = parseInt(rarity, 10) || 5;
+  return (
+    <div className="lc-card__stars">
+      {Array.from({ length: count }).map((_, i) => (
+        <span key={i} className="lc-card__star">★</span>
+      ))}
+    </div>
+  );
+}
+
+export default function GeneralCard({
   itemName,
   itemImage,
   itemRarity,
   itemIcon1,
   itemIcon2,
 }) {
+  const rarity = parseInt(itemRarity, 10) || 5;
+
   return (
-    <>
-      <div className={`character-card__component card-${itemRarity}`}>
-        <img src={itemImage} className="character-image" alt={itemName} />
-
-        <div className="character-card__header">
-          <img
-            className="character-card__icon"
-            src={itemIcon1.icon}
-            alt={itemIcon1.name}
-          />
-          {itemIcon2 === undefined ? (
-            []
-          ) : (
-            <img
-              className="character-card__icon"
-              src={itemIcon2.icon}
-              alt={itemIcon2.name}
-            />
-          )}
-        </div>
-
-        <div className="character-card__footer">
-          <h1 className="character-card__name">{itemName}</h1>
-        </div>
+    <div className={`lc-card card-${rarity}`}>
+      {/* Left: image */}
+      <div className="lc-card__image-wrap">
+        <img src={itemImage} className="lc-card__image" alt={itemName} />
       </div>
-    </>
+
+      {/* Right: info */}
+      <div className="lc-card__info">
+        {/* Path icon */}
+        {itemIcon1 && (
+          <img
+            className="lc-card__path-icon"
+            src={typeof itemIcon1 === "string" ? itemIcon1 : itemIcon1?.icon}
+            alt="path"
+          />
+        )}
+        <p className="lc-card__name">{itemName}</p>
+        <StarRating rarity={rarity} />
+      </div>
+    </div>
   );
 }

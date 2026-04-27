@@ -10,8 +10,9 @@ import CharacterCardList from "../components/CharacterCardList/CharacterCardList
 import LateralBar from "../components/LateralBar/LateralBar";
 
 import { Card } from "primereact/card";
-import RelicsCardTable from "../components/RelicsCardTable/RelicsCardTable";
+import RelicsSttsForm from "../components/RelicsSttsForm/RelicsSttsForm";
 import StatsCard from "../components/StatsCard/StatsCard";
+import { applyPassiveConversions } from "../utils/characterPassives";
 
 export default function BuildCreators() {
   const [finalStats, setFinalStats] = useState({
@@ -127,7 +128,7 @@ export default function BuildCreators() {
         const charData = await postApi("/github/characters/filters", {});
         const lcData = await postApi("/github/light-cones/filters", {});
         const relicsData = await postApi("/github/relics/filters", {});
-        
+
         setOpcoesFiltros((prev) => ({
           ...prev,
           charName: charData && charData.name ? charData.name : [],
@@ -155,7 +156,11 @@ export default function BuildCreators() {
               ...prev,
               charImage: data[0].preview,
             }));
-            setCharBaseStats(data[0].stats);
+            setCharBaseStats({
+              ...data[0].stats,
+              trace_stats: data[0].trace_stats,
+              charId: data[0].id,
+            });
             // Atualiza também o Filtro.charName para consistência
             setFiltro((prev) => ({
               ...prev,
@@ -269,10 +274,10 @@ export default function BuildCreators() {
 
     let totals = {
       flat: { hp: 0, atk: 0, def: 0, spd: 0 },
-      percent: { 
-        hp: 0, atk: 0, def: 0, spd: 0, 
-        crit_rate: 0, crit_dmg: 0, break: 0, 
-        effect_hit: 0, effect_res: 0, energy: 0, heal: 0, dmg: 0 
+      percent: {
+        hp: 0, atk: 0, def: 0, spd: 0,
+        crit_rate: 0, crit_dmg: 0, break: 0,
+        effect_hit: 0, effect_res: 0, energy: 0, heal: 0, dmg: 0
       }
     };
 
@@ -327,6 +332,20 @@ export default function BuildCreators() {
       });
     }
 
+    if (charBaseStats.trace_stats) {
+      charBaseStats.trace_stats.forEach((prop) => {
+        const mapped = propMap[prop.type];
+        if (mapped) {
+          const valToAdd = mapped.percent ? prop.value * 100 : prop.value;
+          if (mapped.percent) {
+            totals.percent[mapped.field] += valToAdd;
+          } else {
+            totals.flat[mapped.field] += valToAdd;
+          }
+        }
+      });
+    }
+
     if (cavernData && cavernData.properties) {
       cavernData.properties.forEach((propList) => {
         propList.forEach((prop) => {
@@ -359,23 +378,44 @@ export default function BuildCreators() {
       });
     }
 
-    const final = {
+    // Calcula os stats finais como números puros (antes do toFixed)
+    // para que applyPassiveConversions possa operar com precisão
+    const rawFinal = {
       hp: Math.floor(baseHp * (1 + totals.percent.hp / 100) + totals.flat.hp),
       atk: Math.floor(baseAtk * (1 + totals.percent.atk / 100) + totals.flat.atk),
       def: Math.floor(baseDef * (1 + totals.percent.def / 100) + totals.flat.def),
-      spd: (baseSpd * (1 + totals.percent.spd / 100) + totals.flat.spd).toFixed(1),
-      crit_rate: (baseCritRate * 100 + totals.percent.crit_rate).toFixed(1),
-      crit_dmg: (baseCritDmg * 100 + totals.percent.crit_dmg).toFixed(1),
-      break: totals.percent.break.toFixed(1),
-      effect_hit: totals.percent.effect_hit.toFixed(1),
-      effect_res: totals.percent.effect_res.toFixed(1),
-      energy: (100 + totals.percent.energy).toFixed(1),
-      heal: totals.percent.heal.toFixed(1),
-      dmg: totals.percent.dmg.toFixed(1)
+      spd: baseSpd * (1 + totals.percent.spd / 100) + totals.flat.spd,
+      crit_rate: baseCritRate * 100 + totals.percent.crit_rate,
+      crit_dmg: baseCritDmg * 100 + totals.percent.crit_dmg,
+      break: totals.percent.break,
+      effect_hit: totals.percent.effect_hit,
+      effect_res: totals.percent.effect_res,
+      energy: 100 + totals.percent.energy,
+      heal: totals.percent.heal,
+      dmg: totals.percent.dmg,
+    };
+
+    // Aplica as passivas de conversão de status do personagem (ex: ATK -> Break da Vaga-lume)
+    const withPassives = applyPassiveConversions(rawFinal, charBaseStats.charId);
+
+    // Formata os valores finais para exibição
+    const final = {
+      hp: withPassives.hp,
+      atk: withPassives.atk,
+      def: withPassives.def,
+      spd: withPassives.spd.toFixed(1),
+      crit_rate: withPassives.crit_rate.toFixed(1),
+      crit_dmg: withPassives.crit_dmg.toFixed(1),
+      break: withPassives.break.toFixed(1),
+      effect_hit: withPassives.effect_hit.toFixed(1),
+      effect_res: withPassives.effect_res.toFixed(1),
+      energy: withPassives.energy.toFixed(1),
+      heal: withPassives.heal.toFixed(1),
+      dmg: withPassives.dmg.toFixed(1),
     };
 
     setFinalStats(final);
-  }, [charBaseStats, lcBaseStats, relicStats]);
+  }, [charBaseStats, lcBaseStats, lcInfo, cavernData, planarData, relicStats]);
   return (
     <>
       <LateralBar />
@@ -416,31 +456,53 @@ export default function BuildCreators() {
         </div>
 
         <div className="right-side">
-          <RelicsCardTable
-            title="Relíquias das Cavernas (4 Peças)"
-            sFilterMain={PesquisaFiltro}
-            setFilterMain={setPesquisaFiltro}
-            mainKey={"cavernName"}
-            imageKey={"cavernImage"}
-            mainFilterOptions={OpcoesFiltros}
-            relicsUserStatis={relicStats}
-            setUserRelicStats={setRelicStats}
-            relicstypes={relics.slice(0, 4)}
-          />
+          <Card title="Relíquias e Ornamentos" className="relics-container">
+            <div className="relics-wrapper">
+              <div className="relics-section">
+                <div className="inputtext-be">
+                  <BtnInputText
+                    PesquisaFiltro={PesquisaFiltro}
+                    setPesquisaFiltro={setPesquisaFiltro}
+                    Campo={"cavernName"}
+                    Opcoes={OpcoesFiltros.cavernName}
+                  />
+                </div>
+                <div className="relics-grid">
+                  {relics.slice(0, 4).map((type, index) => (
+                    <RelicsSttsForm
+                      key={type}
+                      type={type}
+                      relicData={relicStats[type]}
+                      setRelicStats={setRelicStats}
+                      image={OpcoesFiltros.cavernImage[index]}
+                    />
+                  ))}
+                </div>
+              </div>
 
-          <div style={{ marginTop: "20px" }}>
-            <RelicsCardTable
-              title="Ornamentos Planos (2 Peças)"
-              sFilterMain={PesquisaFiltro}
-              setFilterMain={setPesquisaFiltro}
-              mainKey={"planarName"}
-              imageKey={"planarImage"}
-              mainFilterOptions={OpcoesFiltros}
-              relicsUserStatis={relicStats}
-              setUserRelicStats={setRelicStats}
-              relicstypes={relics.slice(4, 6)}
-            />
-          </div>
+              <div className="relics-section">
+                <div className="inputtext-be">
+                  <BtnInputText
+                    PesquisaFiltro={PesquisaFiltro}
+                    setPesquisaFiltro={setPesquisaFiltro}
+                    Campo={"planarName"}
+                    Opcoes={OpcoesFiltros.planarName}
+                  />
+                </div>
+                <div className="relics-grid relics-grid--planar">
+                  {relics.slice(4, 6).map((type, index) => (
+                    <RelicsSttsForm
+                      key={type}
+                      type={type}
+                      relicData={relicStats[type]}
+                      setRelicStats={setRelicStats}
+                      image={OpcoesFiltros.planarImage[index]}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </>

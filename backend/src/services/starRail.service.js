@@ -208,6 +208,7 @@ export async function getAllCharactersCard(filters) {
   const elementsData = await fetchJson("elements.json");
   const pathsData = await fetchJson("paths.json");
   const promotionsData = await fetchJson("character_promotions.json");
+  const skillTreeData = await fetchJson("character_skill_trees.json");
 
   const charactersArray = Object.values(charactersData);
 
@@ -254,6 +255,23 @@ export async function getAllCharactersCard(filters) {
       };
     }
 
+    let trace_stats = [];
+    if (character.skill_trees) {
+      const uniqueNodes = new Map();
+      character.skill_trees.forEach(treeId => {
+        const node = skillTreeData[treeId];
+        if (node && node.levels && node.levels.length > 0) {
+          const props = node.levels[0].properties;
+          if (props && props.length > 0) {
+            uniqueNodes.set(node.anchor, props);
+          }
+        }
+      });
+      uniqueNodes.forEach(props => {
+        trace_stats.push(...props);
+      });
+    }
+
     return {
       id: character.id,
       name: FormatNomesPersonagens(character, pathsData),
@@ -268,6 +286,7 @@ export async function getAllCharactersCard(filters) {
         icon: `${GITHUB_URL}${pathsData[character.path].icon}`,
       },
       stats,
+      trace_stats,
     };
   });
 }
@@ -375,11 +394,19 @@ export async function getAllRelicsCard(filters) {
 
   return filtered.map((r) => {
     const icon = `${GITHUB_URL}${r.icon}`;
+    const basePath = icon.replace('.png', '');
     return {
       id: r.id,
       name: r.name,
       icon: icon,
-      icons: [icon, icon, icon, icon, icon, icon], // Array de 6 ícones iguais para prevenir bugs no frontend
+      icons: [
+        `${basePath}_0.png`,
+        `${basePath}_1.png`,
+        `${basePath}_2.png`,
+        `${basePath}_3.png`,
+        `${basePath}_0.png`,
+        `${basePath}_1.png`,
+      ],
       desc: r.desc,
       properties: r.properties,
     };

@@ -8,9 +8,9 @@
   padding: 0px;
   gap: 0px;
   font-family: "Star Rail", sans-serif;
+  box-sizing: border-box;
 }
 
-/* Mateus do futuro e companhia, esse código reseta a margem */
 html,
 body,
 #root {
@@ -39,36 +39,27 @@ body,
   align-items: center;
 }
 
+/* ── Build Editor ──────────────────────────────────────────── */
 .build-editor-main {
   display: flex;
-  gap: 30px;
+  gap: 20px;
   align-items: flex-start;
-  padding: 20px;
+  padding: 16px 16px 16px 116px; /* offset LateralBar 100px */
+  min-height: 100vh;
+  background-color: #202128;
 }
 
 .left-side {
-  width: 35%;
+  width: 300px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .right-side {
-  width: 65%;
-}
-
-.build-editor {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-
-  margin-left: 90px;
-  height: 100%;
-}
-
-.build-editor .inputtext-be {
-  margin-bottom: 10px;
-  width: 400px;
+  flex: 1;
+  min-width: 0;
 }
 
 .build-editor_content {
@@ -78,26 +69,144 @@ body,
 }
 
 .character-preview {
-  width: 150px;
-  height: 400px;
-
+  width: 100%;
+  max-height: 320px;
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  overflow: hidden;
+  border-radius: 12px;
 }
+
 .character-preview img {
-  max-height: 100%;
+  max-height: 320px;
   max-width: 100%;
   object-fit: contain;
 }
 
+/* ── Relic form (base, complementado por RelicsSttsForm.css) */
 .relic-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
 .stat-row {
   display: flex;
-  gap: 10px;
+  gap: 6px;
+}
+
+/* ── Relics container ────────────────────────────────────────── */
+.relics-wrapper {
+  display: flex;
+  gap: 20px;
+}
+
+.relics-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.relics-section:first-child {
+  flex: 2;
+}
+
+.relics-section:last-child {
+  flex: 1;
+}
+
+.relics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.relics-section:last-child .relics-grid,
+.relics-grid--planar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Input text search ───────────────────────────────────────── */
+.inputtext-be {
+  width: 100%;
+}
+
+.relics-section .inputtext-be {
+  margin-bottom: 10px;
+}
+
+/* ── PrimeReact Card override ─────────────────────────────── */
+.p-card {
+  background: rgba(26, 27, 36, 0.92) !important;
+  border: 1px solid #3a3c4d !important;
+  border-radius: 16px !important;
+  color: #e5e7eb !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.p-card .p-card-title {
+  color: #c9aa71 !important;
+  font-size: 0.85rem !important;
+  font-family: "Star Rail", sans-serif !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid rgba(201, 170, 113, 0.2) !important;
+  margin-bottom: 12px !important;
+}
+
+.p-card .p-card-body {
+  padding: 12px 14px !important;
+}
+
+.p-card .p-card-content {
+  padding: 0 !important;
+}
+
+/* ── PrimeReact Dropdown override ────────────────────────── */
+.p-dropdown {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid #3a3c4d !important;
+  border-radius: 6px !important;
+}
+
+.p-dropdown:not(.p-disabled).p-focus {
+  box-shadow: 0 0 0 2px rgba(201, 170, 113, 0.25) !important;
+  border-color: #c9aa71 !important;
+}
+
+.p-dropdown .p-dropdown-label {
+  color: #c9c5d8 !important;
+  font-size: 10px !important;
+  font-family: "Star Rail", sans-serif !important;
+}
+
+.p-dropdown .p-dropdown-trigger {
+  color: #6b6d80 !important;
+  width: 1.8rem !important;
+}
+
+/* ── PrimeReact InputNumber override ────────────────────── */
+.p-inputnumber .p-inputtext {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid #3a3c4d !important;
+  border-radius: 6px !important;
+  color: #e8e0cc !important;
+  font-family: "Star Rail", sans-serif !important;
+}
+
+.p-inputnumber .p-inputtext:focus {
+  box-shadow: 0 0 0 2px rgba(201, 170, 113, 0.25) !important;
+  border-color: #c9aa71 !important;
+}
+
+/* ── AutoComplete override ────────────────────────────────── */
+.autocomplete-filter {
+  width: 100%;
+  max-width: 100%;
+  background-color: #1a1b24;
+  border: 1px solid #3a3c4d;
+  border-radius: 10px;
+  color: #e5e7eb;
 }
