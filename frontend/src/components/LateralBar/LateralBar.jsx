@@ -79,16 +79,15 @@ export default function LateralBar() {
             />
             {/*</NavLink>*/}
 
-            {/*<NavLink
+            <NavLink
               to="/build-creators"
               className={({ isActive }) => (isActive ? "nav-link-active" : "")}
-            >*/}
-            <img
-              className="lateral-bar__icon"
-              src="icons/inventory-icon.png"
-              onClick={() => alert("Em desenvolvimento")}
-            />
-            {/*</NavLink>*/}
+            >
+              <img
+                className="lateral-bar__icon"
+                src="icons/inventory-icon.png"
+              />
+            </NavLink>
 
             {/* <NavLink
               to="/general"

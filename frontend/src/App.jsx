@@ -1,7 +1,7 @@
-import Router from "./routes/router"
+import Router from "./routes/router.jsx";
 
 function App() {
-    return <Router/>
+  return <Router />;
 }
 
-export default App
+export default App;
