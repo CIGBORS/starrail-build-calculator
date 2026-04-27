@@ -1,0 +1,26 @@
+.header-aware {
+    position: relative;
+    z-index: 1;
+    font-family: 'Star Rail';
+    color: white;
+    background-color: #16171D66;
+    padding: 10px;
+    width: 100%;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-aware a {
+    color: inherit;
+}
+
+.header-text {
+    max-width: 600px;
+    text-align: center;
+}
+
+.header-aware .yellow {
+    color: #F0D98D;
+}

@@ -2,7 +2,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export async function getApi(path) {
   const res = await fetch(`${API_URL}${path}`);
-  console.log(res);
+
   return res.json();
 }
 
@@ -15,6 +15,5 @@ export async function postApi(path, body) {
     body: JSON.stringify(body),
   });
 
-  console.log(res);
   return res.json();
 }

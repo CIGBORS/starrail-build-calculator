@@ -1,8 +1,13 @@
 import "./LateralBar.css";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../../context/UserContext";
+import ModalLogout from "../Modals/Logout";
 
-export default function LateralBar({ userLogged = null }) {
-  const userIcon = null;
+export default function LateralBar() {
+  const [showModal, setShowModal] = useState(false);
+
   // eslint-disable-next-line no-unused-vars
   function getUserIcon() {
     // Função para pegar o ícone do usuário que ele cadastrou
@@ -10,18 +15,24 @@ export default function LateralBar({ userLogged = null }) {
     // Esse ferramenta, DEVE trazer o caminho
   }
 
+  const { userData } = useContext(UserContext);
+  const handleOpenModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+
   return (
     <>
       <div className="lateral-bar">
-        {/* Adicionar condições para caso o usuário esteja loggado*/}
-        {userLogged === null ? (
-          <img
-            className="lateral-bar__user-icon"
-            src="icons/place_holder.png"
-          />
-        ) : (
-          <img src={userIcon} />
-        )}
+
+        { 
+          !userData ? (
+            <img
+              className="lateral-bar__user-icon"
+              src="icons/place_holder.png"
+            />
+          ) : (
+            <img className="lateral-bar__user-icon" src="icons/place_holder.png" />
+          )
+        }
 
         <div className="lateral-bar__primary-icons">
           <div className="primary-icons__icon">
@@ -92,9 +103,27 @@ export default function LateralBar({ userLogged = null }) {
         </div>
 
         <div className="lateral-bar__footer">
-          <img src="icons/information-icon.png" />
+          { 
+            !userData ? (
+                ""
+              ) : (
+                <img 
+                  className="lateral-bar__icon" 
+                  onClick={handleOpenModal}
+                  src="icons/exit-icon.png" alt="Encerrar Sessão"
+                />
+              )
+          }
+
+          <img  className="lateral-bar__icon" src="icons/information-icon.png" alt="Informações sobre o site"/>
         </div>
       </div>
+
+      {
+        showModal && (
+          <ModalLogout onClose={handleCloseModal} />
+        )
+      }
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getApi, postApi } from "../api/api";
-import BtnInputText from "../components/Filters/BtnInputText/BtnInputText";
-import BtnDropDown from "../components/Filters/BtnDropdown/BtnDropDown";
+import { postApi } from "../api/api";
+import BtnInputText from "../components/Filters/BtnInputText/BtnInputText.jsx";
+import BtnDropdown from "../components/Filters/BtnDropdown/BtnDropdown.jsx";
 
 import CharacterCardList from "../components/CharacterCardList/CharacterCardList";
 import LateralBar from "../components/LateralBar/LateralBar";
@@ -13,6 +13,7 @@ export default function Characters() {
     path: [],
     element: [],
   });
+  
   // Adicionado o código para carregar os dados antes da visualização, lan ting me ajudo
   const [Filtro, setFiltro] = useState({
     name: [],
@@ -52,45 +53,47 @@ export default function Characters() {
 
   return (
     <>
-      <LateralBar />
-      <div className="characters-content">
-        <div className="characters-content__header">
-          <BtnInputText
-            PesquisaFiltro={PesquisaFiltro}
-            setPesquisaFiltro={setPesquisaFiltro}
-            Campo={"name"}
-            Opcoes={OpcoesFiltros.name}
-          />
+      <div className="characters-page">
+        <LateralBar />
+        <main className="characters-main-content">
+          <div className="characters-content__header">
+            <BtnInputText
+              PesquisaFiltro={PesquisaFiltro}
+              setPesquisaFiltro={setPesquisaFiltro}
+              Campo={"name"}
+              Opcoes={OpcoesFiltros.name}
+            />
 
-          <BtnDropDown
-            Opcoes={OpcoesFiltros.rarity}
-            Filtro={Filtro}
-            setFiltro={setFiltro}
-            PesquisaFiltro={PesquisaFiltro}
-            setPesquisaFiltro={setPesquisaFiltro}
-            Campo={"rarity"}
-          />
+            <BtnDropdown
+              Opcoes={OpcoesFiltros.rarity}
+              Filtro={Filtro}
+              setFiltro={setFiltro}
+              PesquisaFiltro={PesquisaFiltro}
+              setPesquisaFiltro={setPesquisaFiltro}
+              Campo={"rarity"}
+            />
 
-          <BtnDropDown
-            Opcoes={OpcoesFiltros.path}
-            Filtro={Filtro}
-            setFiltro={setFiltro}
-            PesquisaFiltro={PesquisaFiltro}
-            setPesquisaFiltro={setPesquisaFiltro}
-            Campo={"path"}
-          />
-          
-          <BtnDropDown
-            Opcoes={OpcoesFiltros.element}
-            Filtro={Filtro}
-            setFiltro={setFiltro}
-            PesquisaFiltro={PesquisaFiltro}
-            setPesquisaFiltro={setPesquisaFiltro}
-            Campo={"element"}
-          />
-        </div>
+            <BtnDropdown
+              Opcoes={OpcoesFiltros.path}
+              Filtro={Filtro}
+              setFiltro={setFiltro}
+              PesquisaFiltro={PesquisaFiltro}
+              setPesquisaFiltro={setPesquisaFiltro}
+              Campo={"path"}
+            />
+            
+            <BtnDropdown
+              Opcoes={OpcoesFiltros.element}
+              Filtro={Filtro}
+              setFiltro={setFiltro}
+              PesquisaFiltro={PesquisaFiltro}
+              setPesquisaFiltro={setPesquisaFiltro}
+              Campo={"element"}
+            />
+          </div>
 
-        <CharacterCardList Filtro={Filtro} PesquisaFiltro={PesquisaFiltro} />
+          <CharacterCardList Filtro={Filtro} PesquisaFiltro={PesquisaFiltro} />
+        </main>
       </div>
     </>
   );

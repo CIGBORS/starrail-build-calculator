@@ -2,7 +2,18 @@ import pool from "../config/db.js";
 import { salvarLog } from "../../functions/log.js";
 import { countUsersLogin } from "../../redis/queues/loginQueue.js";
 
-// Essa função roda quando o servidor sobe e já cria a tabela no banco automaticamente caso você não tenha criado!
+export async function getUsuarios(req, res) {
+  try {
+    const resultado = await pool.query(
+      "SELECT id, username, email, status, data_criacao FROM usuarios ORDER BY id"
+    );
+    
+    return res.json(resultado.rows);
+  } catch (error) {
+    console.error("Erro ao buscar usuários:", error);
+    return res.status(500).json({ error: "Erro ao buscar usuários" });
+  }
+}
 async function criarTabelaSeNaoExistir() {
   try {
     await pool.query(`
@@ -20,7 +31,26 @@ async function criarTabelaSeNaoExistir() {
     console.error("Erro ao verificar tabela de usuários:", error);
   }
 }
+
 criarTabelaSeNaoExistir();
+
+// Essa é uma função mais generalizada, para fazer requisições de todos os tipos
+export async function registerLog(req, res) {
+  const { action, description, userId } = req.body;
+
+  try {
+    await salvarLog(
+      action,
+      description,
+      userId
+    );
+
+    return res.status(200).json({ sucess: "Registro salvo com sucesso" });
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ error: "Erro de contato interno com o servidor" })
+  }
+}
 
 export async function login(req, res) {
   const { username, password } = req.body;
@@ -62,8 +92,9 @@ export async function login(req, res) {
       username,
       type: "login",
     });
-    return res.json({ message: "Login bem-sucedido" });
-  } catch (error) {
+    const { password: _, ...usuarioSemSenha } = usuarioAchado;
+
+    return res.json(usuarioSemSenha);  } catch (error) {
     console.error("Erro no login:", error);
     return res.status(500).json({ error: "Erro de conexão com o banco" });
   }
