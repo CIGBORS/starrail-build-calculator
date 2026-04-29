@@ -93,10 +93,10 @@ export default function BuildCreators() {
 
   const [OpcoesFiltros, setOpcoesFiltros] = useState({
     charName: [],
-    charImage: "https://upload.wikimedia.org/wikipedia/en/8/86/Firefly_HSR.png",
+    charImage: "https://static.wikia.nocookie.net/houkai-star-rail/images/7/77/Sticker_PPG_16_March_7th_02.png/revision/latest?cb=20240913030332",
     lcName: [],
     lcImage:
-      "https://starrail.honeyhunterworld.com/img/item/dazzled-by-a-flowery-world-item_icon_thumbnail_large.webp",
+      "https://static.wikia.nocookie.net/houkai-star-rail/images/e/ea/Icon_Light_Cone.png/revision/latest?cb=20240130190656",
     cavernName: [],
     planarName: [],
     cavernImage: ["", "", "", ""],

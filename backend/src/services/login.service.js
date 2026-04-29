@@ -9,7 +9,7 @@ export async function getUsuarios(req, res) {
     const resultado = await pool.query(
       "SELECT id, username, email, status, data_criacao FROM usuarios ORDER BY id"
     );
-    
+
     return res.json(resultado.rows);
   } catch (error) {
     console.error("Erro ao buscar usuários:", error);
@@ -27,8 +27,17 @@ async function criarTabelaSeNaoExistir() {
           status VARCHAR(100) NOT NULL,
           data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           icon_id VARCHAR(20) DEFAULT '202006',
-          icon_url VARCHAR(255) DEFAULT 'icon/avatar/IconHead_202007.png'
+          icon_url VARCHAR(255) DEFAULT 'icons/place_holder.png'
       );
+    `);
+
+    await pool.query(`
+      ALTER TABLE usuarios 
+      ADD COLUMN IF NOT EXISTS email VARCHAR(100) NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS status VARCHAR(100) NOT NULL DEFAULT 'ativo',
+      ADD COLUMN IF NOT EXISTS data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      ADD COLUMN IF NOT EXISTS icon_id VARCHAR(20) DEFAULT '202006',
+      ADD COLUMN IF NOT EXISTS icon_url VARCHAR(255) DEFAULT 'icons/place_holder.png';
     `);
 
     await pool.query(`
@@ -41,9 +50,9 @@ async function criarTabelaSeNaoExistir() {
       );
     `);
 
-    console.log("Tabela 'usuarios' verificada/criada com sucesso!");
+    console.log("Tabelas verificadas/atualizadas com sucesso!");
   } catch (error) {
-    console.error("Erro ao verificar tabela de usuários:", error);
+    console.error("Erro ao verificar/atualizar tabelas do banco:", error);
   }
 }
 
@@ -109,7 +118,8 @@ export async function login(req, res) {
     });
     const { password: _, ...usuarioSemSenha } = usuarioAchado;
 
-    return res.json(usuarioSemSenha);  } catch (error) {
+    return res.json(usuarioSemSenha);
+  } catch (error) {
     console.error("Erro no login:", error);
     return res.status(500).json({ error: "Erro de conexão com o banco" });
   }
