@@ -20,6 +20,22 @@
   display: block;
 }
 
+.carousel-caption {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  text-align: center;
+  padding: 12px 16px;
+  border-radius: 8px 8px 0 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
 .carousel-arrow {
   position: absolute;
   top: 50%;

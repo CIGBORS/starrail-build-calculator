@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import "./ImageCarousel.css";
 
 const images = [
-    "caroseul/1banner_4_2.png"
+    "caroseul/banner_1.png"
 ]
 
 export default function Imagecarousel() {
@@ -41,6 +41,10 @@ export default function Imagecarousel() {
         <div className="carousel-container">
             <div className="carousel-slide">
                 <img src={images[currentIndex]} />
+
+                <div className="carousel-caption">
+                    Uma nova personagem chegou! Cheque o que está rolando e quais builds o pessoal está fazendo!
+                </div>
             </div>
 
             <button
