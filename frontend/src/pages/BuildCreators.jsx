@@ -18,7 +18,6 @@ export default function BuildCreators() {
     hp: "{X}", atk: "{X}", def: "{X}", spd: "{X}",
     crit_rate: "{X}", crit_dmg: "{X}", break: "{X}",
     effect_hit: "{X}", effect_res: "{X}", energy: "{X}", heal: "{X}",
-    aggro: "{X}",
     dmg_physical: "{X}", dmg_fire: "{X}", dmg_ice: "{X}",
     dmg_lightning: "{X}", dmg_wind: "{X}", dmg_quantum: "{X}",
     dmg_imaginary: "{X}", dmg_elation: "{X}"

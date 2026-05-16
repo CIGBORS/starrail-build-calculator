@@ -1,6 +1,97 @@
 import { getAllCharactersCard, getAllLightConesCard, getAllRelicsCard } from "./starRail.service.js";
 import { applyPassiveConversions } from "../../../shared/characterPassives.js";
 import { Stts } from "../../../shared/variables.js";
+import * as FuncStatus from "../utils/FuncStatus.js";
+
+function calculateSubstatsTotals(relicStats, lcInfo, charBaseStats, cavernData, planarData) {
+  let totals = {
+    flat: { hp: 0, atk: 0, def: 0, spd: 0 },
+    percent: {
+      hp: 0, atk: 0, def: 0, spd: 0,
+      crit_rate: 0, crit_dmg: 0, break: 0,
+      effect_hit: 0, effect_res: 0, energy: 0, heal: 0,
+      all_dmg: 0, dmg_physical: 0, dmg_fire: 0, dmg_ice: 0,
+      dmg_lightning: 0, dmg_wind: 0, dmg_quantum: 0, dmg_imaginary: 0, dmg_elation: 0
+    }
+  };
+
+  const addStat = (statName, value) => {
+    const statInfo = Stts[statName];
+    if (!statInfo) return;
+    if (statInfo.percent) {
+      totals.percent[statInfo.field] += Number(value);
+    } else {
+      totals.flat[statInfo.field] += Number(value);
+    }
+  };
+
+  if (relicStats) {
+    Object.values(relicStats).forEach(relic => {
+      const statsToProcess = [relic.main, ...(relic.subs || [])];
+      statsToProcess.forEach(s => {
+        if (!s || !s.stat || !s.value) return;
+        addStat(s.stat, s.value);
+      });
+    });
+  }
+
+  const propMap = {
+    HPAddedRatio: { field: "hp", percent: true },
+    AttackAddedRatio: { field: "atk", percent: true },
+    DefenceAddedRatio: { field: "def", percent: true },
+    SpeedDelta: { field: "spd", percent: false },
+    CriticalChanceBase: { field: "crit_rate", percent: true },
+    CriticalDamageBase: { field: "crit_dmg", percent: true },
+    BreakDamageAddedRatioBase: { field: "break", percent: true },
+    StatusProbabilityBase: { field: "effect_hit", percent: true },
+    StatusResistanceBase: { field: "effect_res", percent: true },
+    SPRatioBase: { field: "energy", percent: true },
+    HealRatioBase: { field: "heal", percent: true },
+    AllDamageTypeAddedRatio: { field: "all_dmg", percent: true },
+    PhysicalAddedRatio: { field: "dmg_physical", percent: true },
+    FireAddedRatio: { field: "dmg_fire", percent: true },
+    IceAddedRatio: { field: "dmg_ice", percent: true },
+    LightningAddedRatio: { field: "dmg_lightning", percent: true },
+    ThunderAddedRatio: { field: "dmg_lightning", percent: true },
+    WindAddedRatio: { field: "dmg_wind", percent: true },
+    QuantumAddedRatio: { field: "dmg_quantum", percent: true },
+    ImaginaryAddedRatio: { field: "dmg_imaginary", percent: true },
+    ElationAddedRatio: { field: "dmg_elation", percent: true },
+  };
+
+  const processProperties = (properties) => {
+    if (!properties) return;
+    properties.forEach((prop) => {
+      const mapped = propMap[prop.type];
+      if (mapped) {
+        const valToAdd = mapped.percent ? prop.value * 100 : prop.value;
+        if (mapped.percent) {
+          totals.percent[mapped.field] += valToAdd;
+        } else {
+          totals.flat[mapped.field] += valToAdd;
+        }
+      }
+    });
+  };
+
+  if (lcInfo && lcInfo.properties) {
+    processProperties(lcInfo.properties);
+  }
+
+  if (charBaseStats && charBaseStats.trace_stats) {
+    processProperties(charBaseStats.trace_stats);
+  }
+
+  if (cavernData && cavernData.properties) {
+    cavernData.properties.forEach(processProperties);
+  }
+
+  if (planarData && planarData.properties) {
+    planarData.properties.forEach(processProperties);
+  }
+
+  return totals;
+}
 
 export async function calculateBuild(payload) {
   const { charName, lcName, cavernName, planarName, relicStats } = payload;
@@ -62,7 +153,6 @@ export async function calculateBuild(payload) {
         hp: "{X}", atk: "{X}", def: "{X}", spd: "{X}",
         crit_rate: "{X}", crit_dmg: "{X}", break: "{X}",
         effect_hit: "{X}", effect_res: "{X}", energy: "{X}", heal: "{X}",
-        aggro: "{X}",
         dmg_physical: "{X}", dmg_fire: "{X}", dmg_ice: "{X}",
         dmg_lightning: "{X}", dmg_wind: "{X}", dmg_quantum: "{X}",
         dmg_imaginary: "{X}", dmg_elation: "{X}"
@@ -77,139 +167,28 @@ export async function calculateBuild(payload) {
   const baseCritRate = charBaseStats.crit_rate || 0;
   const baseCritDmg = charBaseStats.crit_dmg || 0;
 
-  let totals = {
-    flat: { hp: 0, atk: 0, def: 0, spd: 0 },
-    percent: {
-      hp: 0, atk: 0, def: 0, spd: 0,
-      crit_rate: 0, crit_dmg: 0, break: 0,
-      effect_hit: 0, effect_res: 0, energy: 0, heal: 0,
-      all_dmg: 0, dmg_physical: 0, dmg_fire: 0, dmg_ice: 0,
-      dmg_lightning: 0, dmg_wind: 0, dmg_quantum: 0, dmg_imaginary: 0, dmg_elation: 0
-    }
-  };
-
-  if (relicStats) {
-    Object.values(relicStats).forEach(relic => {
-      const statsToProcess = [relic.main, ...(relic.subs || [])];
-      statsToProcess.forEach(s => {
-        if (!s || !s.stat || !s.value) return;
-        const statInfo = Stts[s.stat];
-        if (!statInfo) return;
-
-        if (statInfo.percent) {
-          totals.percent[statInfo.field] += Number(s.value);
-        } else {
-          totals.flat[statInfo.field] += Number(s.value);
-        }
-      });
-    });
-  }
-
-  const propMap = {
-    HPAddedRatio: { field: "hp", percent: true },
-    AttackAddedRatio: { field: "atk", percent: true },
-    DefenceAddedRatio: { field: "def", percent: true },
-    SpeedDelta: { field: "spd", percent: false },
-    CriticalChanceBase: { field: "crit_rate", percent: true },
-    CriticalDamageBase: { field: "crit_dmg", percent: true },
-    BreakDamageAddedRatioBase: { field: "break", percent: true },
-    StatusProbabilityBase: { field: "effect_hit", percent: true },
-    StatusResistanceBase: { field: "effect_res", percent: true },
-    SPRatioBase: { field: "energy", percent: true },
-    HealRatioBase: { field: "heal", percent: true },
-    AllDamageTypeAddedRatio: { field: "all_dmg", percent: true },
-    PhysicalAddedRatio: { field: "dmg_physical", percent: true },
-    FireAddedRatio: { field: "dmg_fire", percent: true },
-    IceAddedRatio: { field: "dmg_ice", percent: true },
-    LightningAddedRatio: { field: "dmg_lightning", percent: true },
-    ThunderAddedRatio: { field: "dmg_lightning", percent: true },
-    WindAddedRatio: { field: "dmg_wind", percent: true },
-    QuantumAddedRatio: { field: "dmg_quantum", percent: true },
-    ImaginaryAddedRatio: { field: "dmg_imaginary", percent: true },
-    ElationAddedRatio: { field: "dmg_elation", percent: true },
-  };
-
-  if (lcInfo && lcInfo.properties) {
-    lcInfo.properties.forEach((prop) => {
-      const mapped = propMap[prop.type];
-      if (mapped) {
-        const valToAdd = mapped.percent ? prop.value * 100 : prop.value;
-        if (mapped.percent) {
-          totals.percent[mapped.field] += valToAdd;
-        } else {
-          totals.flat[mapped.field] += valToAdd;
-        }
-      }
-    });
-  }
-
-  if (charBaseStats.trace_stats) {
-    charBaseStats.trace_stats.forEach((prop) => {
-      const mapped = propMap[prop.type];
-      if (mapped) {
-        const valToAdd = mapped.percent ? prop.value * 100 : prop.value;
-        if (mapped.percent) {
-          totals.percent[mapped.field] += valToAdd;
-        } else {
-          totals.flat[mapped.field] += valToAdd;
-        }
-      }
-    });
-  }
-
-  if (cavernData && cavernData.properties) {
-    cavernData.properties.forEach((propList) => {
-      propList.forEach((prop) => {
-        const mapped = propMap[prop.type];
-        if (mapped) {
-          const valToAdd = mapped.percent ? prop.value * 100 : prop.value;
-          if (mapped.percent) {
-            totals.percent[mapped.field] += valToAdd;
-          } else {
-            totals.flat[mapped.field] += valToAdd;
-          }
-        }
-      });
-    });
-  }
-
-  if (planarData && planarData.properties) {
-    planarData.properties.forEach((propList) => {
-      propList.forEach((prop) => {
-        const mapped = propMap[prop.type];
-        if (mapped) {
-          const valToAdd = mapped.percent ? prop.value * 100 : prop.value;
-          if (mapped.percent) {
-            totals.percent[mapped.field] += valToAdd;
-          } else {
-            totals.flat[mapped.field] += valToAdd;
-          }
-        }
-      });
-    });
-  }
+  const totals = calculateSubstatsTotals(relicStats, lcInfo, charBaseStats, cavernData, planarData);
 
   const rawFinal = {
-    hp: Math.floor(baseHp * (1 + totals.percent.hp / 100) + totals.flat.hp),
-    atk: Math.floor(baseAtk * (1 + totals.percent.atk / 100) + totals.flat.atk),
-    def: Math.floor(baseDef * (1 + totals.percent.def / 100) + totals.flat.def),
-    spd: baseSpd * (1 + totals.percent.spd / 100) + totals.flat.spd,
-    crit_rate: baseCritRate * 100 + totals.percent.crit_rate,
-    crit_dmg: baseCritDmg * 100 + totals.percent.crit_dmg,
-    break: totals.percent.break,
-    effect_hit: totals.percent.effect_hit,
-    effect_res: totals.percent.effect_res,
-    energy: 100 + totals.percent.energy,
-    heal: totals.percent.heal,
-    aggro: charBaseStats.taunt || 0,
-    dmg_physical: totals.percent.dmg_physical + totals.percent.all_dmg,
-    dmg_fire: totals.percent.dmg_fire + totals.percent.all_dmg,
-    dmg_ice: totals.percent.dmg_ice + totals.percent.all_dmg,
-    dmg_lightning: totals.percent.dmg_lightning + totals.percent.all_dmg,
-    dmg_wind: totals.percent.dmg_wind + totals.percent.all_dmg,
-    dmg_quantum: totals.percent.dmg_quantum + totals.percent.all_dmg,
-    dmg_imaginary: totals.percent.dmg_imaginary + totals.percent.all_dmg,
-    dmg_elation: totals.percent.dmg_elation,
+    hp: FuncStatus.calcHp(baseHp, totals.percent.hp, totals.flat.hp),
+    atk: FuncStatus.calcAtk(baseAtk, totals.percent.atk, totals.flat.atk),
+    def: FuncStatus.calcDef(baseDef, totals.percent.def, totals.flat.def),
+    spd: FuncStatus.calcSpd(baseSpd, totals.percent.spd, totals.flat.spd),
+    crit_rate: FuncStatus.calcCritRate(baseCritRate, totals.percent.crit_rate),
+    crit_dmg: FuncStatus.calcCritDmg(baseCritDmg, totals.percent.crit_dmg),
+    break: FuncStatus.calcBreakEffect(totals.percent.break),
+    effect_hit: FuncStatus.calcEffectHitRate(totals.percent.effect_hit),
+    effect_res: FuncStatus.calcEffectRes(totals.percent.effect_res),
+    energy: FuncStatus.calcEnergyRegen(totals.percent.energy),
+    heal: FuncStatus.calcHealBonus(totals.percent.heal),
+    dmg_physical: FuncStatus.calcElementalDmg(totals.percent.dmg_physical, totals.percent.all_dmg),
+    dmg_fire: FuncStatus.calcElementalDmg(totals.percent.dmg_fire, totals.percent.all_dmg),
+    dmg_ice: FuncStatus.calcElementalDmg(totals.percent.dmg_ice, totals.percent.all_dmg),
+    dmg_lightning: FuncStatus.calcElementalDmg(totals.percent.dmg_lightning, totals.percent.all_dmg),
+    dmg_wind: FuncStatus.calcElementalDmg(totals.percent.dmg_wind, totals.percent.all_dmg),
+    dmg_quantum: FuncStatus.calcElementalDmg(totals.percent.dmg_quantum, totals.percent.all_dmg),
+    dmg_imaginary: FuncStatus.calcElementalDmg(totals.percent.dmg_imaginary, totals.percent.all_dmg),
+    dmg_elation: FuncStatus.calcElementalDmg(totals.percent.dmg_elation, 0),
   };
 
   const withPassives = applyPassiveConversions(rawFinal, charBaseStats.charId);
@@ -226,7 +205,6 @@ export async function calculateBuild(payload) {
     effect_res: withPassives.effect_res.toFixed(1),
     energy: withPassives.energy.toFixed(1),
     heal: withPassives.heal.toFixed(1),
-    aggro: withPassives.aggro,
     dmg_physical: withPassives.dmg_physical.toFixed(1),
     dmg_fire: withPassives.dmg_fire.toFixed(1),
     dmg_ice: withPassives.dmg_ice.toFixed(1),
