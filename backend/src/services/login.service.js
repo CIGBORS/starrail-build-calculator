@@ -3,6 +3,7 @@ import { salvarLog } from "../../functions/log.js";
 import { countUsersLogin } from "../../redis/queues/loginQueue.js";
 import * as loginRepository from "../repository/login.repository.js";
 import { getAllAvatars } from "./starRail.service.js";
+import redis from "../../redis/redisClient.js";
 
 export async function getUsuarios(req, res) {
   try {
@@ -91,11 +92,13 @@ export async function login(req, res) {
     );
 
     if (resultado.rows.length === 0) {
-      await salvarLog(
-        "FALHA_LOGIN",
-        "Tentativa de login com usuário inexistente",
-        username,
-      );
+      await redis.xAdd('log-stream', '*', {
+        action: 'FALHA_LOGIN',
+        description: 'Tentativa de login com usuário inexistente',
+        userId: username,
+        timestamp: Date.now().toString()
+      });
+
       return res.status(401).json({ error: "Usuário não encontrado" });
     }
 
@@ -103,19 +106,28 @@ export async function login(req, res) {
 
     // Se a senha estiver incorreta
     if (usuarioAchado.password !== password) {
-      await salvarLog(
-        "FALHA_LOGIN",
-        "Tentativa de login com senha incorreta",
-        username,
-      );
+      await redis.xAdd('log-stream', '*', {
+        action: 'FALHA_LOGIN',
+        description: 'Tentativa de login com senha incorreta',
+        userId: username,
+        timestamp: Date.now().toString()
+      });
+
       return res.status(401).json({ error: "Senha incorreta!" });
     }
 
-    await salvarLog("LOGIN_SUCESSO", "Usuário entrou no sistema", username);
+    await redis.xAdd('log-stream', '*', {
+      action: 'LOGIN_SUCESSO',
+      description: 'Usuário entrou no sistema',
+      userId: username,
+      timestamp: Date.now().toString()
+    });
+
     await countUsersLogin({
       username,
       type: "login",
     });
+
     const { password: _, ...usuarioSemSenha } = usuarioAchado;
 
     return res.json(usuarioSemSenha);
@@ -140,19 +152,23 @@ export async function register(req, res) {
       [username, password, email, status || "ativo"],
     );
 
-    await salvarLog(
-      "CADASTRO_SUCESSO",
-      `Um novo usuario com o e-mail \${email} foi criado.`,
-      username,
-    );
+    await redis.xAdd('log-stream', '*', {
+      action: 'CADASTRO_SUCESSO',
+      description: `Novo usuário ${email} criado.`,
+      userId: username,
+      timestamp: Date.now().toString()
+    });
+
     return res.json({ message: "Registro bem-sucedido no Banco de Dados!" });
   } catch (error) {
     if (error.code === "23505") {
-      await salvarLog(
-        "FALHA_CADASTRO",
-        "Usuário tentou registrar um nome que já existe.",
-        username,
-      );
+      await redis.xAdd('log-stream', '*', {
+        action: 'FALHA_CADASTRO',
+        description: 'Usuário tentou registrar um nome que já existe.',
+        userId: username,
+        timestamp: Date.now().toString()
+      });
+      
       return res
         .status(400)
         .json({ error: "Esse nome de usuário já está em uso!" });
@@ -183,12 +199,13 @@ export async function changeUser(req, res) {
     if (resultado.rows.length === 0) {
       return res.status(404).json({ error: "Usuário não encontrado" });
     }
-
-    await salvarLog(
-      "ALTERACAO_USUARIO",
-      "Dados do usuário atualizados com sucesso",
-      username
-    );
+    
+    await redis.xAdd('log-stream', '*', {
+      action: 'ALTERACAO_USUARIO',
+      description: 'Dados do usuário atualizados com sucesso',
+      userId: username,
+      timestamp: Date.now().toString()
+    });
 
     return res.json(resultado.rows[0]);
   } catch (error) {
