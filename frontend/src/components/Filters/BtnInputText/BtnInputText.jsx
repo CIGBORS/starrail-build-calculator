@@ -19,7 +19,12 @@ const BtnInputText = ({ PesquisaFiltro, setPesquisaFiltro, Campo, Opcoes }) => {
   };
 
   const pesquisa = (valor) => {
-    const valueToSet = typeof valor === "object" ? valor.name : valor;
+    let valueToSet = valor;
+    if (valor && typeof valor === "object") {
+      valueToSet = valor.name;
+    } else if (valor === null) {
+      valueToSet = "";
+    }
     setPesquisaFiltro({
       ...PesquisaFiltro,
       [Campo]: valueToSet,
@@ -39,10 +44,14 @@ const BtnInputText = ({ PesquisaFiltro, setPesquisaFiltro, Campo, Opcoes }) => {
     return <span>{item}</span>;
   };
 
+  const selectedValue = isObject 
+    ? Opcoes.find((o) => o.name === PesquisaFiltro[Campo]) || PesquisaFiltro[Campo] 
+    : PesquisaFiltro[Campo];
+
   return (
     <AutoComplete
       appendTo="self"
-      value={PesquisaFiltro[Campo]}
+      value={selectedValue}
       suggestions={ItensFiltrados}
       completeMethod={search}
       onChange={(e) => pesquisa(e.value)}
