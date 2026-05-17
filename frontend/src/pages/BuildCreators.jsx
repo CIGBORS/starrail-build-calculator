@@ -180,41 +180,46 @@ export default function BuildCreators() {
     <>
       <div className="editor-page-wrapper">
       <LateralBar />
-        <div className="build-editor-column">
+        <div className="editor-main-column">
           <div className="build-editor-main">
             <div className="left-side">
-              <div className="inputtext-be">
-                <BtnInputText
-                  PesquisaFiltro={PesquisaFiltro}
-                  setPesquisaFiltro={setPesquisaFiltro}
-                  Campo={"charName"}
-                  Opcoes={OpcoesFiltros.charName}
-                />
-              </div>
+              <div className="preview-row">
+                <div className="preview-col">
+                  <div className="inputtext-be">
+                    <BtnInputText
+                      PesquisaFiltro={PesquisaFiltro}
+                      setPesquisaFiltro={setPesquisaFiltro}
+                      Campo={"charName"}
+                      Opcoes={OpcoesFiltros.charName}
+                    />
+                  </div>
+                  <div className="build-editor_content">
+                    <div className="character-preview">
+                      <img src={OpcoesFiltros.charImage} alt={Filtro.charName} />
+                    </div>
+                  </div>
+                </div>
 
-              <div className="build-editor_content">
-                <div className="character-preview">
-                  <img src={OpcoesFiltros.charImage} alt={Filtro.charName} />
+                <div className="preview-col">
+                  <div className="inputtext-be">
+                    <BtnInputText
+                      PesquisaFiltro={PesquisaFiltro}
+                      setPesquisaFiltro={setPesquisaFiltro}
+                      Campo={"lcName"}
+                      Opcoes={OpcoesFiltros.lcName}
+                    />
+                  </div>
+                  <GeneralCard
+                    itemName={lcInfo ? lcInfo.name : "Nenhum Cone Selecionado"}
+                    itemRarity={lcInfo ? String(lcInfo.rarity) : "5"}
+                    itemImage={OpcoesFiltros.lcImage}
+                    itemIcon1={lcInfo && lcInfo.path ? lcInfo.path.icon : ""}
+                    layout="vertical"
+                  />
                 </div>
               </div>
 
               <StatsCard stats={finalStats} />
-
-              <div className="inputtext-be">
-                <BtnInputText
-                  PesquisaFiltro={PesquisaFiltro}
-                  setPesquisaFiltro={setPesquisaFiltro}
-                  Campo={"lcName"}
-                  Opcoes={OpcoesFiltros.lcName}
-                />
-              </div>
-
-              <GeneralCard
-                itemName={lcInfo ? lcInfo.name : "Nenhum Cone Selecionado"}
-                itemRarity={lcInfo ? String(lcInfo.rarity) : "5"}
-                itemImage={OpcoesFiltros.lcImage}
-                itemIcon1={lcInfo && lcInfo.path ? lcInfo.path.icon : ""}
-              />
             </div>
 
             <div className="right-side">
