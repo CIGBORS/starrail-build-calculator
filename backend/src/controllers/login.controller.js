@@ -8,17 +8,21 @@ import {
 import redis from "../../redis/redisClient.js";
 
 export async function registerNewLog(req, res){
-  const { action, description, userId } = req.body;
+  if (!action || !description || !userId) {
+    return res.status(400).json({ error: "Todos os campos devem estar preenchidos" });
+  }
 
   try {
-    if(!action && !description && !userId) {
-      return res.status(400).json({ error: "Todos os campos devem estar preenchidos" });
-    } else {
-      await registerLog(req, res);
-      
-      return res.status(200).json({ success: "Sucesso no cadastro do log" });
-    }
-  } catch {
+    await redis.xAdd('log-stream', '*', {
+      action,
+      description,
+      userId,
+      timestamp: Date.now().toString()
+    });
+
+    return res.status(202).json({ success: "Log enfileirado com sucesso" });
+  } catch (error) {
+    console.error("Erro ao enfileirar log:", error);
     return res.status(500).json({ error: "Erro interno no servidor" });
   }
 }

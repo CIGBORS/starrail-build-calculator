@@ -51,7 +51,7 @@ services:
     build:
       context: .
       dockerfile: ./backend/Dockerfile
-    command: node redis/worker/loginWorker.js
+    command: node src/worker.js
     depends_on:
       - redis
     env_file:
