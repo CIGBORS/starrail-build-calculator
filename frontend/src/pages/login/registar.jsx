@@ -44,7 +44,11 @@ export default function Register() {
   }
 
   return (
-    <div className="login-page" style={{ backgroundImage: `url(${bgImage})` }}>
+    <div className="login-page">
+      <video autoPlay loop muted playsInline preload="auto" className="background-video">
+        <source src="/img/Honkai_Star_Rail.mp4" type="video/mp4" />
+        Seu navegador não suporta vídeos.
+      </video>
       <div className="login">
         <div className="card">
           <h2>Cadastrar Usuário</h2>
