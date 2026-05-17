@@ -1,5 +1,5 @@
-import redis from "../redis/redisClient";
-import { salvarLog } from "../functions/log";
+import redis from "../redis/redisClient.js";
+import { salvarLog } from "../functions/log.js";
 
 const consumerName = `worker-${Math.random().toString(36).substring(7)}`;
 
