@@ -383,13 +383,18 @@ export async function getRelicsFilters() {
   const cavern = relicsArray.filter((r) => r.properties.length === 2);
   const planar = relicsArray.filter((r) => r.properties.length === 1);
 
+  const mapToFilter = (r) => ({
+    name: r.name,
+    icon: `${GITHUB_URL}${r.icon}`,
+  });
+
   return {
-    cavern: [...new Set(cavern.map((r) => r.name))].sort((a, b) =>
-      a.localeCompare(b),
-    ),
-    planar: [...new Set(planar.map((r) => r.name))].sort((a, b) =>
-      a.localeCompare(b),
-    ),
+    cavern: cavern
+      .map(mapToFilter)
+      .sort((a, b) => a.name.localeCompare(b.name)),
+    planar: planar
+      .map(mapToFilter)
+      .sort((a, b) => a.name.localeCompare(b.name)),
   };
 }
 
