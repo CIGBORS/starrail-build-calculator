@@ -312,7 +312,8 @@ export async function getLightConesFilters() {
   const items = lcArray.map((c) => ({
     name: c.name,
     icon: `${GITHUB_URL}${c.icon}`,
-    path_icon: pathsData[c.path] ? `${GITHUB_URL}${pathsData[c.path].icon}` : null
+    path_icon: pathsData[c.path] ? `${GITHUB_URL}${pathsData[c.path].icon}` : null,
+    path_name: pathsData[c.path] ? pathsData[c.path].name : null
   }));
 
   items.sort((a, b) => a.name.localeCompare(b.name));

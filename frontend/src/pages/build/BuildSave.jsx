@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getApi } from "../../api/api";
+import { getApi, deleteApi } from "../../api/api";
 import LateralBar from "../../components/LateralBar/LateralBar";
 import { useNavigate } from "react-router-dom";
 import { FaEdit, FaTrash } from "react-icons/fa";
@@ -26,7 +26,7 @@ export default function SavedBuilds() {
         if (!confirmed) return;
 
         try {
-            const res = await getApi(`/github/calculator/delete-build/${build.id}`);
+            const res = await deleteApi(`/github/calculator/delete-build/${build.id}`);
             if (res && res.success) {
                 setBuilds(builds.filter((b) => b.id !== build.id));
             }

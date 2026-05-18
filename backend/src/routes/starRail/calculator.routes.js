@@ -7,6 +7,6 @@ calculatorRouter.post("/build", calculateCharacterBuild);
 calculatorRouter.post("/save", saveCharacterBuild);
 calculatorRouter.post("/top-stats", getTopBuildsStats);
 calculatorRouter.get("/saved-builds/:userId", getSavedBuilds);
-calculatorRouter.get("/delete-build/:id", deleteCharacterBuild);
+calculatorRouter.delete("/delete-build/:id", deleteCharacterBuild);
 
 export default calculatorRouter;

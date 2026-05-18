@@ -14,6 +14,7 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
+import { Checkbox } from "primereact/checkbox";
 import RelicsSttsForm from "../components/RelicsSttsForm/RelicsSttsForm";
 import StatsCard from "../components/StatsCard/StatsCard";
 import GenericChart from "../components/Charts/GenericChart/GenericChart";
@@ -95,6 +96,7 @@ export default function BuildCreators() {
   const [OpcoesFiltros, setOpcoesFiltros] = useState({
     charName: [],
     charImage: "https://static.wikia.nocookie.net/houkai-star-rail/images/7/77/Sticker_PPG_16_March_7th_02.png/revision/latest?cb=20240913030332",
+    charPath: null,
     lcName: [],
     lcImage:
       "https://static.wikia.nocookie.net/houkai-star-rail/images/e/ea/Icon_Light_Cone.png/revision/latest?cb=20240130190656",
@@ -103,6 +105,8 @@ export default function BuildCreators() {
     cavernImage: ["", "", "", ""],
     planarImage: ["", ""],
   });
+
+  const [filterLcByPath, setFilterLcByPath] = useState(false);
 
   const [Filtro, setFiltro] = useState({
     charName: [],
@@ -192,6 +196,7 @@ export default function BuildCreators() {
           setOpcoesFiltros(prev => ({
             ...prev,
             charImage: res.visuals.charImage || prev.charImage,
+            charPath: res.visuals.charPath || null,
             lcImage: res.visuals.lcImage || prev.lcImage,
             cavernImage: res.visuals.cavernImage && res.visuals.cavernImage.length > 0 ? res.visuals.cavernImage : prev.cavernImage,
             planarImage: res.visuals.planarImage && res.visuals.planarImage.length > 0 ? res.visuals.planarImage : prev.planarImage,
@@ -344,6 +349,12 @@ export default function BuildCreators() {
 
   const trendingRank = topStats?.characters?.findIndex(c => c.name === PesquisaFiltro.charName) + 1 || 0;
 
+  const hasChartData = topStats?.caverns?.length > 0 || topStats?.planars?.length > 0 || topStats?.lightCones?.length > 0;
+
+  const displayedLcOptions = filterLcByPath && OpcoesFiltros.charPath
+    ? OpcoesFiltros.lcName.filter(lc => lc.path_name === OpcoesFiltros.charPath.name)
+    : OpcoesFiltros.lcName;
+
   return (
     <>
       <div className="editor-page-wrapper">
@@ -375,13 +386,25 @@ export default function BuildCreators() {
                 </div>
 
                 <div className="preview-col">
-                  <div className="inputtext-be">
-                    <BtnInputText
-                      PesquisaFiltro={PesquisaFiltro}
-                      setPesquisaFiltro={setPesquisaFiltro}
-                      Campo={"lcName"}
-                      Opcoes={OpcoesFiltros.lcName}
-                    />
+                  <div className="inputtext-be" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <BtnInputText
+                        PesquisaFiltro={PesquisaFiltro}
+                        setPesquisaFiltro={setPesquisaFiltro}
+                        Campo={"lcName"}
+                        Opcoes={displayedLcOptions}
+                      />
+                    </div>
+                    <div className="flex align-items-center" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Checkbox 
+                        inputId="filterLcPath" 
+                        checked={filterLcByPath} 
+                        onChange={(e) => setFilterLcByPath(e.checked)} 
+                        disabled={!PesquisaFiltro.charName || !OpcoesFiltros.charPath} 
+                        tooltip="Filtrar cones pelo caminho do personagem"
+                        tooltipOptions={{ position: 'top' }}
+                      />
+                    </div>
                   </div>
                   <GeneralCard
                     itemName={lcInfo ? lcInfo.name : "Nenhum Cone Selecionado"}
@@ -452,7 +475,7 @@ export default function BuildCreators() {
           </div>
 
           {/* Seção de Gráficos de Top 5 */}
-          {PesquisaFiltro.charName && (
+          {PesquisaFiltro.charName && hasChartData && (
             <div className="charts-container" style={{ display: 'flex', gap: '20px', padding: '16px', marginTop: '20px', flexWrap: 'wrap', justifyContent: 'space-between' }}>
               <div style={{ flex: '1 1 calc(33.333% - 20px)' }}>
                 <GenericChart title="Top 5 Relíquias" data={formatChartData(topStats?.caverns, OpcoesFiltros.cavernName)} />

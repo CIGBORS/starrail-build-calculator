@@ -144,6 +144,7 @@ export async function calculateBuild(payload) {
     lcInfo: lcInfo || null,
     cavernImage: cavernData ? cavernData.icons.slice(0, 4) : ["", "", "", ""],
     planarImage: planarData ? planarData.icons.slice(0, 2) : ["", ""],
+    charPath: charData ? charData.path : null,
   };
 
   // If no char, return empty/placeholder finalStats
@@ -287,7 +288,9 @@ export async function getTopBuildsStatsService(charName) {
   const queryCaverns = `
     SELECT relics->>'cavernName' AS name, COUNT(*) AS count
     FROM builds
-    WHERE ${charCondition} AND relics->>'cavernName' IS NOT NULL AND relics->>'cavernName' != ''
+    WHERE ${charCondition} 
+      AND COALESCE(status, 'A') <> 'D'
+      AND relics->>'cavernName' IS NOT NULL AND relics->>'cavernName' != ''
     GROUP BY relics->>'cavernName'
     ORDER BY count DESC
     LIMIT 5;
@@ -296,7 +299,9 @@ export async function getTopBuildsStatsService(charName) {
   const queryPlanars = `
     SELECT relics->>'planarName' AS name, COUNT(*) AS count
     FROM builds
-    WHERE ${charCondition} AND relics->>'planarName' IS NOT NULL AND relics->>'planarName' != ''
+    WHERE ${charCondition} 
+      AND COALESCE(status, 'A') <> 'D'
+      AND relics->>'planarName' IS NOT NULL AND relics->>'planarName' != ''
     GROUP BY relics->>'planarName'
     ORDER BY count DESC
     LIMIT 5;
@@ -305,7 +310,9 @@ export async function getTopBuildsStatsService(charName) {
   const queryLightCones = `
     SELECT light_cones->>'name' AS name, COUNT(*) AS count
     FROM builds
-    WHERE ${charCondition} AND light_cones->>'name' IS NOT NULL AND light_cones->>'name' != ''
+    WHERE ${charCondition} 
+      AND COALESCE(status, 'A') <> 'D'
+      AND light_cones->>'name' IS NOT NULL AND light_cones->>'name' != ''
     GROUP BY light_cones->>'name'
     ORDER BY count DESC
     LIMIT 5;
@@ -315,6 +322,7 @@ export async function getTopBuildsStatsService(charName) {
     SELECT character->>'name' AS name, COUNT(*) AS count
     FROM builds
     WHERE character->>'name' IS NOT NULL AND character->>'name' != ''
+      AND COALESCE(status, 'A') <> 'D'
     GROUP BY character->>'name'
     ORDER BY count DESC
     LIMIT 10;
