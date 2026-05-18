@@ -1,4 +1,4 @@
-import { calculateBuild, saveBuildService, getTopBuildsStatsService } from "../services/calculator.service.js";
+import { calculateBuild, saveBuildService, getSavedBuildsService, deleteBuildService,getTopBuildsStatsService } from "../services/calculator.service.js";
 
 export async function calculateCharacterBuild(req, res) {
   try {
@@ -18,6 +18,28 @@ export async function saveCharacterBuild(req, res) {
     res.json(result);
   } catch (error) {
     console.error("Erro ao salvar build:", error);
+    res.status(500).json({ error: error.message });
+  }
+}
+
+export async function getSavedBuilds(req, res) {
+  try {
+    const { userId } = req.params;
+    const result = await getSavedBuildsService(userId);
+    res.json(result);
+  } catch (error) {
+    console.error("Erro ao obter builds salvas:", error);
+    res.status(500).json({ error: error.message });
+  }
+}
+
+export async function deleteCharacterBuild(req, res) {
+  try {
+    const { id } = req.params;
+    const result = await deleteBuildService(id);
+    res.json(result);
+  } catch (error) {
+    console.error("Erro ao excluir build:", error);
     res.status(500).json({ error: error.message });
   }
 }

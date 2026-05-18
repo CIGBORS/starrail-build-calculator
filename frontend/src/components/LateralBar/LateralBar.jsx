@@ -23,7 +23,7 @@ export default function LateralBar() {
 
   return (
     <>
-      <div className="lateral-bar">
+      <div className={`lateral-bar ${showModal ? "lateral-bar--modal-open" : ""}`}>
         <NavLink
           to="/usuario">
           <img

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { postApi } from "../api/api";
 import BtnInputText from "../components/Filters/BtnInputText/BtnInputText";
 import BtnDropdown from "../components/Filters/BtnDropdown/BtnDropdown";
@@ -18,6 +19,9 @@ import StatsCard from "../components/StatsCard/StatsCard";
 import GenericChart from "../components/Charts/GenericChart/GenericChart";
 
 export default function BuildCreators() {
+  const location = useLocation();
+  const editBuildIdRef = useRef(location.state?.editBuild?.id || null);
+  const [editBuildId, setEditBuildId] = useState(null);
   const [finalStats, setFinalStats] = useState({
     hp: "{X}", atk: "{X}", def: "{X}", spd: "{X}",
     crit_rate: "{X}", crit_dmg: "{X}", break: "{X}",
@@ -120,6 +124,36 @@ export default function BuildCreators() {
   const [topStats, setTopStats] = useState(null);
 
   useEffect(() => {
+    if (location.state?.editBuild) {
+      const build = location.state.editBuild;
+      const currentBuildId = build.id || null;
+
+      editBuildIdRef.current = currentBuildId;
+      setEditBuildId(currentBuildId);
+      
+      setPesquisaFiltro({
+        charName: build.character?.name || "",
+        lcName: build.light_cone?.name || "",
+        cavernName: build.relics?.cavernName || "",
+        planarName: build.relics?.planarName || "",
+      });
+
+      if (build.relics) {
+        setRelicStats({
+          head: build.relics.head || { main: { stat: null, value: null }, subs: [{ stat: null, value: null }, { stat: null, value: null }, { stat: null, value: null }, { stat: null, value: null }] },
+          hands: build.relics.hands || { main: { stat: null, value: null }, subs: [{ stat: null, value: null }, { stat: null, value: null }, { stat: null, value: null }, { stat: null, value: null }] },
+          body: build.relics.body || { main: { stat: null, value: null }, subs: [{ stat: null, value: null }, { stat: null, value: null }, { stat: null, value: null }, { stat: null, value: null }] },
+          boots: build.relics.boots || { main: { stat: null, value: null }, subs: [{ stat: null, value: null }, { stat: null, value: null }, { stat: null, value: null }, { stat: null, value: null }] },
+          sphere: build.relics.sphere || { main: { stat: null, value: null }, subs: [{ stat: null, value: null }, { stat: null, value: null }, { stat: null, value: null }, { stat: null, value: null }] },
+          rope: build.relics.rope || { main: { stat: null, value: null }, subs: [{ stat: null, value: null }, { stat: null, value: null }, { stat: null, value: null }, { stat: null, value: null }] },
+        });
+      }
+
+      setBuildNameInput(build.build_name || "");
+    }
+  }, [location.state]);
+
+  useEffect(() => {
     const fetchFilters = async () => {
       try {
         const charData = await postApi("/github/characters/filters", {});
@@ -204,6 +238,7 @@ export default function BuildCreators() {
 
   const handleSaveBuild = async () => {
     try {
+      const currentEditBuildId = editBuildId || editBuildIdRef.current || null;
       const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
       if (!userStr) {
         alert("Você precisa estar logado para salvar uma build.");
@@ -232,6 +267,7 @@ export default function BuildCreators() {
       const planarObj = OpcoesFiltros.planarName.find(p => p.name === PesquisaFiltro.planarName);
 
       const payload = {
+        id: currentEditBuildId,
         character: { name: PesquisaFiltro.charName },
         light_cones: { name: PesquisaFiltro.lcName, lcInfo: lcInfo },
         relics: {
@@ -249,9 +285,12 @@ export default function BuildCreators() {
       const res = await postApi("/github/calculator/save", payload);
 
       if (res && res.success) {
-        alert("Build salva com sucesso!");
+        alert(currentEditBuildId ? "Build atualizada com sucesso!" : "Build salva com sucesso!");
         setShowSaveDialog(false);
-        setBuildNameInput("");
+        if (res.build && res.build.id) {
+          editBuildIdRef.current = res.build.id;
+          setEditBuildId(res.build.id);
+        }
       } else {
         alert("Erro ao salvar build: " + (res.error || "Desconhecido"));
       }

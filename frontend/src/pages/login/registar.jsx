@@ -31,7 +31,7 @@ export default function Register() {
       username: user,
       password,
       email,
-      status: "ativo"
+      status: "A"
     });
 
     if (response.error) {
