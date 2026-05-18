@@ -384,6 +384,7 @@ export async function getRelicsFilters() {
   const planar = relicsArray.filter((r) => r.properties.length === 1);
 
   const mapToFilter = (r) => ({
+    id: r.id,
     name: r.name,
     icon: `${GITHUB_URL}${r.icon}`,
   });

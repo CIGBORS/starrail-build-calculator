@@ -223,15 +223,15 @@ export async function calculateBuild(payload) {
 }
 
 export async function saveBuildService(buildData) {
-  const { character, light_cones, relics, final_stats, usuario_id } = buildData;
+  const { character, light_cones, relics, final_stats, usuario_id, build_name } = buildData;
 
   if (!usuario_id) {
     throw new Error("Usuário não está logado ou ID inválido.");
   }
 
   const query = `
-    INSERT INTO builds (character, light_cones, relics, final_stats, usuario_id)
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO builds (character, light_cones, relics, final_stats, usuario_id, build_name)
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *;
   `;
 
@@ -240,7 +240,8 @@ export async function saveBuildService(buildData) {
     JSON.stringify(light_cones),
     JSON.stringify(relics),
     JSON.stringify(final_stats),
-    usuario_id
+    usuario_id,
+    build_name || ''
   ];
 
   const result = await pool.query(query, values);

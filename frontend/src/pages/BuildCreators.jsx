@@ -11,6 +11,8 @@ import LateralBar from "../components/LateralBar/LateralBar";
 
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
+import { Dialog } from "primereact/dialog";
+import { InputText } from "primereact/inputtext";
 import RelicsSttsForm from "../components/RelicsSttsForm/RelicsSttsForm";
 import StatsCard from "../components/StatsCard/StatsCard";
 
@@ -111,6 +113,9 @@ export default function BuildCreators() {
     planarName: "",
   });
 
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [buildNameInput, setBuildNameInput] = useState("");
+
   useEffect(() => {
     const fetchFilters = async () => {
       try {
@@ -180,7 +185,7 @@ export default function BuildCreators() {
 
   const handleSaveBuild = async () => {
     try {
-      const userStr = localStorage.getItem("user");
+      const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
       if (!userStr) {
         alert("Você precisa estar logado para salvar uma build.");
         return;
@@ -199,18 +204,35 @@ export default function BuildCreators() {
         return;
       }
 
+      if (!buildNameInput || buildNameInput.trim() === "") {
+        alert("Dê um nome para a sua build!");
+        return;
+      }
+
+      const cavernObj = OpcoesFiltros.cavernName.find(c => c.name === PesquisaFiltro.cavernName);
+      const planarObj = OpcoesFiltros.planarName.find(p => p.name === PesquisaFiltro.planarName);
+
       const payload = {
         character: { name: PesquisaFiltro.charName },
         light_cones: { name: PesquisaFiltro.lcName, lcInfo: lcInfo },
-        relics: relicStats,
+        relics: {
+          ...relicStats,
+          cavernName: PesquisaFiltro.cavernName,
+          cavernId: cavernObj ? cavernObj.id : null,
+          planarName: PesquisaFiltro.planarName,
+          planarId: planarObj ? planarObj.id : null
+        },
         final_stats: finalStats,
-        usuario_id: userId
+        usuario_id: userId,
+        build_name: buildNameInput.trim()
       };
 
       const res = await postApi("/github/calculator/save", payload);
 
       if (res && res.success) {
         alert("Build salva com sucesso!");
+        setShowSaveDialog(false);
+        setBuildNameInput("");
       } else {
         alert("Erro ao salvar build: " + (res.error || "Desconhecido"));
       }
@@ -219,6 +241,13 @@ export default function BuildCreators() {
       alert("Ocorreu um erro inesperado ao salvar a build.");
     }
   };
+
+  const dialogFooter = (
+    <div>
+      <Button label="Cancelar" icon="pi pi-times" onClick={() => setShowSaveDialog(false)} className="p-button-text" />
+      <Button label="Confirmar" icon="pi pi-check" onClick={handleSaveBuild} autoFocus />
+    </div>
+  );
 
   return (
     <>
@@ -269,7 +298,7 @@ export default function BuildCreators() {
             <div className="right-side">
               <Card title="Relíquias e Ornamentos" className="relics-container" style={{ position: 'relative', overflow: 'visible' }}>
                 <div className="save-build-container" style={{ position: 'absolute', top: '0', right: '0', zIndex: 10 }}>
-                  <Button label="Salvar Build" icon="pi pi-save" onClick={handleSaveBuild} className="p-button-success" />
+                  <Button label="Salvar Build" icon="pi pi-save" onClick={() => setShowSaveDialog(true)} className="p-button-success" />
                 </div>
                 <div className="relics-wrapper">
                   <div className="relics-section">
@@ -322,6 +351,23 @@ export default function BuildCreators() {
           </div>
         </div>
       </div>
+      <Dialog
+        header="Salvar Build"
+        visible={showSaveDialog}
+        style={{ width: '30vw' }}
+        breakpoints={{ '960px': '75vw', '641px': '100vw' }}
+        onHide={() => setShowSaveDialog(false)}
+        footer={dialogFooter}
+        className="custom-build-dialog"
+        maskClassName="custom-build-dialog-mask"
+      >
+        <div className="p-fluid">
+          <div className="field">
+            <label htmlFor="buildName" style={{ display: 'block', marginBottom: '8px' }}>Nome da Build</label>
+            <InputText id="buildName" value={buildNameInput} onChange={(e) => setBuildNameInput(e.target.value)} placeholder="Ex: Seele DPS Principal..." autoFocus />
+          </div>
+        </div>
+      </Dialog>
     </>
   );
 }

@@ -65,6 +65,9 @@ async function criarTabelaSeNaoExistir() {
         );
     `);
 
+    await pool.query(`ALTER TABLE builds ADD COLUMN IF NOT EXISTS build_name VARCHAR(100) NOT NULL DEFAULT ''`);
+
+
     console.log("Tabelas verificadas/atualizadas com sucesso!");
   } catch (error) {
     console.error("Erro ao verificar tabela de usuários:", error);
