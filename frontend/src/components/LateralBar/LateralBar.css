@@ -10,6 +10,10 @@
     background-color: #16171D66;
 }
 
+.lateral-bar.lateral-bar--modal-open {
+    z-index: 99999;
+}
+
 .lateral-bar__user-icon {
     margin-top: 10px;
     width: 60px;

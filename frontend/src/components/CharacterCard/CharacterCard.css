@@ -144,3 +144,31 @@
     font-size: 12px;
     line-height: 1;
 }
+
+/* ── Light Cone card (Vertical modifier) ────────────────── */
+.lc-card--vertical {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 12px;
+}
+
+.lc-card--vertical .lc-card__image-wrap {
+    width: 100%;
+    height: 140px;
+    margin-bottom: 8px;
+}
+
+.lc-card--vertical .lc-card__image {
+    object-fit: contain;
+}
+
+.lc-card--vertical .lc-card__info {
+    align-items: center;
+    padding: 0;
+}
+
+.lc-card--vertical .lc-card__path-icon {
+    margin-bottom: 4px;
+}

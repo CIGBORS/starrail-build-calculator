@@ -2,6 +2,7 @@ import { getAllCharactersCard, getAllLightConesCard, getAllRelicsCard } from "./
 import { applyPassiveConversions } from "../../../shared/characterPassives.js";
 import { Stts } from "../../../shared/variables.js";
 import * as FuncStatus from "../utils/FuncStatus.js";
+import pool from "../config/db.js";
 
 function calculateSubstatsTotals(relicStats, lcInfo, charBaseStats, cavernData, planarData) {
   let totals = {
@@ -144,6 +145,7 @@ export async function calculateBuild(payload) {
     lcInfo: lcInfo || null,
     cavernImage: cavernData ? cavernData.icons.slice(0, 4) : ["", "", "", ""],
     planarImage: planarData ? planarData.icons.slice(0, 2) : ["", ""],
+    charPath: charData ? charData.path : null,
   };
 
   // If no char, return empty/placeholder finalStats
@@ -220,4 +222,209 @@ export async function calculateBuild(payload) {
     visuals,
     finalStats
   };
+}
+
+export async function saveBuildService(buildData) {
+  const { id, character, light_cones, relics, final_stats, usuario_id, build_name } = buildData;
+
+  if (!usuario_id) {
+    throw new Error("Usuário não está logado ou ID inválido.");
+  }
+
+  let query;
+  let values;
+
+  if (id) {
+    query = `
+      UPDATE builds 
+      SET character = $1, light_cones = $2, relics = $3, final_stats = $4, build_name = $5
+      WHERE id = $6 AND usuario_id = $7
+      RETURNING *;
+    `;
+    values = [
+      JSON.stringify(character),
+      JSON.stringify(light_cones),
+      JSON.stringify(relics),
+      JSON.stringify(final_stats),
+      build_name || '',
+      id,
+      usuario_id
+    ];
+  } else {
+    query = `
+      INSERT INTO builds (character, light_cones, relics, final_stats, usuario_id, build_name)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *;
+    `;
+    values = [
+      JSON.stringify(character),
+      JSON.stringify(light_cones),
+      JSON.stringify(relics),
+      JSON.stringify(final_stats),
+      usuario_id,
+      build_name || ''
+    ];
+  }
+
+  const result = await pool.query(query, values);
+  if (result.rowCount === 0) {
+    if (id) {
+      throw new Error("Build não encontrada ou não pertence a este usuário.");
+    } else {
+      throw new Error("Erro ao salvar build.");
+    }
+  }
+  return { success: true, build: result.rows[0] };
+}
+
+export async function getTopBuildsStatsService(charName) {
+  let values = [];
+  let charCondition = "1=1";
+  
+  if (charName) {
+    charCondition = "character->>'name' = $1";
+    values = [charName];
+  }
+
+  const queryCaverns = `
+    SELECT relics->>'cavernName' AS name, COUNT(*) AS count
+    FROM builds
+    WHERE ${charCondition} 
+      AND COALESCE(status, 'A') <> 'D'
+      AND relics->>'cavernName' IS NOT NULL AND relics->>'cavernName' != ''
+    GROUP BY relics->>'cavernName'
+    ORDER BY count DESC
+    LIMIT 5;
+  `;
+
+  const queryPlanars = `
+    SELECT relics->>'planarName' AS name, COUNT(*) AS count
+    FROM builds
+    WHERE ${charCondition} 
+      AND COALESCE(status, 'A') <> 'D'
+      AND relics->>'planarName' IS NOT NULL AND relics->>'planarName' != ''
+    GROUP BY relics->>'planarName'
+    ORDER BY count DESC
+    LIMIT 5;
+  `;
+
+  const queryLightCones = `
+    SELECT light_cones->>'name' AS name, COUNT(*) AS count
+    FROM builds
+    WHERE ${charCondition} 
+      AND COALESCE(status, 'A') <> 'D'
+      AND light_cones->>'name' IS NOT NULL AND light_cones->>'name' != ''
+    GROUP BY light_cones->>'name'
+    ORDER BY count DESC
+    LIMIT 5;
+  `;
+
+  const queryCharacters = `
+    SELECT character->>'name' AS name, COUNT(*) AS count
+    FROM builds
+    WHERE character->>'name' IS NOT NULL AND character->>'name' != ''
+      AND COALESCE(status, 'A') <> 'D'
+    GROUP BY character->>'name'
+    ORDER BY count DESC
+    LIMIT 10;
+  `;
+
+  const [resCaverns, resPlanars, resLightCones, resCharacters] = await Promise.all([
+    pool.query(queryCaverns, values),
+    pool.query(queryPlanars, values),
+    pool.query(queryLightCones, values),
+    pool.query(queryCharacters, [])
+  ]);
+
+  return {
+    caverns: resCaverns.rows,
+    planars: resPlanars.rows,
+    lightCones: resLightCones.rows,
+    characters: resCharacters.rows
+  };
+}
+
+export async function getSavedBuildsService(usuario_id) {
+  if (!usuario_id) {
+    throw new Error("ID de usuário inválido.");
+  }
+
+  const query = `
+    SELECT * FROM builds 
+    WHERE usuario_id = $1
+      AND COALESCE(status, 'A') <> 'D'
+    ORDER BY data_criacao DESC;
+  `;
+  const result = await pool.query(query, [usuario_id]);
+  const dbBuilds = result.rows;
+
+  const characters = await getAllCharactersCard({});
+  const relicsList = await getAllRelicsCard({});
+
+  const mappedBuilds = dbBuilds.map(build => {
+    const charName = build.character?.name;
+    const matchedChar = characters.find(c => c.name === charName);
+
+    const relicsData = build.relics || {};
+    let cavernId = relicsData.cavernId;
+    let planarId = relicsData.planarId;
+
+    if (!cavernId && relicsData.cavernName) {
+      const found = relicsList.find(r => r.name === relicsData.cavernName);
+      if (found) cavernId = found.id;
+    }
+    if (!planarId && relicsData.planarName) {
+      const found = relicsList.find(r => r.name === relicsData.planarName);
+      if (found) planarId = found.id;
+    }
+
+    const GITHUB_URL = "https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/";
+
+    const relicIcons = {
+      head: cavernId ? `${GITHUB_URL}icon/relic/${cavernId}_0.png` : null,
+      hands: cavernId ? `${GITHUB_URL}icon/relic/${cavernId}_1.png` : null,
+      body: cavernId ? `${GITHUB_URL}icon/relic/${cavernId}_2.png` : null,
+      boots: cavernId ? `${GITHUB_URL}icon/relic/${cavernId}_3.png` : null,
+      sphere: planarId ? `${GITHUB_URL}icon/relic/${planarId}_0.png` : null,
+      rope: planarId ? `${GITHUB_URL}icon/relic/${planarId}_1.png` : null,
+    };
+
+    return {
+      id: build.id,
+      build_name: build.build_name,
+      status: build.status,
+      character: {
+        name: charName,
+        portrait: matchedChar ? matchedChar.preview : null,
+      },
+      light_cone: {
+        name: build.light_cones?.name,
+        icon: build.light_cones?.lcInfo?.icon,
+        lcInfo: build.light_cones?.lcInfo
+      },
+      relics: build.relics,
+      final_stats: build.final_stats,
+      relic_icons: relicIcons,
+      data_criacao: build.data_criacao
+    };
+  });
+
+  return { success: true, builds: mappedBuilds };
+}
+
+export async function deleteBuildService(buildId) {
+  if (!buildId) {
+    throw new Error("ID de build inválido.");
+  }
+  const query = `
+    UPDATE builds 
+    SET status = 'D'
+    WHERE id = $1 
+    RETURNING *;
+  `;
+  const result = await pool.query(query, [buildId]);
+  if (result.rowCount === 0) {
+    throw new Error("Build não encontrada.");
+  }
+  return { success: true };
 }

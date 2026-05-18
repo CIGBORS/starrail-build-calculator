@@ -5,6 +5,7 @@ import Login from "../pages/login/login.jsx";
 import Register from "../pages/login/registar.jsx";
 import Usuario from "../pages/usuario.jsx";
 import BuildCreators from "../pages/BuildCreators.jsx";
+import SavedBuilds from "../pages/build/BuildSave.jsx";
 import { UserProvider } from "../context/UserContext.jsx";
 
 export default function Router() {
@@ -12,12 +13,13 @@ export default function Router() {
         <BrowserRouter>
             <UserProvider>
                 <Routes>
-                    <Route path="/" element={<Home/>}/>
-                    <Route path="/characters" element={<Characters/>}/>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/characters" element={<Characters />} />
                     <Route path="/build-creators" element={<BuildCreators />} />
-                    <Route path="/login" element={<Login/>}/>
-                    <Route path="/registrar" element={<Register/>}/>
-                    <Route path="/usuario" element={<Usuario/>}/>
+                    <Route path="/saved-builds" element={<SavedBuilds />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/registrar" element={<Register />} />
+                    <Route path="/usuario" element={<Usuario />} />
                 </Routes>
             </UserProvider>
         </BrowserRouter>

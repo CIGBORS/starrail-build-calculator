@@ -32,7 +32,7 @@ async function criarTabelaSeNaoExistir() {
           username VARCHAR(100) UNIQUE NOT NULL,
           password VARCHAR(100) NOT NULL,
           email VARCHAR(100) NOT NULL DEFAULT '',
-          status VARCHAR(100) NOT NULL DEFAULT 'ativo',
+          status VARCHAR(1) NOT NULL DEFAULT 'A',
           data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           token VARCHAR(255) NOT NULL DEFAULT ''
       );
@@ -53,6 +53,22 @@ async function criarTabelaSeNaoExistir() {
           data_log TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    await pool.query(`
+    CREATE TABLE IF NOT EXISTS builds (
+          id SERIAL PRIMARY KEY,
+          character jsonb NOT NULL,
+          light_cones jsonb NOT NULL,
+          relics jsonb NOT NULL,
+          final_stats jsonb NOT NULL,
+          usuario_id INT NOT NULL,
+          data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    `);
+
+    await pool.query(`ALTER TABLE builds ADD COLUMN IF NOT EXISTS build_name VARCHAR(100) NOT NULL DEFAULT ''`);
+    await pool.query(`ALTER TABLE builds ADD COLUMN IF NOT EXISTS status VARCHAR(1) NOT NULL DEFAULT 'A'`);
+
 
     console.log("Tabelas verificadas/atualizadas com sucesso!");
   } catch (error) {
@@ -144,7 +160,7 @@ export async function register(req, res) {
 
     await pool.query(
       "INSERT INTO usuarios (username, password, email, status, token) VALUES ($1, $2, $3, $4, $5)",
-      [username, password, email, status || "ativo", token]
+      [username, password, email, status || "A", token]
     );
 
     await redis.xAdd('log-stream', '*', {

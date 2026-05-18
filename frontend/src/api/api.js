@@ -44,3 +44,26 @@ export async function putApi(path, body) {
     return { error: "Erro de conexão com o servidor" };
   }
 }
+
+export async function deleteApi(path) {
+  try {
+    const res = await fetch(`${API_URL}${path}`, {
+      method: "DELETE",
+    });
+
+    let data;
+    try {
+      data = await res.json();
+    } catch (e) {
+      data = null;
+    }
+    
+    if (!res.ok) {
+      return data || { error: "Erro desconhecido do servidor" };
+    }
+
+    return data;
+  } catch (error) {
+    return { error: "Erro de conexão com o servidor" };
+  }
+}

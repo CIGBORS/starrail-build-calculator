@@ -17,11 +17,13 @@ export default function GeneralCard({
   itemImage,
   itemRarity,
   itemIcon1,
+  layout,
 }) {
   const rarity = parseInt(itemRarity, 10) || 5;
+  const layoutClass = layout === "vertical" ? "lc-card--vertical" : "";
 
   return (
-    <div className={`lc-card card-${rarity}`}>
+    <div className={`lc-card card-${rarity} ${layoutClass}`.trim()}>
       {/* Left: image */}
       <div className="lc-card__image-wrap">
         <img src={itemImage} className="lc-card__image" alt={itemName} />
