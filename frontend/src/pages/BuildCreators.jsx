@@ -15,6 +15,7 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import RelicsSttsForm from "../components/RelicsSttsForm/RelicsSttsForm";
 import StatsCard from "../components/StatsCard/StatsCard";
+import GenericChart from "../components/Charts/GenericChart/GenericChart";
 
 export default function BuildCreators() {
   const [finalStats, setFinalStats] = useState({
@@ -116,6 +117,8 @@ export default function BuildCreators() {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [buildNameInput, setBuildNameInput] = useState("");
 
+  const [topStats, setTopStats] = useState(null);
+
   useEffect(() => {
     const fetchFilters = async () => {
       try {
@@ -183,6 +186,22 @@ export default function BuildCreators() {
     relicStats
   ]);
 
+  useEffect(() => {
+    const fetchTopStats = async () => {
+      try {
+        const payload = { charName: PesquisaFiltro.charName };
+        const res = await postApi("/github/calculator/top-stats", payload);
+        if (res) {
+          setTopStats(res);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar top stats:", error);
+      }
+    };
+
+    fetchTopStats();
+  }, [PesquisaFiltro.charName]);
+
   const handleSaveBuild = async () => {
     try {
       const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
@@ -249,6 +268,43 @@ export default function BuildCreators() {
     </div>
   );
 
+  const formatChartData = (dataArray, optionsArray = []) => {
+    if (!dataArray || dataArray.length === 0) return null;
+    const labels = dataArray.map((item) => item.name);
+    const data = dataArray.map((item) => parseInt(item.count, 10));
+    const backgroundColor = ['#c9aa71', '#8c00ff', '#0078d7', '#d14d4d', '#4db071'];
+    const hoverBackgroundColor = ['#e6cd98', '#a836ff', '#3b9dff', '#e66767', '#6cd18f'];
+    
+    const customLabels = dataArray.map((item, idx) => {
+      let icon = "";
+      if (optionsArray && optionsArray.length > 0) {
+        const found = optionsArray.find(opt => opt.name === item.name);
+        if (found) icon = found.icon || found.preview || "";
+      }
+      return { 
+        name: item.name, 
+        icon, 
+        count: item.count, 
+        color: backgroundColor[idx % backgroundColor.length] 
+      };
+    });
+
+    return {
+      labels,
+      datasets: [
+        {
+          data,
+          backgroundColor,
+          hoverBackgroundColor,
+          borderWidth: 0
+        }
+      ],
+      customLabels
+    };
+  };
+
+  const trendingRank = topStats?.characters?.findIndex(c => c.name === PesquisaFiltro.charName) + 1 || 0;
+
   return (
     <>
       <div className="editor-page-wrapper">
@@ -268,6 +324,12 @@ export default function BuildCreators() {
                   </div>
                   <div className="build-editor_content">
                     <div className="character-preview">
+                      {trendingRank > 0 && (
+                        <div className="trending-badge">
+                          <i className="pi pi-fire"></i>
+                          <span>{trendingRank}º dos 10 em alta</span>
+                        </div>
+                      )}
                       <img src={OpcoesFiltros.charImage} alt={Filtro.charName} />
                     </div>
                   </div>
@@ -298,7 +360,7 @@ export default function BuildCreators() {
             <div className="right-side">
               <Card title="Relíquias e Ornamentos" className="relics-container" style={{ position: 'relative', overflow: 'visible' }}>
                 <div className="save-build-container" style={{ position: 'absolute', top: '0', right: '0', zIndex: 10 }}>
-                  <Button label="Salvar Build" icon="pi pi-save" onClick={() => setShowSaveDialog(true)} className="p-button-success" />
+                  <Button label="Salvar Build" icon="pi pi-save" onClick={() => setShowSaveDialog(true)} className="btn-sedutora" />
                 </div>
                 <div className="relics-wrapper">
                   <div className="relics-section">
@@ -349,6 +411,21 @@ export default function BuildCreators() {
               </Card>
             </div>
           </div>
+
+          {/* Seção de Gráficos de Top 5 */}
+          {PesquisaFiltro.charName && (
+            <div className="charts-container" style={{ display: 'flex', gap: '20px', padding: '16px', marginTop: '20px', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+              <div style={{ flex: '1 1 calc(33.333% - 20px)' }}>
+                <GenericChart title="Top 5 Relíquias" data={formatChartData(topStats?.caverns, OpcoesFiltros.cavernName)} />
+              </div>
+              <div style={{ flex: '1 1 calc(33.333% - 20px)' }}>
+                <GenericChart title="Top 5 Ornamentos" data={formatChartData(topStats?.planars, OpcoesFiltros.planarName)} />
+              </div>
+              <div style={{ flex: '1 1 calc(33.333% - 20px)' }}>
+                <GenericChart title="Top 5 Cones de Luz" data={formatChartData(topStats?.lightCones, OpcoesFiltros.lcName)} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <Dialog

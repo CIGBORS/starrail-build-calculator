@@ -420,3 +420,81 @@ html, body {
 .custom-build-dialog .p-button.p-button-success:hover {
   background: #45a049 !important;
 }
+
+/* ── Custom Styles ────────────────────────────────────────── */
+
+/* Botão sedutora */
+.btn-sedutora {
+  background: linear-gradient(135deg, #a6854b, #c9aa71, #e8c88c) !important;
+  background-size: 200% 200% !important;
+  color: #1a1b24 !important;
+  border: 1px solid #e8c88c !important;
+  border-radius: 8px !important;
+  padding: 0.75rem 1.5rem !important;
+  font-family: "Star Rail", sans-serif !important;
+  font-weight: bold !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer !important;
+  box-shadow: 0 0 15px rgba(201, 170, 113, 0.4) !important;
+  transition: all 0.3s ease-in-out !important;
+  animation: bgPulse 3s ease infinite, pulseGlow 2s infinite !important;
+}
+
+.btn-sedutora:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(232, 200, 140, 0.7) !important;
+}
+
+@keyframes bgPulse {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 10px rgba(201, 170, 113, 0.3); }
+  50% { box-shadow: 0 0 15px rgba(201, 170, 113, 0.8), 0 0 20px rgba(232, 200, 140, 0.5); }
+  100% { box-shadow: 0 0 10px rgba(201, 170, 113, 0.3); }
+}
+
+/* Badge Em Alta */
+.character-preview {
+  position: relative;
+}
+
+.trending-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(20, 20, 30, 0.85);
+  border: 1px solid #ff6b6b;
+  border-radius: 20px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Star Rail", sans-serif;
+  font-size: 0.85rem;
+  color: #ff9800;
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.6);
+  z-index: 10;
+  animation: float 3s ease-in-out infinite, firePulse 2s infinite alternate;
+}
+
+.trending-badge i {
+  color: #ff5722;
+  font-size: 1rem;
+  text-shadow: 0 0 5px #ffeb3b;
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes firePulse {
+  0% { box-shadow: 0 0 5px rgba(255, 87, 34, 0.4); }
+  100% { box-shadow: 0 0 15px rgba(255, 87, 34, 0.8); }
+}

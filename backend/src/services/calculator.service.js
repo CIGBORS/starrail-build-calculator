@@ -247,3 +247,63 @@ export async function saveBuildService(buildData) {
   const result = await pool.query(query, values);
   return { success: true, build: result.rows[0] };
 }
+
+export async function getTopBuildsStatsService(charName) {
+  let values = [];
+  let charCondition = "1=1";
+  
+  if (charName) {
+    charCondition = "character->>'name' = $1";
+    values = [charName];
+  }
+
+  const queryCaverns = `
+    SELECT relics->>'cavernName' AS name, COUNT(*) AS count
+    FROM builds
+    WHERE ${charCondition} AND relics->>'cavernName' IS NOT NULL AND relics->>'cavernName' != ''
+    GROUP BY relics->>'cavernName'
+    ORDER BY count DESC
+    LIMIT 5;
+  `;
+
+  const queryPlanars = `
+    SELECT relics->>'planarName' AS name, COUNT(*) AS count
+    FROM builds
+    WHERE ${charCondition} AND relics->>'planarName' IS NOT NULL AND relics->>'planarName' != ''
+    GROUP BY relics->>'planarName'
+    ORDER BY count DESC
+    LIMIT 5;
+  `;
+
+  const queryLightCones = `
+    SELECT light_cones->>'name' AS name, COUNT(*) AS count
+    FROM builds
+    WHERE ${charCondition} AND light_cones->>'name' IS NOT NULL AND light_cones->>'name' != ''
+    GROUP BY light_cones->>'name'
+    ORDER BY count DESC
+    LIMIT 5;
+  `;
+
+  const queryCharacters = `
+    SELECT character->>'name' AS name, COUNT(*) AS count
+    FROM builds
+    WHERE character->>'name' IS NOT NULL AND character->>'name' != ''
+    GROUP BY character->>'name'
+    ORDER BY count DESC
+    LIMIT 10;
+  `;
+
+  const [resCaverns, resPlanars, resLightCones, resCharacters] = await Promise.all([
+    pool.query(queryCaverns, values),
+    pool.query(queryPlanars, values),
+    pool.query(queryLightCones, values),
+    pool.query(queryCharacters, [])
+  ]);
+
+  return {
+    caverns: resCaverns.rows,
+    planars: resPlanars.rows,
+    lightCones: resLightCones.rows,
+    characters: resCharacters.rows
+  };
+}
