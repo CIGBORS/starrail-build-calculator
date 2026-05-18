@@ -1,5 +1,7 @@
 import { createClient } from "redis";
 import dotenv from "dotenv";
+import { enqueueBuildCalculation } from "./queues/buildQueue.js";
+
 dotenv.config();
 
 const redis = createClient({

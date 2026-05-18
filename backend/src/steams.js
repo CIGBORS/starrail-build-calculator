@@ -16,3 +16,12 @@ export async function addLogEvent(acao, descricao, usuario) {
         timestamp: Date.now().toString()
     });
 }
+
+export async function addCalcCharacter(payload){
+    await redis.xAdd("build-steam", "*", {
+        payload: JSON.stringify(payload),
+        timestamp: Date.now().toString(),
+    });
+
+    return jobId;
+}

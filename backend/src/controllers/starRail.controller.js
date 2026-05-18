@@ -71,20 +71,12 @@ export function getCharacterByName(req, res) {
 export async function getCharactersFilters(req, res) {
   try {
     const { name, rarity, path, element } = req.body;
-    console.log("Filtros recebidos:", {
-      name,
-      rarity,
-      path,
-      element,
-    });
     const data = await getCharFiltersServ({
       name,
       rarity,
       path,
       element,
     });
-
-    console.log("return do back", data);
 
     res.json(data);
   } catch (error) {

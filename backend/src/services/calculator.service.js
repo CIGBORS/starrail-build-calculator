@@ -98,6 +98,7 @@ export async function calculateBuild(payload) {
 
   let charData = null;
   let charBaseStats = null;
+  
   if (charName) {
     const chars = await getAllCharactersCard({ name: charName });
     if (chars && chars.length > 0) {

@@ -124,8 +124,7 @@ export async function login(req, res) {
     });
 
     const { password: _, ...usuarioSemSenha } = usuarioAchado;
-
-    const { password: _, ...usuarioSemSenha } = usuarioAchado;
+    
     return res.json(usuarioSemSenha);
   } catch (error) {
     console.error("Erro no login:", error);

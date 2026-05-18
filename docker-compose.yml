@@ -1,5 +1,6 @@
 services:
   postgres:
+    init: true
     image: postgres:16-alpine
     container_name: star_rail_database
     restart: unless-stopped
@@ -20,10 +21,10 @@ services:
       retries: 5
   
   frontend:
+    init: true
     build:
       context: .
       dockerfile: ./frontend/Dockerfile
-    init: true
     ports:
       - "5173:5173"
     depends_on:
@@ -34,6 +35,7 @@ services:
       - ./frontend/.env
 
   backend:
+    init: true
     build:
       context: .
       dockerfile: ./backend/Dockerfile
@@ -48,6 +50,7 @@ services:
       - ./backend/.env
 
   worker:
+    init: true
     build:
       context: .
       dockerfile: ./backend/Dockerfile
@@ -58,6 +61,7 @@ services:
       - ./backend/.env
 
   redis:
+    init: true
     image: redis:7
     ports:
       - "6379:6379"

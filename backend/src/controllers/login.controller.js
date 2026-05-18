@@ -8,6 +8,8 @@ import {
 import redis from "../../redis/redisClient.js";
 
 export async function registerNewLog(req, res){
+  const { action, description, userId } = req.body;
+
   if (!action || !description || !userId) {
     return res.status(400).json({ error: "Todos os campos devem estar preenchidos" });
   }
@@ -16,7 +18,7 @@ export async function registerNewLog(req, res){
     await redis.xAdd('log-stream', '*', {
       action,
       description,
-      userId,
+      userId: String(userId),
       timestamp: Date.now().toString()
     });
 
