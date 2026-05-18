@@ -10,6 +10,7 @@ import CharacterCardList from "../components/CharacterCardList/CharacterCardList
 import LateralBar from "../components/LateralBar/LateralBar";
 
 import { Card } from "primereact/card";
+import { Button } from "primereact/button";
 import RelicsSttsForm from "../components/RelicsSttsForm/RelicsSttsForm";
 import StatsCard from "../components/StatsCard/StatsCard";
 
@@ -176,10 +177,53 @@ export default function BuildCreators() {
     PesquisaFiltro.planarName,
     relicStats
   ]);
+
+  const handleSaveBuild = async () => {
+    try {
+      const userStr = localStorage.getItem("user");
+      if (!userStr) {
+        alert("Você precisa estar logado para salvar uma build.");
+        return;
+      }
+
+      const userObj = JSON.parse(userStr);
+      const userId = userObj.id || userObj.usuario_id;
+
+      if (!userId) {
+        alert("Sessão de usuário inválida. Faça login novamente.");
+        return;
+      }
+
+      if (!PesquisaFiltro.charName) {
+        alert("Selecione um personagem para poder salvar a build.");
+        return;
+      }
+
+      const payload = {
+        character: { name: PesquisaFiltro.charName },
+        light_cones: { name: PesquisaFiltro.lcName, lcInfo: lcInfo },
+        relics: relicStats,
+        final_stats: finalStats,
+        usuario_id: userId
+      };
+
+      const res = await postApi("/github/calculator/save", payload);
+
+      if (res && res.success) {
+        alert("Build salva com sucesso!");
+      } else {
+        alert("Erro ao salvar build: " + (res.error || "Desconhecido"));
+      }
+    } catch (error) {
+      console.error("Erro ao salvar a build:", error);
+      alert("Ocorreu um erro inesperado ao salvar a build.");
+    }
+  };
+
   return (
     <>
       <div className="editor-page-wrapper">
-      <LateralBar />
+        <LateralBar />
         <div className="editor-main-column">
           <div className="build-editor-main">
             <div className="left-side">
@@ -223,7 +267,10 @@ export default function BuildCreators() {
             </div>
 
             <div className="right-side">
-              <Card title="Relíquias e Ornamentos" className="relics-container">
+              <Card title="Relíquias e Ornamentos" className="relics-container" style={{ position: 'relative', overflow: 'visible' }}>
+                <div className="save-build-container" style={{ position: 'absolute', top: '0', right: '0', zIndex: 10 }}>
+                  <Button label="Salvar Build" icon="pi pi-save" onClick={handleSaveBuild} className="p-button-success" />
+                </div>
                 <div className="relics-wrapper">
                   <div className="relics-section">
                     <div className="inputtext-be">
@@ -234,6 +281,7 @@ export default function BuildCreators() {
                         Opcoes={OpcoesFiltros.cavernName}
                       />
                     </div>
+
                     <div className="relics-grid">
                       {relics.slice(0, 4).map((type, index) => (
                         <RelicsSttsForm

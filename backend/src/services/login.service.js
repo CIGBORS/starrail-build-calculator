@@ -53,6 +53,18 @@ async function criarTabelaSeNaoExistir() {
       );
     `);
 
+    await pool.query(`
+    CREATE TABLE IF NOT EXISTS builds (
+          id SERIAL PRIMARY KEY,
+          character jsonb NOT NULL,
+          light_cones jsonb NOT NULL,
+          relics jsonb NOT NULL,
+          final_stats jsonb NOT NULL,
+          usuario_id INT NOT NULL,
+          data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    `);
+
     console.log("Tabelas verificadas/atualizadas com sucesso!");
   } catch (error) {
     console.error("Erro ao verificar tabela de usuários:", error);

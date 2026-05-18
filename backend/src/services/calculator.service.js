@@ -2,6 +2,7 @@ import { getAllCharactersCard, getAllLightConesCard, getAllRelicsCard } from "./
 import { applyPassiveConversions } from "../../../shared/characterPassives.js";
 import { Stts } from "../../../shared/variables.js";
 import * as FuncStatus from "../utils/FuncStatus.js";
+import pool from "../config/db.js";
 
 function calculateSubstatsTotals(relicStats, lcInfo, charBaseStats, cavernData, planarData) {
   let totals = {
@@ -219,4 +220,29 @@ export async function calculateBuild(payload) {
     visuals,
     finalStats
   };
+}
+
+export async function saveBuildService(buildData) {
+  const { character, light_cones, relics, final_stats, usuario_id } = buildData;
+
+  if (!usuario_id) {
+    throw new Error("Usuário não está logado ou ID inválido.");
+  }
+
+  const query = `
+    INSERT INTO builds (character, light_cones, relics, final_stats, usuario_id)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *;
+  `;
+
+  const values = [
+    JSON.stringify(character),
+    JSON.stringify(light_cones),
+    JSON.stringify(relics),
+    JSON.stringify(final_stats),
+    usuario_id
+  ];
+
+  const result = await pool.query(query, values);
+  return { success: true, build: result.rows[0] };
 }
