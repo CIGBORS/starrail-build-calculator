@@ -179,12 +179,22 @@ docker compose down
 E logo em seguida, para aplicar as alterações feitas no código dos arquivos, será necessário utilizar:
 
 ```bash
-docker compose up -d
+docker compose up --build --scale worker=3
 ```
 
-Onde o `up -d` recria os container com a última configuração realizada.
+Onde o `up --build --scale worker=3` recria os container com a última configuração realizada.
+
+> [!IMPORTANT]
+> Como o sistema utiliza workers para divisão do processamento de algumas requisições no backend, você deve rodar com `--scale worker=N` para definir a quantidade de workers serão criados localmente.
+> N é o número de workers que deseja criar.
 
 ---
+
+## APIs e endpoints
+
+[As APIs e endpoints estão disponíveis neste documento](backend/API.md)
+
+Caso tenha alguma dúvida, você pode entrar em contato com qualquer membro do grupo para ideias de configuração.
 
 ## Referências
 <!-- Adicionar conforme formos pesquisando sobre -->
