@@ -3,7 +3,8 @@ dotenv.config();
 
 import express, { json } from "express";
 import cors from "cors";
-
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import testRoutes from "./routes/test.routes.js";
 import charactersRoutes from "./routes/starRail/characters.routes.js";
 import lightConesRoutes from "./routes/starRail/light-cones.routes.js";
@@ -16,8 +17,23 @@ import redis from "../redis/redisClient.js";
 
 const app = express();
 
+// Segurança - Headers HTTP
+app.use(helmet());
+
+// Segurança - Rate Limiting
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 200, // Limita cada IP a 200 requisições por `window` (aqui, por 15 minutos)
+  standardHeaders: true, // Retorna informação de limite nos headers `RateLimit-*`
+  legacyHeaders: false, // Desabilita os headers `X-RateLimit-*`
+  message: { error: "Muitas requisições deste IP, tente novamente após 15 minutos" }
+});
+
 app.use(cors());
 app.use(json());
+
+// Aplica o rate limiter nas rotas da API
+app.use("/api", apiLimiter);
 
 app.use("/test", testRoutes);
 app.use("/api/github/characters", charactersRoutes);

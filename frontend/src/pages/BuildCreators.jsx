@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { postApi } from "../api/api";
+import { postApi, getApi } from "../api/api";
 import BtnInputText from "../components/Filters/BtnInputText/BtnInputText";
 import BtnDropdown from "../components/Filters/BtnDropdown/BtnDropdown";
 import { Stts } from "../../../shared/variables";
@@ -188,23 +188,48 @@ export default function BuildCreators() {
           planarName: PesquisaFiltro.planarName,
           relicStats
         };
-        const res = await postApi("/github/calculator/build", payload);
-        if (res && res.finalStats) {
-          setFinalStats(res.finalStats);
-        }
-        if (res && res.visuals) {
-          setOpcoesFiltros(prev => ({
-            ...prev,
-            charImage: res.visuals.charImage || prev.charImage,
-            charPath: res.visuals.charPath || null,
-            lcImage: res.visuals.lcImage || prev.lcImage,
-            cavernImage: res.visuals.cavernImage && res.visuals.cavernImage.length > 0 ? res.visuals.cavernImage : prev.cavernImage,
-            planarImage: res.visuals.planarImage && res.visuals.planarImage.length > 0 ? res.visuals.planarImage : prev.planarImage,
-          }));
-          if (res.visuals.lcInfo) {
-            setLcInfo(res.visuals.lcInfo);
-          } else if (!payload.lcName) {
-            setLcInfo(null);
+        const initialRes = await postApi("/github/calculator/build", payload);
+        
+        if (initialRes && initialRes.jobId) {
+          const jobId = initialRes.jobId;
+          let isComplete = false;
+          let retries = 0;
+          let finalRes = null;
+
+          while (!isComplete && retries < 20) { // 20 retries * 500ms = 10s max wait
+            await new Promise(r => setTimeout(r, 500));
+            const pollRes = await getApi(`/github/calculator/result/${jobId}`);
+            
+            if (pollRes && pollRes.status === "COMPLETED") {
+              isComplete = true;
+              finalRes = pollRes.data;
+            } else if (pollRes && pollRes.status === "FAILED") {
+              console.error("Erro no cálculo do worker:", pollRes.error);
+              isComplete = true;
+            }
+            retries++;
+          }
+
+          if (finalRes) {
+            const res = finalRes;
+            if (res && res.finalStats) {
+              setFinalStats(res.finalStats);
+            }
+            if (res && res.visuals) {
+              setOpcoesFiltros(prev => ({
+                ...prev,
+                charImage: res.visuals.charImage || prev.charImage,
+                charPath: res.visuals.charPath || null,
+                lcImage: res.visuals.lcImage || prev.lcImage,
+                cavernImage: res.visuals.cavernImage && res.visuals.cavernImage.length > 0 ? res.visuals.cavernImage : prev.cavernImage,
+                planarImage: res.visuals.planarImage && res.visuals.planarImage.length > 0 ? res.visuals.planarImage : prev.planarImage,
+              }));
+              if (res.visuals.lcInfo) {
+                setLcInfo(res.visuals.lcInfo);
+              } else if (!payload.lcName) {
+                setLcInfo(null);
+              }
+            }
           }
         }
       } catch (error) {

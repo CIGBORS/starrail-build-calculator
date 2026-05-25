@@ -1,12 +1,35 @@
 import { calculateBuild, saveBuildService, getSavedBuildsService, deleteBuildService,getTopBuildsStatsService } from "../services/calculator.service.js";
+import { enqueueBuildCalculation } from "../../redis/queues/buildQueue.js";
+import redis from "../../redis/redisClient.js";
 
 export async function calculateCharacterBuild(req, res) {
   try {
     const payload = req.body;
-    const result = await calculateBuild(payload);
-    return res.json(result);
+    const jobId = await enqueueBuildCalculation(payload);
+    return res.status(202).json({ jobId, message: "Cálculo enfileirado" });
   } catch (error) {
-    console.error("Erro ao calcular build:", error);
+    console.error("Erro ao enfileirar build:", error);
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+export async function getBuildResult(req, res) {
+  try {
+    const { jobId } = req.params;
+    const result = await redis.get(`build-result:${jobId}`);
+    if (result) {
+      return res.json({ status: "COMPLETED", data: JSON.parse(result) });
+    }
+    
+    // Check if it failed
+    const error = await redis.get(`build-error:${jobId}`);
+    if (error) {
+      return res.status(500).json({ status: "FAILED", error });
+    }
+
+    return res.json({ status: "PROCESSING" });
+  } catch (error) {
+    console.error("Erro ao buscar resultado da build:", error);
     return res.status(500).json({ error: error.message });
   }
 }
