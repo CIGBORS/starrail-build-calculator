@@ -15,10 +15,23 @@ const handlers = {
         console.log(`Log salvo: ${data.action}`);
     },
     "build-stream": async (data) => {
-        const payload = JSON.parse(data.payload);
-        const { calculateBuild } = await import("../services/calculator.service.js");
-        const result = await calculateBuild(payload);
-        console.log(`Build calculada:`, result);
+        const jobId = data.jobId;
+        try {
+            const payload = JSON.parse(data.payload);
+            const { calculateBuild } = await import("./services/calculator.service.js");
+            const result = await calculateBuild(payload);
+            
+            // Save result to Redis (expires in 10 minutes)
+            if (jobId) {
+                await redis.setEx(`build-result:${jobId}`, 600, JSON.stringify(result));
+            }
+            console.log(`Build calculada: ${jobId || 'sem id'}`);
+        } catch (error) {
+            if (jobId) {
+                await redis.setEx(`build-error:${jobId}`, 600, error.message);
+            }
+            throw error;
+        }
     },
     "dead-letter-stream": async (data) => {
         console.error(`[DEAD-LETTER] Stream original: ${data.originalStream}`, data);
