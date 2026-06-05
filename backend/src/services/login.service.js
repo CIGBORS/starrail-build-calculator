@@ -5,6 +5,7 @@ import * as loginRepository from "../repository/login.repository.js";
 import { getAllAvatars } from "./starRail.service.js";
 import crypto from 'crypto';
 import redis from "../../redis/redisClient.js";
+import bcrypt from 'bcrypt';
 
 export async function getUsuarios(req, res) {
   try {
@@ -116,7 +117,26 @@ export async function login(req, res) {
 
     const usuarioAchado = resultado.rows[0];
 
-    if (usuarioAchado.password !== password) {
+    let passwordMatch = false;
+
+    if (usuarioAchado.password.startsWith('$2b$')) {
+      // É um hash bcrypt
+      passwordMatch = await bcrypt.compare(password, usuarioAchado.password);
+    } else {
+      // Senha em texto plano (legado)
+      if (usuarioAchado.password === password) {
+        passwordMatch = true;
+        // Migração transparente: atualiza a senha para hash
+        const hashPassword = await bcrypt.hash(password, 10);
+        await pool.query(
+          "UPDATE usuarios SET password = $1 WHERE id = $2",
+          [hashPassword, usuarioAchado.id]
+        );
+        console.log(`Senha do usuário ${username} migrada para hash com sucesso.`);
+      }
+    }
+
+    if (!passwordMatch) {
       await redis.xAdd('log-stream', '*', {
         action: 'FALHA_LOGIN',
         description: 'Tentativa de login com senha incorreta',
@@ -157,10 +177,11 @@ export async function register(req, res) {
 
   try {
     const token = generateToken();
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     await pool.query(
       "INSERT INTO usuarios (username, password, email, status, token) VALUES ($1, $2, $3, $4, $5)",
-      [username, password, email, status || "A", token]
+      [username, hashedPassword, email, status || "A", token]
     );
 
     await redis.xAdd('log-stream', '*', {
@@ -201,6 +222,7 @@ export async function changeUser(req, res) {
     let resultado;
 
     if (password) {
+      req.body.password = await bcrypt.hash(password, 10);
       resultado = await loginRepository.changeUser(req, res);
     } else {
       resultado = await loginRepository.changeUserWithoutPassword(req, res);
