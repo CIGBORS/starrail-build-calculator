@@ -1,4 +1,5 @@
 import redis from "../../../redis/redisClient.js";
+import crypto from "crypto";
 
 const CHARACTER_CACHE_PREFIX = "cache:character:data:";
 const CHARACTER_HISTORY_KEY = "cache:character:history";
@@ -125,5 +126,70 @@ export async function setCachedFilters(prefix, filters, data, ttlSeconds = 43200
 
   } catch (error) {
     console.error("Erro ao salvar filtros no cache:", error);
+  }
+}
+
+/**
+ * Gera um hash único para a combinação de payload de build
+ */
+function generateBuildKey(payload) {
+  const payloadString = JSON.stringify(payload);
+  const hash = crypto.createHash("md5").update(payloadString).digest("hex");
+  return `cache:build:data:${hash}`;
+}
+
+const BUILD_HISTORY_KEY = "cache:build:history";
+const MAX_BUILD_CACHE_SIZE = 50;
+
+/**
+ * Busca um cálculo de build salvo no cache (LRU de 50)
+ */
+export async function getCachedBuild(payload) {
+  try {
+    const key = generateBuildKey(payload);
+    const cached = await redis.get(key);
+    
+    if (cached) {
+      await redis.lRem(BUILD_HISTORY_KEY, 0, key);
+      await redis.lPush(BUILD_HISTORY_KEY, key);
+      
+      const currentCacheList = await redis.lRange(BUILD_HISTORY_KEY, 0, -1);
+      console.log(`[CACHE LRU Builds] Lista atualizada após acesso. Total salvos: ${currentCacheList.length}`);
+      
+      return JSON.parse(cached);
+    }
+    return null;
+  } catch (error) {
+    console.error("Erro ao buscar build no cache do Redis:", error);
+    return null;
+  }
+}
+
+/**
+ * Salva o resultado de um cálculo de build (LRU de 50)
+ */
+export async function setCachedBuild(payload, data) {
+  try {
+    const key = generateBuildKey(payload);
+    
+    // Salva a build
+    await redis.set(key, JSON.stringify(data));
+    
+    await redis.lRem(BUILD_HISTORY_KEY, 0, key);
+    await redis.lPush(BUILD_HISTORY_KEY, key);
+    
+    const length = await redis.lLen(BUILD_HISTORY_KEY);
+    if (length > MAX_BUILD_CACHE_SIZE) {
+      const oldestKey = await redis.rPop(BUILD_HISTORY_KEY);
+      if (oldestKey) {
+        await redis.del(oldestKey);
+      }
+    }
+    
+    const currentCacheList = await redis.lRange(BUILD_HISTORY_KEY, 0, -1);
+    console.log(`[CACHE LRU Builds] Build salva. Total no cache: ${currentCacheList.length}`);
+    
+  } catch (error) {
+    console.error("Erro ao salvar build no cache do Redis:", error);
   }
 }

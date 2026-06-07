@@ -21,6 +21,10 @@ const handlers = {
             const { calculateBuild } = await import("./services/calculator.service.js");
             const result = await calculateBuild(payload);
             
+            // Save to LRU cache
+            const { setCachedBuild } = await import("./services/utils/cache.service.js");
+            await setCachedBuild(payload, result);
+            
             // Save result to Redis (expires in 10 minutes)
             if (jobId) {
                 await redis.setEx(`build-result:${jobId}`, 600, JSON.stringify(result));
