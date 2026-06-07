@@ -1,10 +1,21 @@
 import { calculateBuild, saveBuildService, getSavedBuildsService, deleteBuildService,getTopBuildsStatsService } from "../services/calculator.service.js";
 import { enqueueBuildCalculation } from "../../redis/queues/buildQueue.js";
 import redis from "../../redis/redisClient.js";
+import { getCachedBuild } from "../services/utils/cache.service.js";
 
 export async function calculateCharacterBuild(req, res) {
   try {
     const payload = req.body;
+    
+    // Verifica se já calculamos essa mesma combinação recentemente
+    const cachedResult = await getCachedBuild(payload);
+    if (cachedResult) {
+      // Se achou no cache, cria um job falso e salva o resultado pra ser lido na hora
+      const jobId = `job-cached-${Date.now()}`;
+      await redis.setEx(`build-result:${jobId}`, 600, JSON.stringify(cachedResult));
+      return res.status(202).json({ jobId, message: "Cálculo recuperado do cache instantaneamente" });
+    }
+
     const jobId = await enqueueBuildCalculation(payload);
     return res.status(202).json({ jobId, message: "Cálculo enfileirado" });
   } catch (error) {

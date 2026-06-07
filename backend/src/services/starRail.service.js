@@ -3,6 +3,13 @@ import {
   ConverterCampoId,
   FormatNomesPersonagens,
 } from "./utils/utilidades.service.js";
+import {
+  getCachedCharacter,
+  setCachedCharacter,
+  getCachedFilters,
+  setCachedFilters,
+} from "./utils/cache.service.js";
+
 
 // Esse link está relativo ao código do personagem
 export const GITHUB_URL =
@@ -52,6 +59,12 @@ export async function getCharacterById(characterId) {
 }
 
 export async function getCharacterAllInformations(characterId) {
+  const cachedCharacter = await getCachedCharacter(characterId);
+  if (cachedCharacter) {
+    console.log(`[CACHE] Personagem ${characterId} recuperado do cache.`);
+    return cachedCharacter;
+  }
+
   // Essa função é exclusiva para os personagens que são, em especial, do modo de jogo normal
   const charactersData = await fetchJson("characters.json");
   const characterData = charactersData[characterId];
@@ -97,7 +110,7 @@ export async function getCharacterAllInformations(characterId) {
   // Relacionamento com skill tree, verificar se vai ser necessário, porque aqui é mais componente
   // const skillTreeData = await fetchJson("character_skill_trees.json");
 
-  return {
+  const result = {
     id: characterId,
     name: characterData.name,
     rarity: characterData.rarity,
@@ -110,6 +123,9 @@ export async function getCharacterAllInformations(characterId) {
     preview: `${GITHUB_URL}${characterData.preview}`,
     portrait: `${GITHUB_URL}${characterData.portrait}`,
   };
+
+  await setCachedCharacter(characterId, result);
+  return result;
 }
 
 export async function getCharacterByName(characterName) {
@@ -128,6 +144,12 @@ export async function getCharacterByName(characterName) {
 }
 
 export async function getCharactersFilters(filters) {
+  const cachedFilters = await getCachedFilters("charFilters", filters);
+  if (cachedFilters) {
+    console.log("[CACHE] Filtros de personagens recuperados do cache.");
+    return cachedFilters;
+  }
+
   //desistruturação dos filters
   const { name, rarity, path, element } = filters;
 
@@ -178,7 +200,7 @@ export async function getCharactersFilters(filters) {
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  return {
+  const result = {
     name: [
       ...new Set(
         filtered
@@ -212,9 +234,18 @@ export async function getCharactersFilters(filters) {
       ...new Set(filtered.map((c) => elementsData[c.element]?.name)),
     ].sort((a, b) => a.localeCompare(b)),
   };
+
+  await setCachedFilters("charFilters", filters, result);
+  return result;
 }
 
 export async function getAllCharactersCard(filters) {
+  const cachedCards = await getCachedFilters("charCards", filters);
+  if (cachedCards) {
+    console.log("[CACHE] Cards de personagens recuperados do cache.");
+    return cachedCards;
+  }
+
   const { name, rarity, path, element } = filters;
 
   const charactersData = await fetchJson("characters.json");
@@ -302,6 +333,9 @@ export async function getAllCharactersCard(filters) {
       trace_stats,
     };
   });
+
+  await setCachedFilters("charCards", filters, result);
+  return result;
 }
 
 export async function getLightConesFilters() {
@@ -367,9 +401,9 @@ export async function getAllLightConesCard(filters) {
       rarity: lc.rarity,
       path: pathsData[lc.path]
         ? {
-            name: pathsData[lc.path].name,
-            icon: `${GITHUB_URL}${pathsData[lc.path].icon}`,
-          }
+          name: pathsData[lc.path].name,
+          icon: `${GITHUB_URL}${pathsData[lc.path].icon}`,
+        }
         : null,
       stats,
       properties,

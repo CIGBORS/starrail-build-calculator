@@ -154,6 +154,32 @@ export default function BuildCreators() {
       }
 
       setBuildNameInput(build.build_name || "");
+
+      // Injeta imediatamente os status finais carregados do banco de dados (evita {X} se o worker estiver offline)
+      if (build.final_stats) {
+        setFinalStats(build.final_stats);
+      }
+
+      // Injeta os dados visuais (imagens) e info do cone de luz
+      setOpcoesFiltros(prev => ({
+        ...prev,
+        charImage: build.character?.portrait || prev.charImage,
+        lcImage: build.light_cone?.icon || prev.lcImage,
+        cavernImage: [
+          build.relic_icons?.head || "",
+          build.relic_icons?.hands || "",
+          build.relic_icons?.body || "",
+          build.relic_icons?.boots || ""
+        ],
+        planarImage: [
+          build.relic_icons?.sphere || "",
+          build.relic_icons?.rope || ""
+        ]
+      }));
+
+      if (build.light_cone?.lcInfo) {
+        setLcInfo(build.light_cone.lcInfo);
+      }
     }
   }, [location.state]);
 

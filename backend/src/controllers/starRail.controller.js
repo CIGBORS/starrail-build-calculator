@@ -87,13 +87,18 @@ export async function getCharactersFilters(req, res) {
 }
 
 export async function getAllCharactersCards(req, res) {
-  const allCards = await getCharactersCard(req.body);
+  try {
+    const allCards = await getCharactersCard(req.body);
 
-  if (!allCards) {
-    console.log("Sem personagem");
-    res.json({ error: "Personagens não encontrados dentro da base de dados " });
-  } else {
-    res.json(allCards);
+    if (!allCards) {
+      console.log("Sem personagem");
+      res.json({ error: "Personagens não encontrados dentro da base de dados" });
+    } else {
+      res.json(allCards);
+    }
+  } catch (error) {
+    console.error("Erro em getAllCharactersCards:", error);
+    res.status(500).json({ error: "Erro ao buscar os personagens da base de dados" });
   }
 }
 

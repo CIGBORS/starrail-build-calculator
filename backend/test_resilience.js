@@ -2,11 +2,11 @@ import { createClient } from "redis";
 
 async function runCrashTest() {
   console.log("=== INICIANDO CRASH TEST (Resiliência da Fila) ===");
-  
+
   const redis = createClient({ url: "redis://localhost:6379" });
   redis.on("error", (err) => console.log("Redis Error:", err));
   await redis.connect();
-  
+
   console.log("-> Conectado ao Cofre (Redis).");
   console.log("-> Verificando se os Workers estão mortos...");
 
@@ -26,7 +26,7 @@ async function runCrashTest() {
   });
 
   console.log("-> Injetando 5 requisições vitais de usuários que acabaram de clicar no site...");
-  
+
   const multi = redis.multi();
   for (let i = 1; i <= 5; i++) {
     const jobId = `crash-job-${i}`;
@@ -41,17 +41,16 @@ async function runCrashTest() {
   console.log("✅ Requisições inseridas com sucesso.");
 
   console.log("-> Checando a persistência crua na Fila (O servidor de Workers está OFFLINE).");
-  
+
   const streamInfo = await redis.xInfoStream("build-stream");
   const length = streamInfo.length;
   console.log(`[Status do Cofre] Existem agora ${length} mensagens (requisições) TOTALMENTE SALVAS na fila.`);
-  
-  // Vamos ler as ultimas 5 mensagens da stream crua para provar que os dados estão inteiros
+
   const latestMessages = await redis.xRevRange("build-stream", "+", "-", { COUNT: 5 });
   console.log("=========================================");
   console.log("As 5 mensagens represadas estão perfeitamente legíveis:");
   latestMessages.forEach((msg, idx) => {
-    console.log(` Ticket ${idx+1} [ID: ${msg.id}] -> Job: ${msg.message.jobId}`);
+    console.log(` Ticket ${idx + 1} [ID: ${msg.id}] -> Job: ${msg.message.jobId}`);
   });
   console.log("=========================================");
   console.log("⚠️ ATENÇÃO: Nenhuma delas foi processada ainda porque a 'Cozinha' está fechada.");

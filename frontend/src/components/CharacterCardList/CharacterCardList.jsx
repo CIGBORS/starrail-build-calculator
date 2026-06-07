@@ -6,6 +6,7 @@ import "./CharacterCardList.css";
 export default function CharacterCardList({ Filtro, PesquisaFiltro }) {
   const [loading, setLoading] = useState(true);
   const [characters, setCharacters] = useState([]);
+  const [errorMsg, setErrorMsg] = useState(null);
   const [page, setPage] = useState(1);
   const itemsPerPage = 21;
 
@@ -21,7 +22,17 @@ export default function CharacterCardList({ Filtro, PesquisaFiltro }) {
           path: Filtro.path,
           element: Filtro.element,
         });
-        setCharacters(data);
+        
+        if (data.error) {
+          console.error("Erro da API:", data.error);
+          setErrorMsg(data.error);
+          setCharacters([]);
+        } else if (Array.isArray(data)) {
+          setErrorMsg(null);
+          setCharacters(data);
+        } else {
+          setCharacters([]);
+        }
       } finally {
         setLoading(false);
       }
@@ -31,6 +42,7 @@ export default function CharacterCardList({ Filtro, PesquisaFiltro }) {
   }, [PesquisaFiltro, Filtro]);
 
   if (loading) return <h1 className="character-card-list__h1">Carregando personagens</h1>;
+  if (errorMsg) return <h1 className="character-card-list__h1" style={{color: 'red'}}>{errorMsg}</h1>;
 
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
