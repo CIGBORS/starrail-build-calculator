@@ -25,55 +25,61 @@ function generateToken(length = 8) {
 }
 
 async function criarTabelaSeNaoExistir() {
-  try {
-    // Colunas base que sempre existiram desde o início
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS usuarios (
-          id SERIAL PRIMARY KEY,
-          username VARCHAR(100) UNIQUE NOT NULL,
-          password VARCHAR(100) NOT NULL,
-          email VARCHAR(100) NOT NULL DEFAULT '',
-          status VARCHAR(1) NOT NULL DEFAULT 'A',
-          data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          token VARCHAR(255) NOT NULL DEFAULT ''
-      );
-    `);
-
-    // Colunas adicionadas depois — só rodam se não existirem
-    await pool.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS icon_id VARCHAR(20) DEFAULT '202006'`);
-    await pool.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS icon_url VARCHAR(255) DEFAULT 'icons/place_holder.png'`);
-    await pool.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS token VARCHAR(255) NOT NULL DEFAULT ''`);
-
-    // Tabela de logs
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS sistema_logs (
-          id SERIAL PRIMARY KEY,
-          acao VARCHAR(50) NOT NULL,
-          descricao TEXT NOT NULL,
-          usuario_afetado VARCHAR(100),
-          data_log TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-
-    await pool.query(`
-    CREATE TABLE IF NOT EXISTS builds (
-          id SERIAL PRIMARY KEY,
-          character jsonb NOT NULL,
-          light_cones jsonb NOT NULL,
-          relics jsonb NOT NULL,
-          final_stats jsonb NOT NULL,
-          usuario_id INT NOT NULL,
-          data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  let retries = 5;
+  while (retries > 0) {
+    try {
+      // Colunas base que sempre existiram desde o início
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(100) UNIQUE NOT NULL,
+            password VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL DEFAULT '',
+            status VARCHAR(1) NOT NULL DEFAULT 'A',
+            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            token VARCHAR(255) NOT NULL DEFAULT ''
         );
-    `);
+      `);
 
-    await pool.query(`ALTER TABLE builds ADD COLUMN IF NOT EXISTS build_name VARCHAR(100) NOT NULL DEFAULT ''`);
-    await pool.query(`ALTER TABLE builds ADD COLUMN IF NOT EXISTS status VARCHAR(1) NOT NULL DEFAULT 'A'`);
+      // Colunas adicionadas depois — só rodam se não existirem
+      await pool.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS icon_id VARCHAR(20) DEFAULT '202006'`);
+      await pool.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS icon_url VARCHAR(255) DEFAULT 'icons/place_holder.png'`);
+      await pool.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS token VARCHAR(255) NOT NULL DEFAULT ''`);
+
+      // Tabela de logs
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS sistema_logs (
+            id SERIAL PRIMARY KEY,
+            acao VARCHAR(50) NOT NULL,
+            descricao TEXT NOT NULL,
+            usuario_afetado VARCHAR(100),
+            data_log TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+
+      await pool.query(`
+      CREATE TABLE IF NOT EXISTS builds (
+            id SERIAL PRIMARY KEY,
+            character jsonb NOT NULL,
+            light_cones jsonb NOT NULL,
+            relics jsonb NOT NULL,
+            final_stats jsonb NOT NULL,
+            usuario_id INT NOT NULL,
+            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
+      `);
+
+      await pool.query(`ALTER TABLE builds ADD COLUMN IF NOT EXISTS build_name VARCHAR(100) NOT NULL DEFAULT ''`);
+      await pool.query(`ALTER TABLE builds ADD COLUMN IF NOT EXISTS status VARCHAR(1) NOT NULL DEFAULT 'A'`);
 
 
-    console.log("Tabelas verificadas/atualizadas com sucesso!");
-  } catch (error) {
-    console.error("Erro ao verificar tabela de usuários:", error);
+      console.log("Tabelas verificadas/atualizadas com sucesso!");
+      break;
+    } catch (error) {
+      console.error(`Erro ao verificar tabelas. Tentativas restantes: ${retries - 1}. Aguardando banco subir...`);
+      retries -= 1;
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
   }
 }
 

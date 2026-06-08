@@ -123,6 +123,7 @@ export default function BuildCreators() {
   });
 
   const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [showOverwriteDialog, setShowOverwriteDialog] = useState(false);
   const [buildNameInput, setBuildNameInput] = useState("");
 
   const [topStats, setTopStats] = useState(null);
@@ -292,9 +293,29 @@ export default function BuildCreators() {
     fetchTopStats();
   }, [PesquisaFiltro.charName]);
 
-  const handleSaveBuild = async () => {
+  const verificarSobrescrita = () => {
+    const currentEditBuildId = editBuildId || editBuildIdRef.current || null;
+    
+    if (!buildNameInput || buildNameInput.trim() === "") {
+      alert("Dê um nome para a sua build!");
+      return;
+    }
+
+    if (currentEditBuildId) {
+      // Tem ID, então é uma edição. Fechar o primeiro modal e abrir o segundo.
+      setShowSaveDialog(false);
+      setShowOverwriteDialog(true);
+    } else {
+      // É uma build nova, salva direto sem ID
+      handleSaveBuild(false);
+    }
+  };
+
+  const handleSaveBuild = async (isOverwrite) => {
     try {
-      const currentEditBuildId = editBuildId || editBuildIdRef.current || null;
+      // Se for sobrescrever, usa o ID. Se não, não usa o ID (cria nova).
+      const currentEditBuildId = isOverwrite ? (editBuildId || editBuildIdRef.current || null) : null;
+      
       const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
       if (!userStr) {
         alert("Você precisa estar logado para salvar uma build.");
@@ -311,11 +332,6 @@ export default function BuildCreators() {
 
       if (!PesquisaFiltro.charName) {
         alert("Selecione um personagem para poder salvar a build.");
-        return;
-      }
-
-      if (!buildNameInput || buildNameInput.trim() === "") {
-        alert("Dê um nome para a sua build!");
         return;
       }
 
@@ -343,6 +359,7 @@ export default function BuildCreators() {
       if (res && res.success) {
         alert(currentEditBuildId ? "Build atualizada com sucesso!" : "Build salva com sucesso!");
         setShowSaveDialog(false);
+        setShowOverwriteDialog(false);
         if (res.build && res.build.id) {
           editBuildIdRef.current = res.build.id;
           setEditBuildId(res.build.id);
@@ -359,7 +376,14 @@ export default function BuildCreators() {
   const dialogFooter = (
     <div>
       <Button label="Cancelar" icon="pi pi-times" onClick={() => setShowSaveDialog(false)} className="p-button-text" />
-      <Button label="Confirmar" icon="pi pi-check" onClick={handleSaveBuild} autoFocus />
+      <Button label="Confirmar" icon="pi pi-check" onClick={verificarSobrescrita} autoFocus />
+    </div>
+  );
+
+  const overwriteDialogFooter = (
+    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+      <Button label="Sobrescrever" icon="pi pi-save" onClick={() => handleSaveBuild(true)} className="p-button-danger" />
+      <Button label="Criar Novo" icon="pi pi-file-edit" onClick={() => handleSaveBuild(false)} className="p-button-success" autoFocus />
     </div>
   );
 
@@ -544,7 +568,7 @@ export default function BuildCreators() {
       <Dialog
         header="Salvar Build"
         visible={showSaveDialog}
-        style={{ width: '30vw' }}
+        style={{ width: '30vw', fontFamily: 'Agency FB, sans-serif' }}
         breakpoints={{ '960px': '75vw', '641px': '100vw' }}
         onHide={() => setShowSaveDialog(false)}
         footer={dialogFooter}
@@ -556,6 +580,23 @@ export default function BuildCreators() {
             <label htmlFor="buildName" style={{ display: 'block', marginBottom: '8px' }}>Nome da Build</label>
             <InputText id="buildName" value={buildNameInput} onChange={(e) => setBuildNameInput(e.target.value)} placeholder="Ex: Seele DPS Principal..." autoFocus />
           </div>
+        </div>
+      </Dialog>
+
+      <Dialog
+        header="Atenção"
+        visible={showOverwriteDialog}
+        style={{ width: '30vw', fontFamily: 'Agency FB, sans-serif' }}
+        breakpoints={{ '960px': '75vw', '641px': '100vw' }}
+        onHide={() => setShowOverwriteDialog(false)}
+        footer={overwriteDialogFooter}
+        className="custom-build-dialog"
+        maskClassName="custom-build-dialog-mask"
+      >
+        <div className="p-fluid">
+          <p style={{ textAlign: 'center', marginBottom: '20px', fontSize: '1.1rem' }}>
+            Deseja sobrescrever o arquivo salvo anteriormente ou criar um novo?
+          </p>
         </div>
       </Dialog>
     </>

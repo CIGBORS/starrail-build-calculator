@@ -1,26 +1,150 @@
 services:
-  postgres:
-    init: true
-    image: postgres:16-alpine
-    container_name: star_rail_database
+  etcd:
+    security_opt:
+      - apparmor:unconfined
+    image: quay.io/coreos/etcd:v3.5.17
+    container_name: etcd
+    restart: unless-stopped
+    environment:
+      ETCD_NAME: etcd
+      ETCD_DATA_DIR: /etcd-data
+      ETCD_ADVERTISE_CLIENT_URLS: http://etcd:2379
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+      ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://etcd:2380
+      ETCD_INITIAL_CLUSTER: etcd=http://etcd:2380
+      ETCD_INITIAL_CLUSTER_STATE: new
+      ETCD_INITIAL_CLUSTER_TOKEN: star_rail_etcd
+    volumes:
+      - etcd_data:/etcd-data
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+    healthcheck:
+      test: ["CMD", "etcdctl", "--endpoints=http://localhost:2379", "endpoint", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres-primary:
+    security_opt:
+      - apparmor:unconfined
+    image: patroni-pg:latest
+    build:
+      context: ./patroni
+    container_name: postgres-primary
     restart: unless-stopped
     env_file:
       - ./backend/.env
     environment:
+      PATRONI_NAME: postgres-primary
+      PATRONI_SCOPE: star_rail_cluster
+      PATRONI_ETCD3_HOSTS: etcd:2379
+      PATRONI_RESTAPI_CONNECT_ADDRESS: postgres-primary:8008
+      PATRONI_POSTGRESQL_CONNECT_ADDRESS: postgres-primary:5432
+      PATRONI_POSTGRESQL_DATA_DIR: /data/patroni
       POSTGRES_USER: ${POSTGRESQL_USER}
       POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
-      POSTGRES_DB: ${POSTGRESQL_DB}
-    ports:
-      - "${POSTGRESQL_PORT}:5432"
+      POSTGRES_DB: ${POSTGRESQL_DATABASE}
+      PATRONI_SUPERUSER_USERNAME: ${POSTGRESQL_USER}
+      PATRONI_SUPERUSER_PASSWORD: ${POSTGRESQL_PASSWORD}
+      PATRONI_REPLICATION_USERNAME: replicator
+      PATRONI_REPLICATION_PASSWORD: replicator_secret
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pg_primary_data:/data/patroni
+      - ./patroni/patroni.yml:/etc/patroni/patroni.yml:ro
+    depends_on:
+      etcd:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRESQL_USER}"]
-      interval: 5s
+      test: ["CMD", "patronictl", "-c", "/etc/patroni/patroni.yml", "list"]
+      interval: 10s
       timeout: 5s
-      retries: 5
-  
+      retries: 10
+
+  postgres-standby:
+    security_opt:
+      - apparmor:unconfined
+    image: patroni-pg:latest
+    build:
+      context: ./patroni
+    container_name: postgres-standby
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      PATRONI_NAME: postgres-standby
+      PATRONI_SCOPE: star_rail_cluster
+      PATRONI_ETCD3_HOSTS: etcd:2379
+      PATRONI_RESTAPI_CONNECT_ADDRESS: postgres-standby:8008
+      PATRONI_POSTGRESQL_CONNECT_ADDRESS: postgres-standby:5432
+      PATRONI_POSTGRESQL_DATA_DIR: /data/patroni
+      POSTGRES_USER: ${POSTGRESQL_USER}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
+      POSTGRES_DB: ${POSTGRESQL_DATABASE}
+      PATRONI_SUPERUSER_USERNAME: ${POSTGRESQL_USER}
+      PATRONI_SUPERUSER_PASSWORD: ${POSTGRESQL_PASSWORD}
+      PATRONI_REPLICATION_USERNAME: replicator
+      PATRONI_REPLICATION_PASSWORD: replicator_secret
+    volumes:
+      - pg_standby_data:/data/patroni
+      - ./patroni/patroni.yml:/etc/patroni/patroni.yml:ro
+    depends_on:
+      etcd:
+        condition: service_healthy
+
+  haproxy:
+    security_opt:
+      - apparmor:unconfined
+    image: haproxy:2.9-alpine
+    container_name: haproxy
+    restart: unless-stopped
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    ports:
+      - "7000:7000"
+      - "5000:5000"
+      - "5001:5001"
+    depends_on:
+      - postgres-primary
+      - postgres-standby
+
+  backend:
+    security_opt:
+      - apparmor:unconfined
+    init: true
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      redis:
+        condition: service_started
+      haproxy:
+        condition: service_started
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRESQL_USER}:${POSTGRESQL_PASSWORD}@haproxy:5000/${POSTGRESQL_DATABASE}
+      DATABASE_URL_READ: postgresql://${POSTGRESQL_USER}:${POSTGRESQL_PASSWORD}@haproxy:5001/${POSTGRESQL_DATABASE}
+
+  worker:
+    security_opt:
+      - apparmor:unconfined
+    init: true
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    command: node src/worker.js
+    depends_on:
+      - redis
+    env_file:
+      - ./backend/.env
+
   frontend:
+    security_opt:
+      - apparmor:unconfined
     init: true
     build:
       context: .
@@ -34,37 +158,15 @@ services:
     env_file:
       - ./frontend/.env
 
-  backend:
-    init: true
-    build:
-      context: .
-      dockerfile: ./backend/Dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-      redis:
-        condition: service_started
-      postgres:
-        condition: service_healthy
-    env_file:
-      - ./backend/.env
-
-  worker:
-    init: true
-    build:
-      context: .
-      dockerfile: ./backend/Dockerfile
-    command: node src/worker.js
-    depends_on:
-      - redis
-    env_file:
-      - ./backend/.env
-
   redis:
+    security_opt:
+      - apparmor:unconfined
     init: true
     image: redis:7
     ports:
       - "6379:6379"
-    
+
 volumes:
-  postgres_data:
+  pg_primary_data:
+  pg_standby_data:
+  etcd_data:
