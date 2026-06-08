@@ -25,7 +25,7 @@ function generateToken(length = 8) {
 }
 
 async function criarTabelaSeNaoExistir() {
-  let retries = 20; // Aumentado para suportar PCs mais lentos (até 60 segundos de boot)
+  let retries = 40; // Aumentado para suportar PCs mais lentos (até 60 segundos de boot)
   while (retries > 0) {
     try {
       // Colunas base que sempre existiram desde o início
